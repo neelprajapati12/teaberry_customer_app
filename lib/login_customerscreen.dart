@@ -37,7 +37,8 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             children: [
-              Image.asset('assets/iamges/teaberry_logo.jpg',
+              Image.asset(
+                'assets/iamges/teaberry_logo.jpg',
                 height: 80,
               ),
               SizedBox(height: 10),

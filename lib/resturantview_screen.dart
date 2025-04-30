@@ -14,7 +14,7 @@ import 'package:teaberryapp_project/walletrecgarge_screen.dart';
 //   }
 // }
 
-class MenuScreen extends StatelessWidget {
+class CoffeeMenuScreen extends StatelessWidget {
   final List<String> categories = ["Coffee", "Sandwich", "Pizza", "Sandwich", "Burger"];
 
   void _showOfferPopup(BuildContext context) {

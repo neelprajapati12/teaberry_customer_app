@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/productscreen1.dart';
 import 'package:teaberryapp_project/resturantview_screen.dart';
 
 // void main() {
@@ -123,7 +124,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     onPressed: () {Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MenuScreen(),
+                            builder: (context) => HomeScreen(),
                             ),
                     );
                       // Add your verification logic here
