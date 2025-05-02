@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teaberry_project/menuScreen.dart';
+// import 'package:teaberry_project/menuScreen.dart';
+import 'package:teaberryapp_project/productscreen2.dart';
 
 class PizzaDetailsPage extends StatefulWidget {
   const PizzaDetailsPage({super.key});
@@ -35,7 +36,7 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
                   const Text(
                     'Details',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -58,7 +59,10 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
             // Location
             Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
@@ -150,7 +154,10 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: isSelected ? Colors.orange : Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -224,12 +231,13 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {Navigator.push(
+                  onPressed: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MenuScreen(),
-                          ),
-                      );
+                        builder: (context) => CoffeeMenuScreen(),
+                      ),
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Pizza added to cart")),
                     );
@@ -237,7 +245,7 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const MenuScreen(),
+                          builder: (context) => CoffeeMenuScreen(),
                         ),
                       );
                     });
@@ -259,9 +267,10 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 10,
-                      offset: const Offset(0, -3))
+                    color: Colors.grey.shade300,
+                    blurRadius: 10,
+                    offset: const Offset(0, -3),
+                  ),
                 ],
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
@@ -271,7 +280,10 @@ class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
-                  BottomNavItem(icon: Icons.account_balance_wallet, label: 'Wallet'),
+                  BottomNavItem(
+                    icon: Icons.account_balance_wallet,
+                    label: 'Wallet',
+                  ),
                   BottomNavItem(icon: Icons.home, label: 'Home'),
                   BottomNavItem(icon: Icons.person, label: 'Profile'),
                 ],

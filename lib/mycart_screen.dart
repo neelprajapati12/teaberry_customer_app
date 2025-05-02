@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: CartPage(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     home: CartPage(),
+//   ));
+// }
 
 class CartPage extends StatefulWidget {
   @override
@@ -15,17 +15,19 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   List<CartItem> cartItems = [
     CartItem(
-        name: "Desi Filter Coffee",
-        price: 40,
-        quantity: 2,
-        image: "assets/images/coffee.jpg",
-        size: "400ml"),
+      name: "Desi Filter Coffee",
+      price: 40,
+      quantity: 2,
+      image: "assets/images/coffee.jpg",
+      size: "400ml",
+    ),
     CartItem(
-        name: "Pizza Calzone European",
-        price: 230,
-        quantity: 1,
-        image: "assets/images/pizza.jpg",
-        size: '14"'),
+      name: "Pizza Calzone European",
+      price: 230,
+      quantity: 1,
+      image: "assets/images/pizza.jpg",
+      size: '14"',
+    ),
   ];
 
   String address = "27-A, Aparna apartments, Gurudev...";
@@ -47,13 +49,18 @@ class _CartPageState extends State<CartPage> {
                 children: [
                   const Icon(Icons.arrow_back),
                   const SizedBox(width: 8),
-                  const Text("Cart",
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Cart",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
-                  Text("DONE",
-                      style: TextStyle(
-                          color: Colors.green[700], fontWeight: FontWeight.bold))
+                  Text(
+                    "DONE",
+                    style: TextStyle(
+                      color: Colors.green[700],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -68,7 +75,8 @@ class _CartPageState extends State<CartPage> {
                       elevation: 0,
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Row(
@@ -90,17 +98,27 @@ class _CartPageState extends State<CartPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(item.name,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text("₹${item.price}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                  Text(item.size,
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 12)),
+                                  Text(
+                                    "₹${item.price}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    item.size,
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -116,8 +134,10 @@ class _CartPageState extends State<CartPage> {
                                     });
                                   },
                                 ),
-                                Text(item.quantity.toString(),
-                                    style: const TextStyle(fontSize: 16)),
+                                Text(
+                                  item.quantity.toString(),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle_outline),
                                   onPressed: () {
@@ -135,7 +155,7 @@ class _CartPageState extends State<CartPage> {
                               onPressed: () {
                                 setState(() => cartItems.removeAt(index));
                               },
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -149,11 +169,14 @@ class _CartPageState extends State<CartPage> {
               // Address
               Align(
                 alignment: Alignment.centerLeft,
-                child: const Text("DELIVERY ADDRESS",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        fontSize: 12)),
+                child: const Text(
+                  "DELIVERY ADDRESS",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
               ),
               const SizedBox(height: 6),
               TextFormField(
@@ -161,8 +184,10 @@ class _CartPageState extends State<CartPage> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade100,
-                  contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -176,12 +201,17 @@ class _CartPageState extends State<CartPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("TOTAL:",
-                      style:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text("₹$totalAmount",
-                      style:
-                      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "TOTAL:",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "₹$totalAmount",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
 
@@ -199,9 +229,10 @@ class _CartPageState extends State<CartPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text("PLACE ORDER",
-                      style:
-                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    "PLACE ORDER",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],

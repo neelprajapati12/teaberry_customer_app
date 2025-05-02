@@ -59,11 +59,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/iamges/teaberry_logo.jpg
-    - assets/iamges/chai.jpg
-    - assets/iamges/coffee.jpg
-    - assets/iamges/pizza.jpg
-    - assets/iamges/sandwich.jpg
+    - assets/iamges/
 
 
 

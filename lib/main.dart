@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'package:teaberryapp_project/resturantview_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
+
 void main() {
-  runApp(TeaBerryApp());
+  runApp(MyApp());
 }
 
-class TeaBerryApp extends StatelessWidget {
-  const TeaBerryApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
