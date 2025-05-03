@@ -1,46 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/walletrecharge_lastscreen.dart';
 
-// void main() => runApp(TeaBerryRechargeApp());
-//
-// class TeaBerryRechargeApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Wallet Recharge',
-//       debugShowCheckedModeBanner: false,
-//       home: WalletRechargeScreen(),
-//     );
-//   }
-// }
-
 class WalletRechargeOfferScreen extends StatefulWidget {
   @override
-  State<WalletRechargeOfferScreen> createState() => _WalletRechargeOfferScreenState();
+  State<WalletRechargeOfferScreen> createState() =>
+      _WalletRechargeOfferScreenState();
 }
 
 class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
-  final TextEditingController userIdController =
-  TextEditingController(text: "+91 88888 34213");
-  final TextEditingController amountController =
-  TextEditingController(text: "2000");
+  final TextEditingController userIdController = TextEditingController(
+    text: "+91 88888 34213",
+  );
+  final TextEditingController amountController = TextEditingController(
+    text: "2000",
+  );
 
   bool showOffersPopup = true;
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
       body: Stack(
         children: [
           // Main content
@@ -75,10 +57,7 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                     Text(
                       "Feel fresh\nFreshness is our priority",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.green[900],
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.green[900]),
                     ),
                   ],
                 ),
@@ -91,9 +70,14 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Wallet Recharge",
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    Text(
+                      "Wallet Recharge",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
                     SizedBox(height: 6),
                     Text(
                       "Please enter the amount to recharge.",
@@ -108,7 +92,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[200],
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -116,7 +103,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text("ENTER AMOUNT", style: TextStyle(color: Colors.grey[700])),
+                    Text(
+                      "ENTER AMOUNT",
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
                     SizedBox(height: 6),
                     TextField(
                       controller: amountController,
@@ -124,7 +114,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[200],
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 14,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -133,12 +126,14 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: () {Navigator.push(
+                      onPressed: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RechargeSuccessScreen(),
+                            builder: (context) => RechargeSuccessScreen(),
                           ),
-                      );},
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(vertical: 14),
@@ -147,7 +142,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                         ),
                       ),
                       child: Center(
-                        child: Text("RECHARGE", style: TextStyle(color: Colors.white)),
+                        child: Text(
+                          "RECHARGE",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -164,7 +162,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.green.withOpacity(0.95), Colors.lightGreen.withOpacity(0.95)],
+                    colors: [
+                      Colors.green.withOpacity(0.95),
+                      Colors.lightGreen.withOpacity(0.95),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -195,7 +196,10 @@ class _WalletRechargeOfferScreenState extends State<WalletRechargeOfferScreen> {
                           "10% on Rs. 500\n15% on Rs. 1000\n20% on Rs. 2000!",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),

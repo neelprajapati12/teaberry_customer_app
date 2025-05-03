@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/walletrecgarge_screen.dart';
 
-// void main() => runApp(TeaBerryApp());
-//
-// class TeaBerryApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Tea Berry',
-//       debugShowCheckedModeBanner: false,
-//       home: MenuScreen(),
-//     );
-//   }
-// }
+class CoffeeMenuScreen extends StatefulWidget {
+  @override
+  State<CoffeeMenuScreen> createState() => _CoffeeMenuScreenState();
+}
 
-class CoffeeMenuScreen extends StatelessWidget {
-  final List<String> categories = ["Coffee", "Sandwich", "Pizza", "Sandwich", "Burger"];
+class _CoffeeMenuScreenState extends State<CoffeeMenuScreen> {
+  final List<String> categories = [
+    "Coffee",
+    "Sandwich",
+    "Pizza",
+    "Sandwich",
+    "Burger",
+  ];
 
   void _showOfferPopup(BuildContext context) {
     showDialog(
@@ -63,19 +62,13 @@ class CoffeeMenuScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     Text(
                       "#Referral bonus: Rs. 200\n#Loyalty bonus: Rs. 180",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 15),
                     Text(
                       "Use these offers for discounts!",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.white70),
                     ),
                   ],
                 ),
@@ -90,12 +83,12 @@ class CoffeeMenuScreen extends StatelessWidget {
                     icon: Icon(Icons.close, color: Colors.white, size: 18),
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WalletRechargeScreen(),
-                          ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WalletRechargeScreen(),
+                        ),
                       );
-                    }
+                    },
                   ),
                 ),
               ),
@@ -114,7 +107,9 @@ class CoffeeMenuScreen extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(12),
         leading: CircleAvatar(
-          backgroundImage: AssetImage('assets/coffee.jpg'), // Replace with your asset
+          backgroundImage: AssetImage(
+            'assets/coffee.jpg',
+          ), // Replace with your asset
           radius: 25,
         ),
         title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
@@ -126,7 +121,7 @@ class CoffeeMenuScreen extends StatelessWidget {
           ],
         ),
         trailing: CircleAvatar(
-          backgroundColor: Colors.green,
+          backgroundColor: Appcolors.green,
           child: Icon(Icons.add, color: Colors.white),
         ),
       ),
@@ -135,6 +130,8 @@ class CoffeeMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -156,12 +153,18 @@ class CoffeeMenuScreen extends StatelessWidget {
                 top: 6,
                 child: Container(
                   padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                  child: Text("2", style: TextStyle(fontSize: 10, color: Colors.white)),
+                  decoration: BoxDecoration(
+                    color: Appcolors.green,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    "2",
+                    style: TextStyle(fontSize: 10, color: Colors.white),
+                  ),
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
       body: Column(
@@ -179,7 +182,8 @@ class CoffeeMenuScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Chip(
                     label: Text(categories[index]),
-                    backgroundColor: selected ? Colors.green : Colors.grey[200],
+                    backgroundColor:
+                        selected ? Appcolors.green : Colors.grey[200],
                     labelStyle: TextStyle(
                       color: selected ? Colors.white : Colors.black,
                     ),
@@ -208,7 +212,10 @@ class CoffeeMenuScreen extends StatelessWidget {
             child: Center(
               child: Text(
                 "2 ITEMS ADDED; ₹95",
-                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -216,19 +223,19 @@ class CoffeeMenuScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showOfferPopup(context),
-        backgroundColor: Colors.green,
+        backgroundColor: Appcolors.green,
         child: Icon(Icons.local_offer),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: 1,
+      //   selectedItemColor: Appcolors.green,
+      //   unselectedItemColor: Colors.grey,
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      //   ],
+      // ),
     );
   }
 }

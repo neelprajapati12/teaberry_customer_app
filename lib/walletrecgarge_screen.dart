@@ -1,148 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/walletrecharge_offersscreen.dart';
 
-// void main() => runApp(TeaBerryRechargeApp());
-//
-// class TeaBerryRechargeApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Wallet Recharge',
-//       debugShowCheckedModeBanner: false,
-//       home: WalletRechargeScreen(),
-//     );
-//   }
-// }
-
 class WalletRechargeScreen extends StatelessWidget {
-  final TextEditingController userIdController =
-  TextEditingController(text: "+91 88888 34213");
-  final TextEditingController amountController =
-  TextEditingController(text: "2000");
+  final TextEditingController userIdController = TextEditingController(
+    // text: "+91 88888 34213",
+  );
+  final TextEditingController amountController = TextEditingController(
+    // text: "2000",
+  );
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Yellow top section with logo and title
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            decoration: BoxDecoration(
-              color: Color(0xFFF4CE5E),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
+            color: Appcolors.yellow,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
             child: Column(
               children: [
+                vSize(10),
                 Image.asset(
-                  'assets/iamges/teaberry_logo.jpg', // Add your logo image here
+                  'assets/iamges/teaberry_logo.jpg',
                   height: 80,
+                  width: 80,
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 15),
                 Text(
-                  "Tea berry",
+                  'Wallet Recharge',
                   style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[800],
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
+                SizedBox(height: 8),
                 Text(
-                  "Feel fresh\nFreshness is our priority",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.green[900],
-                  ),
+                  'Please enter the amount to recharge.',
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ],
             ),
           ),
 
-          SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Wallet Recharge",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.28,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
-                SizedBox(height: 6),
-                Text(
-                  "Please enter the amount to recharge.",
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-                SizedBox(height: 30),
-                Text("USER ID", style: TextStyle(color: Colors.grey[700])),
-                SizedBox(height: 6),
-                TextField(
-                  controller: userIdController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+              ),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    vSize(10),
+                    Text(
+                      "USER ID",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text("ENTER AMOUNT", style: TextStyle(color: Colors.grey[700])),
-                SizedBox(height: 6),
-                TextField(
-                  controller: amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                    SizedBox(height: 8),
+                    CustomTextFormField(
+                      controller: userIdController,
+                      hintText: "+91 88888 34213",
+                      // readOnly: true,
                     ),
-                  ),
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WalletRechargeOfferScreen(),
-                          ),
-                      );
-                    // Handle recharge logic
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    SizedBox(height: 20),
+                    Text(
+                      "ENTER AMOUNT",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Text("RECHARGE", style: TextStyle(color: Colors.white)),
-                  ),
+                    SizedBox(height: 8),
+                    CustomTextFormField(
+                      controller: amountController,
+                      hintText: "2000",
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => RechargeSuccessScreen(),
+                        //   ),
+                        // );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Appcolors.green,
+                        minimumSize: Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "RECHARGE",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],

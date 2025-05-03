@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/payment_screen.dart';
 
-// void main() => runApp(TeaBerryRechargeApp());
-//
-// class TeaBerryRechargeApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Recharge Success',
-//       debugShowCheckedModeBanner: false,
-//       home: RechargeSuccessScreen(),
-//     );
-//   }
-// }
-
 class RechargeSuccessScreen extends StatefulWidget {
   @override
   State<RechargeSuccessScreen> createState() => _RechargeSuccessScreenState();
@@ -24,18 +11,10 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), label: 'Wallet'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
       body: Stack(
         children: [
           // Main content
@@ -70,10 +49,7 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
                     Text(
                       "Feel fresh\nFreshness is our priority",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.green[900],
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.green[900]),
                     ),
                   ],
                 ),
@@ -84,9 +60,14 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Wallet Recharge",
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    Text(
+                      "Wallet Recharge",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
                     SizedBox(height: 6),
                     Text(
                       "Please enter the amount to recharge.",
@@ -106,7 +87,10 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.green.withOpacity(0.95), Colors.lightGreen.withOpacity(0.95)],
+                    colors: [
+                      Colors.green.withOpacity(0.95),
+                      Colors.lightGreen.withOpacity(0.95),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -140,10 +124,7 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
                         Text(
                           "You’ve got an additional\n15% on your recharge!",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         SizedBox(height: 12),
                         Text(
@@ -168,14 +149,14 @@ class _RechargeSuccessScreenState extends State<RechargeSuccessScreen> {
                             showSuccessPopup = false;
                           });
 
-                          Future.delayed(Duration(microseconds: 300),() {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder:(context) => PaymentScreen()),
-    );
-    });
-
-
+                          Future.delayed(Duration(microseconds: 300), () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentScreen(),
+                              ),
+                            );
+                          });
                         },
                         child: CircleAvatar(
                           backgroundColor: Color(0xFFFAD883),

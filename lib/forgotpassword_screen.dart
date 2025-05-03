@@ -1,125 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/verification_screen.dart';
 
-// void main() {
-//   runApp(TeaBerryApp());
-// }
-//
-// class TeaBerryApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Tea Berry - Forgot Password',
-//       home: ForgotPasswordScreen(),
-//       debugShowCheckedModeBanner: false,
-//     );
-//   }
-// }
+class ForgotPasswordScreen extends StatefulWidget {
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
 
-class ForgotPasswordScreen extends StatelessWidget {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 200,
-              color: Color(0xFFF2D269), // Yellow background
-              padding: EdgeInsets.only(top: 50, left: 20),
-              alignment: Alignment.topLeft,
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.arrow_back, color: Colors.black),
-              ),
+      body: Stack(
+        children: [
+          Container(
+            color: Appcolors.yellow,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ],
+                ),
+                // Image.asset(
+                //   'assets/iamges/teaberry_logo.jpg',
+                //   height: 80,
+                //   width: 80,
+                // ),
+                SizedBox(height: 15),
+                Text(
+                  'Forgot Password',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Please sign in to your existing account',
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+              ],
             ),
-            Container(
-              transform: Matrix4.translationValues(0, -40, 0),
-              padding: EdgeInsets.symmetric(horizontal: 20),
+          ),
+
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.28,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      'Forgot Password',
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    vSize(20),
+                    Text(
+                      "EMAIL",
                       style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      'Please sign in to your existing account',
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  Text(
-                    'EMAIL',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFF1F4F9),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextField(
+                    SizedBox(height: 5),
+                    CustomTextFormField(
                       controller: emailController,
-                      decoration: InputDecoration(
-                        hintText: 'example@gmail.com',
-                        border: InputBorder.none,
-                      ),
+                      hintText: "example@gmail.com",
                       keyboardType: TextInputType.emailAddress,
                     ),
-                  ),
-                  SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () {Navigator.push(
-                        context,
-                        MaterialPageRoute(
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
                             builder: (context) => VerificationScreen(),
-                            ),
-                    );
-                      // Add your send code logic
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF749D3E), // Green button
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Appcolors.green,
+                        minimumSize: Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      minimumSize: Size(double.infinity, 50),
-                    ),
-                    child: Text(
-                      'SEND CODE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                      child: Text(
+                        "SEND CODE",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
