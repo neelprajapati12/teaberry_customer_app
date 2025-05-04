@@ -1,316 +1,196 @@
 import 'package:flutter/material.dart';
-import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-// import 'package:teaberry_project/menuScreen.dart';
-import 'package:teaberryapp_project/see_all_categories_page.dart';
 
-class ProductDetailspage extends StatefulWidget {
-  const ProductDetailspage({super.key});
-
-  @override
-  State<ProductDetailspage> createState() => _ProductDetailspageState();
+void main() {
+  runApp(PizzaDetailsApp());
 }
 
-class _ProductDetailspageState extends State<ProductDetailspage> {
-  int quantity = 1;
-  int selectedSizeIndex = 1;
-  List<String> sizes = ['10"', '14"', '16"'];
-
+class PizzaDetailsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          vSize(30),
-          // Top Bar
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  onPressed: () {
-                    Navigator.pop(context); // Proper back behavior
-                  },
-                ),
-                const Text(
-                  'Details',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-
-          // Pizza Image
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/iamges/pizza.jpg',
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Location
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.location_pin, color: Colors.red),
-                  SizedBox(width: 5),
-                  Text('Malviya Nagar Outlet'),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Title and Description
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Pizza Calzone European',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Prosciutto e funghi is a pizza variety that is topped with tomato sauce.',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Ratings, Delivery, Time
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: const [
-                Icon(Icons.star, color: Colors.orange, size: 20),
-                SizedBox(width: 5),
-                Text('4.7'),
-                SizedBox(width: 15),
-                Icon(Icons.local_shipping, color: Colors.orange, size: 20),
-                SizedBox(width: 5),
-                Text('Free'),
-                SizedBox(width: 15),
-                Icon(Icons.access_time, color: Colors.orange, size: 20),
-                SizedBox(width: 5),
-                Text('20 min'),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Size Options
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: const Text(
-              'Size:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: List.generate(sizes.length, (index) {
-                bool isSelected = selectedSizeIndex == index;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedSizeIndex = index;
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 10),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.orange : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? Colors.orange : Colors.grey,
-                      ),
-                    ),
-                    child: Text(
-                      sizes[index],
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-
-          const Spacer(),
-
-          // Price and Quantity
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '₹295',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: () {
-                        if (quantity > 1) {
-                          setState(() {
-                            quantity--;
-                          });
-                        }
-                      },
-                    ),
-                    Text('$quantity', style: const TextStyle(fontSize: 18)),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: () {
-                        setState(() {
-                          quantity++;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // Add to Cart Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: Appcolors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SeeAllCategoriesPage(),
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Pizza added to cart")),
-                  );
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SeeAllCategoriesPage(),
-                      ),
-                    );
-                  });
-                },
-                child: const Text(
-                  'ADD TO CART',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Bottom Navigation
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade300,
-                  blurRadius: 10,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
-                BottomNavItem(
-                  icon: Icons.account_balance_wallet,
-                  label: 'Wallet',
-                ),
-                BottomNavItem(icon: Icons.home, label: 'Home'),
-                BottomNavItem(icon: Icons.person, label: 'Profile'),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return MaterialApp(
+      home: PizzaDetailsPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class BottomNavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
+class PizzaDetailsPage extends StatefulWidget {
+  @override
+  _PizzaDetailsPageState createState() => _PizzaDetailsPageState();
+}
 
-  const BottomNavItem({super.key, required this.icon, required this.label});
+class _PizzaDetailsPageState extends State<PizzaDetailsPage> {
+  int quantity = 1;
+  String selectedSize = "14\"";
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Appcolors.green),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Appcolors.green)),
-      ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: ListView(
+            children: [
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Icon(Icons.arrow_back_ios),
+                  SizedBox(width: 8),
+                  Text("Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/iamges/pizza.jpg', // Replace with your image asset
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.location_on, color: Colors.red, size: 16),
+                      SizedBox(width: 4),
+                      Text("Malviya Nagar Outlet"),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Pizza Calzone European",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "Prosciutto e funghi is a pizza variety that is topped with tomato sauce.",
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.orange),
+                      SizedBox(width: 4),
+                      Text("4.7"),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.delivery_dining, color: Colors.green),
+                      SizedBox(width: 4),
+                      Text("Free"),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, color: Colors.blue),
+                      SizedBox(width: 4),
+                      Text("20 min"),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Text("SIZE:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Row(
+                children: ["10\"", "14\"", "16\""].map((size) {
+                  bool isSelected = selectedSize == size;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSize = size;
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.orange : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        size,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 30),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFFF3F6FA),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "₹295",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed: () {
+                            setState(() {
+                              if (quantity > 1) quantity--;
+                            });
+                          },
+                        ),
+                        Text('$quantity', style: TextStyle(fontSize: 18)),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              quantity++;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  "ADD TO CART",
+                  style: TextStyle(fontSize: 16, letterSpacing: 1),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

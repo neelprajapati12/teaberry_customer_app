@@ -5,13 +5,18 @@ import 'package:teaberryapp_project/myprofile.screen.dart';
 import 'package:teaberryapp_project/product_detailspage.dart';
 import 'package:teaberryapp_project/see_all_categories_page.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String deliveryOption = "Delivery";
+
   final List<Map<String, String>> categories = [
     {"name": "Chai", "image": "assets/iamges/chai.jpg"},
     {"name": "Coffee", "image": "assets/iamges/coffee.jpg"},
     {"name": "Pizza", "image": "assets/iamges/pizza.jpg"},
-
-    {"name": "Sandwich", "image": "assets/iamges/sandwich.jpg"},
     {"name": "Sandwich", "image": "assets/iamges/sandwich.jpg"},
   ];
 
@@ -105,12 +110,35 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Delivery toggle
+              // Delivery Toggle as Radio Buttons
               Row(
                 children: [
-                  ChoiceChip(label: Text("Delivery"), selected: true),
-                  const SizedBox(width: 10),
-                  ChoiceChip(label: Text("Take Away"), selected: false),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: Text("Delivery"),
+                      value: "Delivery",
+                      groupValue: deliveryOption,
+                      activeColor: Appcolors.green,
+                      onChanged: (value) {
+                        setState(() {
+                          deliveryOption = value!;
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: Text("Take Away"),
+                      value: "Take Away",
+                      groupValue: deliveryOption,
+                      activeColor: Appcolors.green,
+                      onChanged: (value) {
+                        setState(() {
+                          deliveryOption = value!;
+                        });
+                      },
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -145,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SeeAllCategoriesPage(),
+                          builder: (context) => CoffeeMenuScreen(),
                         ),
                       );
                     },
@@ -160,7 +188,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              // vSize(10),
 
               // Categories Grid
               GridView.builder(
@@ -181,7 +208,7 @@ class HomeScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailspage(),
+                            builder: (context) => PizzaDetailsPage(),
                           ),
                         );
                       }

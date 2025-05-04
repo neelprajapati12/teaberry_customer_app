@@ -13,14 +13,14 @@ class _CartPageState extends State<CartPage> {
       name: "Desi Filter Coffee",
       price: 40,
       quantity: 2,
-      image: "assets/images/coffee.jpg",
+      image: "assets/iamges/coffee.jpg",
       size: "400ml",
     ),
     CartItem(
       name: "Pizza Calzone European",
       price: 230,
       quantity: 1,
-      image: "assets/images/pizza.jpg",
+      image: "assets/iamges/pizza.jpg",
       size: '14"',
     ),
   ];
@@ -245,6 +245,7 @@ class CartItem {
   int quantity;
   String image;
   String size;
+
 
   CartItem({
     required this.name,
