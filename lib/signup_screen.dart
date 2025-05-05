@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teaberryapp_project/bottom_navbar.dart';
+// import 'package:teaberryapp_project/bottom_navbar.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 
@@ -27,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String? selectedRole;
   String? selectedStore;
 
-  final roles = ['Customer', 'Seller'];
+  final roles = ['Customer', 'Delivery Boy'];
   final stores = ['Store 1', 'Store 2'];
 
   @override
@@ -257,7 +258,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Bottomnavbar(),
+                            builder: (context) => BottomNavbarCustomer(),
                           ),
                         );
                         // Add signup logic here

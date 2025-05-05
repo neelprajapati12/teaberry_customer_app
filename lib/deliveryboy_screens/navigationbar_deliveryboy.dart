@@ -1,33 +1,28 @@
+// import 'package:deliveryboy_screens/homepage_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/myprofile.screen.dart';
-import 'package:teaberryapp_project/home_screen.dart';
-import 'package:teaberryapp_project/walletrecgarge_screen.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 
-class Bottomnavbar extends StatefulWidget {
+class NavigationbarDeliveryboy extends StatefulWidget {
   final index;
-  const Bottomnavbar({super.key, this.index});
+  const NavigationbarDeliveryboy({super.key, this.index});
 
   @override
-  State<Bottomnavbar> createState() => _BottomnavbarState();
+  State<NavigationbarDeliveryboy> createState() =>
+      _NavigationbarDeliveryboyState();
 }
 
-class _BottomnavbarState extends State<Bottomnavbar> {
+class _NavigationbarDeliveryboyState extends State<NavigationbarDeliveryboy> {
   late int _index; // Declare _index without initialization
 
-  final PageController _pageController = PageController(initialPage: 1);
+  final PageController _pageController = PageController();
 
   // Properly initialize the screen widgets
-  final List<Widget> _screens = [
-    WalletRechargeScreen(),
-    HomeScreen(),
-    ProfileScreen(),
-  ];
+  final List<Widget> _screens = [HomepageDeliveryboy()];
 
   @override
   void initState() {
     super.initState();
-    _index = widget.index ?? 1; // Initialize _index in initState
+    _index = widget.index ?? 0; // Initialize _index in initState
   }
 
   @override
@@ -68,10 +63,10 @@ class _BottomnavbarState extends State<Bottomnavbar> {
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            selectedItemColor: Appcolors.green, // ✅ Fix here
+            selectedItemColor: Colors.green, // ✅ Fix here
             unselectedItemColor: Colors.grey,
             selectedLabelStyle: TextStyle(
-              color: Appcolors.green,
+              color: Colors.green,
               fontSize: 13,
               fontFamily: "popR",
             ),
@@ -88,20 +83,20 @@ class _BottomnavbarState extends State<Bottomnavbar> {
               _pageController.jumpToPage(index);
             },
             items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.wallet),
-                label: 'Wallet',
-              ),
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Profile',
+                icon: Icon(Icons.apartment),
+                label: 'Company',
               ),
-              // BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Users'),
-              // BottomNavigationBarItem(
-              //   icon: Icon(Icons.directions_car),
-              //   label: 'Vehicles',
-              // ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle),
+                label: 'Admin',
+              ),
+              BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Users'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.directions_car),
+                label: 'Vehicles',
+              ),
             ],
           ),
         ),

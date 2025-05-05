@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:teaberryapp_project/bottom_navbar.dart';
+// import 'package:teaberryapp_project/bottom_navbar.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 
@@ -221,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Bottomnavbar(),
+                            builder: (context) => BottomNavbarCustomer(),
                           ),
                         );
                       },

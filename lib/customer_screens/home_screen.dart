@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CoffeeMenuScreen(),
+                          builder: (context) => SeeAllCategoriesPage(),
                         ),
                       );
                     },
@@ -204,14 +204,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   final item = categories[index];
                   return GestureDetector(
                     onTap: () {
-                      if (item['name'] == 'Coffee') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PizzaDetailsPage(),
-                          ),
-                        );
-                      }
+                      // if (item['name'] == 'Coffee') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductDetailspage(),
+                        ),
+                      );
+                      // }
                     },
                     child: Container(
                       decoration: BoxDecoration(

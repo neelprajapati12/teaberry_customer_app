@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
+class ProfileScreenDeliveryboy extends StatefulWidget {
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreenDeliveryboy> createState() =>
+      _ProfileScreenDeliveryboyState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
   bool _isEditing = false;
   bool _hidePassword = true;
   bool _hideConfirmPassword = true;
