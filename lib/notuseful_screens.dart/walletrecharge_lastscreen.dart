@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teaberryapp_project/payment_screen.dart';
+import 'package:teaberryapp_project/customer_screens/payment_screen.dart';
+// import 'package:teaberryapp_project/payment_screen.dart';
 
 class RechargeSuccessScreen extends StatefulWidget {
   @override

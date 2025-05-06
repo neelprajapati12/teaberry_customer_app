@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/myprofile.screen.dart';
+import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
+// import 'package:teaberryapp_project/myprofile.screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -179,7 +180,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreenCustomer(),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

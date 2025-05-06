@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
-import 'package:teaberryapp_project/home_screen.dart';
-import 'package:teaberryapp_project/resturantview_screen.dart';
+// import 'package:teaberryapp_project/home_screen.dart';
+// import 'package:teaberryapp_project/resturantview_screen.dart';
 
 class VerificationScreen extends StatefulWidget {
   @override

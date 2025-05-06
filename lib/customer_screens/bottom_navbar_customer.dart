@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/myprofile.screen.dart';
-import 'package:teaberryapp_project/home_screen.dart';
-import 'package:teaberryapp_project/walletrecgarge_screen.dart';
+import 'package:teaberryapp_project/customer_screens/home_screen.dart';
+import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
+import 'package:teaberryapp_project/customer_screens/walletrecgarge_screen.dart';
+// import 'package:teaberryapp_project/myprofile.screen.dart';
+// import 'package:teaberryapp_project/home_screen.dart';
+// import 'package:teaberryapp_project/walletrecgarge_screen.dart';
 
 class BottomNavbarCustomer extends StatefulWidget {
   final index;
@@ -21,7 +24,7 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
   final List<Widget> _screens = [
     WalletRechargeScreen(),
     HomeScreen(),
-    ProfileScreen(),
+    ProfileScreenCustomer(),
   ];
 
   @override

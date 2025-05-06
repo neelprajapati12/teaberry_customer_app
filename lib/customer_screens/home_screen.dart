@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/myprofile.screen.dart';
-import 'package:teaberryapp_project/product_detailspage.dart';
-import 'package:teaberryapp_project/see_all_categories_page.dart';
+import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
+import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
+import 'package:teaberryapp_project/customer_screens/see_all_categories_page.dart';
+// import 'package:teaberryapp_project/myprofile.screen.dart';
+// import 'package:teaberryapp_project/product_detailspage.dart';
+// import 'package:teaberryapp_project/see_all_categories_page.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(),
+                              builder: (context) => ProfileScreenCustomer(),
                             ),
                           );
                         },

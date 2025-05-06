@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/customer_screens/verification_screen.dart';
+import 'package:teaberryapp_project/verification_screen.dart';
+// import 'package:teaberryapp_project/customer_screens/verification_screen.dart';
 // import 'package:teaberryapp_project/verification_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
