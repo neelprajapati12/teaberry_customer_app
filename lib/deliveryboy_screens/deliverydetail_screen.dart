@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 
 class DeliveryDetailsScreen extends StatefulWidget {
   @override
@@ -6,10 +7,10 @@ class DeliveryDetailsScreen extends StatefulWidget {
 }
 
 class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -27,9 +28,13 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                   ),
                   Stack(
                     children: [
-                      Icon(Icons.notifications_none, size: 30),
+                      CircleAvatar(
+                        backgroundColor: Colors.grey[200],
+                        child: Icon(Icons.notifications_none, color: Colors.black),
+                      ),
                       Positioned(
-                        right: 0,
+                        right: 2,
+                        top: 2,
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -47,32 +52,19 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                 ],
               ),
             ),
-            // Logo and tagline
+
+            // Logo Only (Text removed)
             Column(
               children: [
                 Image.asset(
-                  'assets/final_logo.jpg',
-                  height: 100,
-                ), // Add your logo
-                Text(
-                  'Tea berry',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[800],
-                  ),
-                ),
-                Text(
-                  'Feel fresh',
-                  style: TextStyle(fontSize: 16, color: Colors.green[600]),
-                ),
-                Text(
-                  'Freshness is our priority',
-                  style: TextStyle(fontSize: 12, color: Colors.green[600]),
+                  'assets/iamges/final_logo.jpg',
+                  height: 120,
                 ),
               ],
             ),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+
             // Delivery Details Heading
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -84,55 +76,73 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            // Form Fields
+
+            const SizedBox(height: 20),
+
+            // Delivery Form
             Expanded(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      CustomField(label: 'DELIVERY STATUS', value: '231-4521'),
-                      CustomField(label: 'PAYMENT', value: 'COD'),
-                      CustomField(
-                        label: 'ENTER AMOUNT',
-                        value:
-                            'Rs.265/-\nApplicable Tax: 25.50/-\nTotal Payable: 290.50/-',
-                      ),
-                      CustomField(
-                        label: 'COLLECTED AMOUNT',
-                        value: 'Rs.290.50/-',
-                      ),
-                      SizedBox(height: 30),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          minimumSize: Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    CustomField(label: 'DELIVERY STATUS', value: '231-4521'),
+                    CustomField(label: 'PAYMENT', value: 'COD'),
+                    CustomField(
+                      label: 'ENTER AMOUNT',
+                      value: 'Rs.265/-\nAPPLICABLE TAX: 25.50/-\nTOTAL PAYABLE: 290.50/-',
+                    ),
+                    CustomField(label: 'COLLECTED AMOUNT', value: 'Rs.290.50/-'),
+
+                    const SizedBox(height: 30),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Details Submitted")),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        backgroundColor: Appcolors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text('SUBMIT', style: TextStyle(fontSize: 16)),
                       ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
+                      child: const Text(
+                        'SUBMIT',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
             ),
           ],
         ),
       ),
+
+      // BottomNavigationBar with at least 2 items
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            label: 'Orders',
+          ),
         ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
       ),
     );
   }
@@ -146,25 +156,27 @@ class CustomField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-        ),
-        SizedBox(height: 5),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           ),
-          child: Text(value, style: TextStyle(color: Colors.grey[700])),
-        ),
-        SizedBox(height: 15),
-      ],
+          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(value, style: TextStyle(color: Colors.grey[800])),
+          ),
+        ],
+      ),
     );
   }
 }

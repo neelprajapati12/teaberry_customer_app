@@ -1,43 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 
-class OrdersScreen extends StatefulWidget {
-  @override
-  State<OrdersScreen> createState() => _OrdersScreenState();
-}
-
-class _OrdersScreenState extends State<OrdersScreen> {
+class OrdersScreen extends StatelessWidget {
   final List<Map<String, String>> orders = [
-    {'name': 'Anuradha Joshi', 'phone': '+91 88657 84320'},
-    {'name': 'Shraddha P.', 'phone': '+91 96642 56729'},
-    {'name': 'Robert Vadra', 'phone': '+91 88657 99342'},
-    {'name': 'Vishal Sen', 'phone': '+91 76532 98735'},
-    {'name': 'Vidya Sinha', 'phone': '+91 88653 33240'},
+    {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
+    {"name": "Shraddha P.", "phone": "+91 96642 56729"},
+    {"name": "Robert Vadra", "phone": "+91 88657 99342"},
+    {"name": "Vishal Sen", "phone": "+91 76532 98735"},
+    {"name": "Vidya Sinha", "phone": "+91 88653 33240"},
   ];
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        currentIndex: 0,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: 'Orders',
+          ),
+        ],
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            children: [
+              // Top bar
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    child: Text('S', style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey.shade200,
+                    child: Text('S', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                   Stack(
+                    alignment: Alignment.topRight,
                     children: [
-                      Icon(Icons.notifications_none, size: 30),
+                      CircleAvatar(
+                        backgroundColor: Colors.grey.shade200,
+                        child: Icon(Icons.notifications_none, color: Colors.black),
+                      ),
                       Positioned(
-                        right: 0,
+                        right: 6,
+                        top: 4,
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -49,86 +64,68 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],
               ),
-            ),
-            // Logo and tagline
-            Column(
-              children: [
-                Image.asset(
-                  'assets/tea_berry_logo.png',
-                  height: 100,
-                ), // Add your logo in assets folder
-                Text(
-                  'Tea berry',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[800],
-                  ),
-                ),
-                Text(
-                  'Feel fresh',
-                  style: TextStyle(fontSize: 16, color: Colors.green[600]),
-                ),
-                Text(
-                  'Freshness is our priority',
-                  style: TextStyle(fontSize: 12, color: Colors.green[600]),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            // Orders title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
+
+              const SizedBox(height: 12),
+
+              // Only Logo (Text removed)
+              Image.asset(
+                'assets/iamges/teaberry_logo.jpg', // Use your actual logo asset path
+                height: 180,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Orders section
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Orders',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  "Orders",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
-            // Orders list
-            Expanded(
-              child: ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.check_circle, color: Colors.green),
-                    title: Text(orders[index]['name'] ?? ''),
-                    subtitle: Text(orders[index]['phone'] ?? ''),
-                    trailing: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[400],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+
+              const SizedBox(height: 8),
+
+              // Orders list
+              Expanded(
+                child: ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 4),
+                      leading: Icon(Icons.check_circle, color: Colors.green),
+                      title: Text(order["name"]!),
+                      subtitle: Text(order["phone"]!),
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          // Add navigation here if needed
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Appcolors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 16),
                         ),
+                        child: Text("DETAILS"),
                       ),
-                      child: Text('DETAILS'),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            ],
           ),
-          // You can add more items if needed
-        ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
+        ),
       ),
     );
   }

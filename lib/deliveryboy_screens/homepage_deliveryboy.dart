@@ -28,7 +28,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                     Column(
                       children: [
                         Image.asset(
-                          'assets/images/final_logo.jpg', // Replace with your logo
+                          'assets/iamges/final_logo.jpg', // Replace with your logo
                           height: 80,
                         ),
                         Text(
