@@ -65,9 +65,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 Image.asset(
-                  'assets/iamges/teaberry_logo.jpg',
-                  height: 105,
-                  width: 105,
+                  'assets/iamges/removebckclr.png',
+                  height: 110,
+                  width: 110,
                 ),
                 SizedBox(height: 15),
                 Text(

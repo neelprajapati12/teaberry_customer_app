@@ -46,9 +46,9 @@ class _WalletRechargeScreenState extends State<WalletRechargeScreen> {
               children: [
                 vSize(10),
                 Image.asset(
-                  'assets/iamges/teaberry_logo.jpg',
-                  height: 80,
-                  width: 80,
+                  'assets/iamges/removebckclr.png',
+                  height: 120,
+                  width: 100,
                 ),
                 SizedBox(height: 15),
                 Text(

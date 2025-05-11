@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tea Berry',
       debugShowCheckedModeBanner: false,
-      home: DeliveryDetailsScreen(),
+      home: RadioSelectionScreen(),
     );
   }
 }
