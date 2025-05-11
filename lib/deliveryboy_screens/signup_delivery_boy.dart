@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
+// import 'package:teaberryapp_project/bottom_navbar.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
+import 'package:teaberryapp_project/forgotpassword_screen.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 
-class ProfileScreenDeliveryboy extends StatefulWidget {
+class SignupDeliveryBoy extends StatefulWidget {
   @override
-  State<ProfileScreenDeliveryboy> createState() =>
-      _ProfileScreenDeliveryboyState();
+  _SignupDeliveryBoyState createState() => _SignupDeliveryBoyState();
 }
 
-class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
-  bool _isEditing = false;
+class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
   bool _hidePassword = true;
   bool _hideConfirmPassword = true;
+
+  // Controllers for form fields
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+
+  String? selectedRole;
   String? selectedStore;
 
-  final TextEditingController nameController = TextEditingController(
-    text: "Adam Doe",
-  );
-  final TextEditingController mobileController = TextEditingController(
-    text: "+91 88888 34213",
-  );
-  final TextEditingController emailController = TextEditingController(
-    text: "adam.doe@gmail.com",
-  );
-  final TextEditingController addressController = TextEditingController(
-    text: "27-A, Aparna apartments, Gurudev..",
-  );
-  final TextEditingController passwordController = TextEditingController(
-    text: "********",
-  );
-  final TextEditingController confirmPasswordController = TextEditingController(
-    text: "********",
-  );
-
+  final roles = ['Customer', 'Delivery Boy'];
   final stores = ['Store 1', 'Store 2'];
 
   @override
@@ -43,57 +40,57 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Yellow Header with Back Button and Profile
+          // Yellow Header with Logo and Text
           Container(
             color: Appcolors.yellow,
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
-                    onPressed: () => Navigator.pop(context),
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ],
+                ),
+                Image.asset(
+                  'assets/iamges/removebckclr.png',
+                  height: 110,
+                  width: 110,
+                ),
+                SizedBox(height: 15),
+                Text(
+                  'Sign Up',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 20),
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40, color: Colors.grey),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        'My Profile',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'You may edit your details here.',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: 8),
+                Text(
+                  'Please sign up to get started',
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ],
             ),
           ),
 
-          // White Container with Form
+          // Form Body
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.35,
+            top: MediaQuery.of(context).size.height * 0.32,
             left: 0,
             right: 0,
             bottom: 0,
@@ -113,91 +110,25 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                     vSize(10),
                     Text("NAME"),
                     SizedBox(height: 5),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: nameController,
-                      enabled: _isEditing,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "Adam Doe",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      hintText: "Adam Doe",
                     ),
                     SizedBox(height: 20),
                     Text("MOBILE NO"),
                     SizedBox(height: 5),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: mobileController,
-                      enabled: _isEditing,
+                      hintText: "+91 88888 34213",
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "+91 88888 34213",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
                     ),
                     SizedBox(height: 20),
                     Text("EMAIL"),
                     SizedBox(height: 5),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: emailController,
-                      enabled: _isEditing,
+                      hintText: "adam.doe@gmail.com",
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "adam.doe@gmail.com",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
                     ),
                     SizedBox(height: 20),
                     Text("NEAREST STORE"),
@@ -214,11 +145,6 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                          suffixIcon: Icon(
-                            Icons.edit,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
                         ),
                         hint: Text("Please select"),
                         value: selectedStore,
@@ -231,40 +157,15 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                                   ),
                                 )
                                 .toList(),
-                        onChanged:
-                            _isEditing
-                                ? (val) => setState(() => selectedStore = val)
-                                : null,
+                        onChanged: (val) => setState(() => selectedStore = val),
                       ),
                     ),
                     SizedBox(height: 20),
                     Text("ADDRESS"),
                     SizedBox(height: 5),
-                    TextFormField(
+                    CustomTextFormField(
                       controller: addressController,
-                      enabled: _isEditing,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "27-A, Aparna apartments, Gurudev..",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      hintText: "27-A, Aparna apartments, Gandhinagar...",
                     ),
                     SizedBox(height: 20),
 
@@ -426,12 +327,12 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => HomepageDeliveryboy(),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomepageDeliveryboy(),
+                          ),
+                        );
                         // Add signup logic here
                       },
                       style: ElevatedButton.styleFrom(
@@ -442,7 +343,7 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                         ),
                       ),
                       child: Text(
-                        "UPDATE",
+                        "SIGN UP",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -450,7 +351,34 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                         ),
                       ),
                     ),
-
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account? ",
+                          style: TextStyle(color: Colors.black54, fontSize: 14),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "LOG IN",
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     vSize(20),
                   ],
                 ),

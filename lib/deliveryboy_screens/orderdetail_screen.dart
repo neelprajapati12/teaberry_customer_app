@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   @override
@@ -11,22 +14,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'Orders',
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   backgroundColor: Colors.white,
+      //   selectedItemColor: Colors.green,
+      //   unselectedItemColor: Colors.grey,
+      //   currentIndex: 0,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home_outlined),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.shopping_cart_outlined),
+      //       label: 'Orders',
+      //     ),
+      //   ],
+      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -39,14 +42,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.grey.shade200,
-                    child: Text('S', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'S',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Stack(
                     alignment: Alignment.topRight,
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.grey.shade200,
-                        child: Icon(Icons.notifications_none, color: Colors.black),
+                        child: Icon(
+                          Icons.notifications_none,
+                          color: Colors.black,
+                        ),
                       ),
                       Positioned(
                         right: 6,
@@ -54,7 +63,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Appcolors.green,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -62,7 +71,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
@@ -70,11 +79,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
               const SizedBox(height: 10),
 
-
-              Image.asset(
-                'assets/iamges/teaberry_logo.jpg',
-                height: 170,
-              ),
+              Image.asset('assets/iamges/removebckclr.png', height: 170),
 
               const SizedBox(height: 16),
 
@@ -92,7 +97,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               buildLabel("CLIENT REGISTRATION NO."),
               buildDisabledField("7654321"),
               buildLabel("ORDER DETAILS"),
-              buildDisabledField("1 Mac-n-cheese burger, 2 diet cokes, 1 small choco-lava cake"),
+              buildDisabledField(
+                "1 Mac-n-cheese burger, 2 diet cokes, 1 small choco-lava cake",
+              ),
               buildLabel("PAYMENT DONE?"),
               buildDisabledField("NO"),
               buildLabel("MODE OF PAYMENT"),
@@ -103,9 +110,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               // Accept Button
               ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Order Accepted")),
+                  showAppToast("Order Accepted");
+                  // showAppToast(msg: "Order Accepted");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DeliveryDetailsScreen(),
+                    ),
                   );
+
+                  // ScaffoldMessenger.of(
+                  //   context,
+                  // ).showSnackBar(SnackBar(content: Text("Order Accepted")));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Appcolors.green,
@@ -116,7 +132,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
                 child: const Text(
                   "ACCEPT ORDER",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

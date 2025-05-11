@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
+import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 
@@ -35,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 Image.asset(
-                  'assets/iamges/teaberry_logo.jpg',
+                  'assets/iamges/removebckclr.png',
                   fit: BoxFit.fill,
                   height: 160,
                   width: 190,
@@ -248,7 +249,7 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignUpScreen(),
+                                builder: (context) => RoleSelectionScreen(),
                               ),
                             );
                           },

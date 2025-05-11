@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
   final List<Map<String, String>> orders = [
     {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
     {"name": "Shraddha P.", "phone": "+91 96642 56729"},
@@ -14,22 +20,7 @@ class OrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'Orders',
-          ),
-        ],
-      ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -41,14 +32,20 @@ class OrdersScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.grey.shade200,
-                    child: Text('S', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'S',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Stack(
                     alignment: Alignment.topRight,
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.grey.shade200,
-                        child: Icon(Icons.notifications_none, color: Colors.black),
+                        child: Icon(
+                          Icons.notifications_none,
+                          color: Colors.black,
+                        ),
                       ),
                       Positioned(
                         right: 6,
@@ -56,7 +53,7 @@ class OrdersScreen extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Appcolors.green,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -64,7 +61,7 @@ class OrdersScreen extends StatelessWidget {
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],
@@ -74,7 +71,7 @@ class OrdersScreen extends StatelessWidget {
 
               // Only Logo (Text removed)
               Image.asset(
-                'assets/iamges/teaberry_logo.jpg', // Use your actual logo asset path
+                'assets/iamges/removebckclr.png', // Use your actual logo asset path
                 height: 180,
               ),
 
@@ -103,12 +100,17 @@ class OrdersScreen extends StatelessWidget {
                     final order = orders[index];
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(vertical: 4),
-                      leading: Icon(Icons.check_circle, color: Colors.green),
+                      leading: Icon(Icons.check_circle, color: Appcolors.green),
                       title: Text(order["name"]!),
                       subtitle: Text(order["phone"]!),
                       trailing: ElevatedButton(
                         onPressed: () {
-                          // Add navigation here if needed
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OrderDetailsScreen(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Appcolors.green,
@@ -117,7 +119,10 @@ class OrdersScreen extends StatelessWidget {
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 16),
                         ),
-                        child: Text("DETAILS"),
+                        child: Text(
+                          "DETAILS",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     );
                   },

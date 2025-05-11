@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 // import 'package:teaberryapp_project/bottom_navbar.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 // import 'package:teaberryapp_project/home_screen.dart';
@@ -12,11 +18,56 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  List<TextEditingController> controllers = List.generate(
-    4,
-    (index) => TextEditingController(),
-  );
-  int resendSeconds = 50;
+  TextEditingController otpController = TextEditingController();
+  String currentText = "";
+  Timer? _timer;
+  int _countdownSeconds = 60;
+  bool _timerRunning = false;
+  bool isOtpSent = false;
+  bool showResend = false;
+
+  @override
+  void codeUpdated() {
+    setState(() {
+      // Removed undefined variable 'code' assignment
+      // If needed, define 'code' or replace this line with appropriate logic
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SmsAutoFill().listenForCode();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    SmsAutoFill().unregisterListener();
+    otpController.dispose();
+    super.dispose();
+  }
+
+  void startTimer() {
+    setState(() {
+      _timerRunning = true;
+      _countdownSeconds = 60;
+      showResend = false;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_countdownSeconds > 0) {
+          _countdownSeconds--;
+        } else {
+          _timerRunning = false;
+          showResend = true;
+          _timer?.cancel();
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +111,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 Text(
                   'Verification',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 30,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
@@ -117,7 +168,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             // Add resend logic
                           },
                           child: Text(
-                            'Resend in ${resendSeconds}s',
+                            'Resend in ${_countdownSeconds}s',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.black87,
@@ -127,48 +178,101 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       ],
                     ),
                     SizedBox(height: 12),
+                    PinCodeTextField(
+                      appContext: context,
+                      length: 6,
+                      controller: otpController,
+                      onChanged: (value) {
+                        setState(() {
+                          currentText = value;
+                        });
+                      },
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(8),
+                        fieldHeight: 60,
+                        fieldWidth: 50,
+                        activeFillColor: Colors.grey[200],
+                        inactiveFillColor: Colors.grey[200],
+                        selectedFillColor: Colors.grey[200],
+                        activeColor: Appcolors.green,
+                        inactiveColor: Colors.grey[300],
+                        selectedColor: Appcolors.green,
+                      ),
+                      cursorColor: Appcolors.green,
+                      animationDuration: Duration(milliseconds: 300),
+                      enableActiveFill: true,
+                      keyboardType: TextInputType.number,
+                      boxShadows: [
+                        BoxShadow(
+                          offset: Offset(0, 1),
+                          color: Colors.black12,
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+
+                    // Add Resend OTP section
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(4, (index) {
-                        return Container(
-                          width: 70,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: TextField(
-                            controller: controllers[index],
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            maxLength: 1,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Didn't receive the code? ",
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                        ),
+                        if (!showResend) ...[
+                          Text(
+                            '${_countdownSeconds}s',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 14,
+                              color: Colors.grey,
                               fontWeight: FontWeight.w600,
                             ),
-                            decoration: InputDecoration(
-                              counterText: '',
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            onChanged: (value) {
-                              if (value.length == 1 && index < 3) {
-                                FocusScope.of(context).nextFocus();
-                              }
-                            },
                           ),
-                        );
-                      }),
+                        ] else
+                          GestureDetector(
+                            onTap: () async {
+                              setState(() {
+                                isOtpSent = true;
+                              });
+
+                              // Add your resend OTP API call here
+                              // await apiValue.requestOTP(mobileNumber);
+
+                              startTimer();
+
+                              setState(() {
+                                isOtpSent = false;
+                              });
+                              showAppToast("OTP sent successfully!");
+                              // Fluttertoast.showToast(
+                              //   msg: "OTP sent successfully!",
+                              //   backgroundColor: Colors.grey,
+                              // );
+                            },
+                            child: Text(
+                              'Resend OTP',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Appcolors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNavbarCustomer(),
-                          ),
-                        );
+                        if (currentText.length == 6) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BottomNavbarCustomer(),
+                            ),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,

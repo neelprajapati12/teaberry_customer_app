@@ -6,7 +6,7 @@ void showAppToast(String message) {
   Fluttertoast.showToast(
     msg: message,
     timeInSecForIosWeb: 1,
-    backgroundColor: Appcolors.maincolor,
+    backgroundColor: Appcolors.green,
     textColor: Colors.white,
     fontSize: 16.0,
     gravity: ToastGravity.BOTTOM, // You can change this if needed
@@ -18,8 +18,8 @@ void showErrorToast(String message) {
   Fluttertoast.showToast(
     msg: message,
     timeInSecForIosWeb: 1,
-    backgroundColor: Appcolors.red,
-    textColor: Colors.white,
+    backgroundColor: Appcolors.white,
+    textColor: Colors.red,
     fontSize: 16.0,
     gravity: ToastGravity.BOTTOM, // You can change this if needed
     toastLength: Toast.LENGTH_SHORT,

@@ -106,37 +106,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(5),
-                    Text("SIGN UP AS"),
-                    SizedBox(height: 5),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text("Please select"),
-                        value: selectedRole,
-                        items:
-                            roles
-                                .map(
-                                  (role) => DropdownMenuItem(
-                                    value: role,
-                                    child: Text(role),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) => setState(() => selectedRole = val),
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                    vSize(10),
                     Text("NAME"),
                     SizedBox(height: 5),
                     CustomTextFormField(

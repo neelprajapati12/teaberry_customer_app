@@ -26,178 +26,162 @@ class _PaymentScreenState extends State<PaymentScreen> {
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "Payment",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            vSize(30),
-            // Back button and title
-            Row(
-              children: const [
-                CircleAvatar(
-                  backgroundColor: Color(0xFFF1F6FB),
-                  child: Icon(Icons.arrow_back_ios, color: Colors.black),
-                  radius: 16,
-                ),
-                SizedBox(width: 12),
-                Text(
-                  "Payment",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
             // Payment Method Selection
             SizedBox(
-              height: 60,
+              height: 90,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: paymentMethods.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                separatorBuilder: (context, index) => const SizedBox(width: 15),
                 itemBuilder: (context, index) {
                   bool isSelected = selectedMethod == index;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedMethod = index;
-                      });
-                    },
-                    child: Container(
-                      width: 80,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected
-                                ? const Color(0xFFE3F9EB)
-                                : const Color(0xFFF1F6FB),
-                        borderRadius: BorderRadius.circular(10),
-                        border:
-                            isSelected
-                                ? Border.all(
-                                  color: const Color(0xFF4CAF50),
-                                  width: 2,
-                                )
-                                : null,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            paymentMethods[index]['icon'],
-                            color:
-                                isSelected
-                                    ? const Color(0xFF4CAF50)
-                                    : Colors.grey,
-                            size: 24,
+                  return Container(
+                    width: 100,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected ? Colors.white : const Color(0xFFF8F9FB),
+                      borderRadius: BorderRadius.circular(12),
+                      border:
+                          isSelected
+                              ? Border.all(color: Color(0xFF35C759), width: 2)
+                              : null,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          paymentMethods[index]['icon'],
+                          color: isSelected ? Color(0xFF35C759) : Colors.grey,
+                          size: 24,
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          paymentMethods[index]['label'],
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isSelected ? Colors.black : Colors.grey,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            paymentMethods[index]['label'],
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isSelected ? Colors.black : Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 30),
 
-            // Card Placeholder
+            // Card Container
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFF6F7FA),
-                borderRadius: BorderRadius.circular(12),
+                color: Color(0xFFF8F9FB),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
                 children: [
-                  Image.asset('assets/iamges/payment_screen.png', height: 100),
-                  const SizedBox(height: 12),
-                  const Text(
+                  Image.asset('assets/iamges/payment_screen.png', height: 120),
+                  SizedBox(height: 15),
+                  Text(
                     "No master card added",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "You can add a mastercard\nand save it for later",
+                  SizedBox(height: 8),
+                  Text(
+                    "You can add a mastercard and\nsave it for later",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 20),
 
             // Add New Button
-            OutlinedButton.icon(
+            TextButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.add, color: Color(0xFF4CAF50)),
-              label: const Text(
+              icon: Icon(Icons.add, color: Color(0xFF35C759)),
+              label: Text(
                 "ADD NEW",
-                style: TextStyle(color: Color(0xFF4CAF50)),
-              ),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-                side: const BorderSide(color: Color(0xFFE0E0E0)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: TextStyle(
+                  color: Color(0xFF35C759),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 15),
+              ),
             ),
-            const Spacer(),
+            Spacer(),
 
-            // Total and Confirm Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  "TOTAL:",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  "₹295",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+            // Total Amount
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "TOTAL:",
+                    style: TextStyle(fontSize: 15, color: Colors.grey),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreenCustomer(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7AAC4B),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  Text(
+                    "₹295",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
-                ),
-                child: const Text(
-                  "PAY & CONFIRM",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 20),
+
+            // Pay & Confirm Button
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreenCustomer(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF76A04D),
+                minimumSize: Size(double.infinity, 55),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                "PAY & CONFIRM",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),

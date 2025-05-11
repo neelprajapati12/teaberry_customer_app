@@ -127,47 +127,47 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Text(
-                      "SIZE:",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children:
-                          ["10\"", "14\"", "16\""].map((size) {
-                            bool isSelected = selectedSize == size;
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedSize = size;
-                                });
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(right: 12),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      isSelected
-                                          ? Colors.orange
-                                          : Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  size,
-                                  style: TextStyle(
-                                    color:
-                                        isSelected
-                                            ? Colors.white
-                                            : Colors.black,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                    ),
+                    // Text(
+                    //   "SIZE:",
+                    //   style: TextStyle(fontWeight: FontWeight.bold),
+                    // ),
+                    // const SizedBox(height: 10),
+                    // Row(
+                    //   children:
+                    //       ["10\"", "14\"", "16\""].map((size) {
+                    //         bool isSelected = selectedSize == size;
+                    //         return GestureDetector(
+                    //           onTap: () {
+                    //             setState(() {
+                    //               selectedSize = size;
+                    //             });
+                    //           },
+                    //           child: Container(
+                    //             margin: EdgeInsets.only(right: 12),
+                    //             padding: EdgeInsets.symmetric(
+                    //               horizontal: 16,
+                    //               vertical: 8,
+                    //             ),
+                    //             decoration: BoxDecoration(
+                    //               color:
+                    //                   isSelected
+                    //                       ? Colors.orange
+                    //                       : Colors.grey[200],
+                    //               borderRadius: BorderRadius.circular(20),
+                    //             ),
+                    //             child: Text(
+                    //               size,
+                    //               style: TextStyle(
+                    //                 color:
+                    //                     isSelected
+                    //                         ? Colors.white
+                    //                         : Colors.black,
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       }).toList(),
+                    // ),
                     const SizedBox(height: 30),
 
                     // Replace the bottom Container and ElevatedButton with this code

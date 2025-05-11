@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
+import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 // import 'package:teaberryapp_project/mycart_screen.dart';
 // import 'package:teaberryapp_project/resturantview_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
+import 'package:teaberryapp_project/verification_screen.dart';
 // import 'package:teaberryapp_project/verification_screen.dart';
 
 void main() {
@@ -22,7 +26,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tea Berry',
       debugShowCheckedModeBanner: false,
-      home: RadioSelectionScreen(),
+      routes: {
+        '/homedeliveryboy':
+            (context) => HomepageDeliveryboy(), // Add your home screen route
+      },
+      home: LoginPage(),
     );
   }
 }

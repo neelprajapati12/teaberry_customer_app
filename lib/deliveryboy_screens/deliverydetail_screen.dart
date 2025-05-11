@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 
 class DeliveryDetailsScreen extends StatefulWidget {
   @override
@@ -30,7 +33,10 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.grey[200],
-                        child: Icon(Icons.notifications_none, color: Colors.black),
+                        child: Icon(
+                          Icons.notifications_none,
+                          color: Colors.black,
+                        ),
                       ),
                       Positioned(
                         right: 2,
@@ -38,7 +44,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         child: Container(
                           padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Appcolors.green,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
@@ -56,10 +62,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
             // Logo Only (Text removed)
             Column(
               children: [
-                Image.asset(
-                  'assets/iamges/final_logo.jpg',
-                  height: 120,
-                ),
+                Image.asset('assets/iamges/removebckclr.png', height: 120),
               ],
             ),
 
@@ -89,17 +92,22 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     CustomField(label: 'PAYMENT', value: 'COD'),
                     CustomField(
                       label: 'ENTER AMOUNT',
-                      value: 'Rs.265/-\nAPPLICABLE TAX: 25.50/-\nTOTAL PAYABLE: 290.50/-',
+                      value:
+                          'Rs.265/-\nAPPLICABLE TAX: 25.50/-\nTOTAL PAYABLE: 290.50/-',
                     ),
-                    CustomField(label: 'COLLECTED AMOUNT', value: 'Rs.290.50/-'),
+                    CustomField(
+                      label: 'COLLECTED AMOUNT',
+                      value: 'Rs.290.50/-',
+                    ),
 
                     const SizedBox(height: 30),
 
                     ElevatedButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Details Submitted")),
-                        );
+                        _showOfferDialog(context);
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(content: Text("Details Submitted")),
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),
@@ -124,26 +132,118 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
       ),
 
       // BottomNavigationBar with at least 2 items
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   selectedItemColor: Colors.green,
+      //   unselectedItemColor: Colors.grey,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //     });
+      //   },
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home_outlined),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.receipt_long_outlined),
+      //       label: 'Orders',
+      //     ),
+      //   ],
+      // ),
+    );
+  }
+
+  void _showOfferDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.6),
+      builder:
+          (context) => BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: EdgeInsets.zero,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Main Container
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFCEC15C).withOpacity(0.8),
+                          Color(0xFF67903D).withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          blurRadius: 15,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'The order has been delivered!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Close Button
+                  Positioned(
+                    top: -15,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/homedeliveryboy', // Replace with your home route name
+                          (Route<dynamic> route) =>
+                              false, // This will clear the entire stack
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.black54,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: 'Orders',
-          ),
-        ],
-      ),
     );
   }
 }
