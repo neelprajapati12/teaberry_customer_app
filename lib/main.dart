@@ -9,13 +9,18 @@ import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/mycart_screen.dart';
 // import 'package:teaberryapp_project/resturantview_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 import 'package:teaberryapp_project/verification_screen.dart';
 // import 'package:teaberryapp_project/verification_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SharedPreferences
+  await SharedPreferencesHelper.init();
   runApp(MyApp());
 }
 

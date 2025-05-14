@@ -1,10 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/constants/api_constant.dart';
 // import 'package:teaberryapp_project/bottom_navbar.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +25,124 @@ class _LoginPageState extends State<LoginPage> {
   bool showPassword = false;
   TextEditingController numbercontroller = new TextEditingController();
   TextEditingController password = new TextEditingController();
+
+  login() async {
+    // Optional: show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+    print("Attempting login with credentials:");
+    print("Email/Number: ${numbercontroller.text}");
+    print("Password length: ${password.text.length} characters");
+
+    // Check for common issues
+    if (numbercontroller.text.isEmpty || password.text.isEmpty) {
+      showErrorToast("Email/number and password cannot be empty");
+      return;
+    }
+
+    try {
+      final url = Uri.parse('${ApiConstant.baseUrl}/auth/login');
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        "mobile": numbercontroller.text,
+        "password": password.text,
+      });
+      print("Request URL: ${ApiConstant.baseUrl}/auth/login");
+      print("Request body: $body");
+
+      final response = await http.post(url, headers: headers, body: body);
+
+      Navigator.of(context).pop(); // Hide loading dialog
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        SharedPreferencesHelper.setIsLoggedIn(status: true);
+
+        // Properly extract role from the roles array
+        final List<dynamic> roles = data['roles'];
+        final String role = roles.isNotEmpty ? roles[0] : "";
+
+        final String token = data['token'];
+        final String Id = data['userId'].toString();
+
+        print("Logged in Successfully as $role");
+
+        if (role == "ROLE_SUPERADMIN") {
+          SharedPreferencesHelper.setRole(rolename: role);
+          SharedPreferencesHelper.setTokensuperadmin(apiKey: token);
+          SharedPreferencesHelper.setIDsuperadmin(id: Id);
+          SharedPreferencesHelper.setsuperadminusername(
+            username: numbercontroller.text,
+          );
+          SharedPreferencesHelper.setsuperadminpassword(
+            password: password.text,
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavbarCustomer()),
+          );
+        } else if (role == "ROLE_CUSTOMER") {
+          SharedPreferencesHelper.setRole(rolename: role);
+          SharedPreferencesHelper.setTokencustomer(apiKey: token);
+          SharedPreferencesHelper.setIDcustomer(id: Id);
+          SharedPreferencesHelper.setcustomermobno(
+            mobno: numbercontroller.text,
+          );
+          SharedPreferencesHelper.setcustomerpassword(password: password.text);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavbarCustomer()),
+          );
+        } else if (role == "ROLE_DELIVERY_BOY") {
+          SharedPreferencesHelper.setRole(rolename: role);
+          SharedPreferencesHelper.setTokendeliveryboy(apiKey: token);
+          SharedPreferencesHelper.setIDdeliveryboy(id: Id);
+          SharedPreferencesHelper.setdeliveryboymobno(
+            mobno: numbercontroller.text,
+          );
+          SharedPreferencesHelper.setdeliveryboypassword(
+            password: password.text,
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomepageDeliveryboy()),
+          );
+        }
+      } else {
+        // Parse the error message from the server response
+        final errorData = jsonDecode(response.body);
+        String errorMessage = "Login failed";
+
+        // Try to extract a meaningful error message
+        if (errorData.containsKey('trace') &&
+            errorData['trace'].contains("Invalid email or password")) {
+          errorMessage =
+              "Invalid email or password. Please check your credentials and try again.";
+        } else if (errorData.containsKey('message')) {
+          errorMessage = errorData['message'];
+        } else if (errorData.containsKey('error')) {
+          errorMessage = errorData['error'];
+        }
+
+        print("Login failed: ${response.body}");
+        showErrorToast(errorMessage);
+      }
+    } catch (e) {
+      Navigator.of(context).pop(); // Hide loading dialog
+      if (e is SocketException) {
+        showErrorToast(
+          "Cannot connect to server. Please check your internet connection.",
+        );
+      } else {
+        showErrorToast("Something went wrong. Please try again later.");
+      }
+      print("Login exception details: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 30),
                     // Update the USER ID field
                     Text(
-                      "USER ID",
+                      "Mobile Number",
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -220,12 +346,13 @@ class _LoginPageState extends State<LoginPage> {
                         minimumSize: Size(double.infinity, 48),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNavbarCustomer(),
-                          ),
-                        );
+                        login();
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => BottomNavbarCustomer(),
+                        //   ),
+                        // );
                       },
                       child: Text(
                         "LOG IN",
