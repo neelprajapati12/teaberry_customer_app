@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
       home:
+          // BottomNavbarCustomer(),
           SharedPreferencesHelper.getIsLoggedIn() == true
               ? BottomNavbarCustomer()
               : LoginPage(),

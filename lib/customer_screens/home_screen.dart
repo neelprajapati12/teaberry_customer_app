@@ -51,7 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-              'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+              'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwicm9sZXMiOlsiUk9MRV9DVVNUT01FUiJdLCJpYXQiOjE3NTAwODI4NjUsImV4cCI6MTc1MDE2OTI2NX0.GucN0gkM6vMKJjswN4LW9rXC4kUIfxjxTSo_Gxc0UAebLud-0fvZjMTZmlVNDq0l12nF_KHye5boqNIADcnwyA',
+          // 'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
         },
       );
 

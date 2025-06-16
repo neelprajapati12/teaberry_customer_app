@@ -11,17 +11,18 @@ class ProductDetailspage extends StatefulWidget {
 }
 
 class _ProductDetailspageState extends State<ProductDetailspage> {
-  int quantity = 1;
+  // int quantity = widget.subproduct.quantity ?? 0;
   String selectedSize = "14\"";
 
   @override
   Widget build(BuildContext context) {
+    int quantity = widget.subproduct.quantity ?? 0;
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Details"),
+        title: Text(widget.subproduct.name ?? 'Product Details'),
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -59,12 +60,20 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                     const SizedBox(height: 20),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'assets/iamges/pizza.jpg',
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                      child:
+                          widget.subproduct.photoUrl != null
+                              ? Image.network(
+                                widget.subproduct.photoUrl!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              )
+                              : Image.asset(
+                                'assets/iamges/coffee.jpg',
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
                     ),
                     const SizedBox(height: 10),
                     Center(
@@ -93,7 +102,7 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      "Pizza Calzone European",
+                      widget.subproduct.name ?? 'N/A',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -212,7 +221,7 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "₹295",
+                            '₹${widget.subproduct.price?.toString() ?? '0'}',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
