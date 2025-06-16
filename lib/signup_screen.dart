@@ -1,11 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-// import 'package:teaberryapp_project/bottom_navbar.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/shared_pref.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -30,6 +35,100 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final roles = ['Customer', 'Delivery Boy'];
   final stores = ['Store 1', 'Store 2'];
+
+  // First, fix the imports at the top of the file
+  // Remove or comment out: import 'package:http/http.dart' as http;
+
+  Future<void> signup() async {
+    try {
+      // Input validation
+      if (nameController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          mobileController.text.isEmpty ||
+          passwordController.text.isEmpty) {
+        throw Exception('Please fill all required fields');
+      }
+
+      final userData = jsonEncode({
+        'name': nameController.text,
+        'email': emailController.text,
+        'mobile': mobileController.text,
+        'password': passwordController.text,
+        'role': "ROLE_CUSTOMER",
+        'storeId': 1,
+      });
+
+      // Create form data with userData part
+      final formData = FormData.fromMap({
+        'userData': MultipartFile.fromString(
+          userData,
+          contentType: MediaType('application', 'json'),
+        ),
+      });
+
+      // Create Dio instance with base options
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: ApiConstant.baseUrl,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      // Print request details for debugging
+      print('Request URL: ${ApiConstant.baseUrl}/auth/signup');
+      print('Request Body: ${formData.fields}');
+
+      // Make API request
+      final response = await dio.post(
+        '/auth/signup',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            // 'Accept': 'application/json',
+          },
+          followRedirects: false,
+          validateStatus: (status) => true,
+        ),
+      );
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Signup successful!')));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else {
+        final errorMessage = response.data['message'] ?? 'Signup failed';
+        throw Exception(errorMessage);
+      }
+    } on DioException catch (e) {
+      Navigator.of(context).pop(); // Hide loading dialog
+      String errorMessage = 'An error occurred';
+
+      if (e.response != null) {
+        print('Error Response: ${e.response?.data}');
+        errorMessage = e.response?.data['message'] ?? 'Server error occurred';
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timed out';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection';
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,15 +323,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNavbarCustomer(),
-                          ),
-                        );
-                        // Add signup logic here
+                      onPressed: () async {
+                        print("Sign Up button pressed");
+                        if (passwordController.text !=
+                            confirmPasswordController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Passwords do not match!')),
+                          );
+                          return;
+                        }
+                        await signup();
                       },
+                      // Add signup logic here
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,
                         minimumSize: Size(double.infinity, 48),

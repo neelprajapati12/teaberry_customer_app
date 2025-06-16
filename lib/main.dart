@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
@@ -35,7 +36,10 @@ class MyApp extends StatelessWidget {
         '/homedeliveryboy':
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
-      home: LoginPage(),
+      home:
+          SharedPreferencesHelper.getIsLoggedIn() == true
+              ? BottomNavbarCustomer()
+              : LoginPage(),
     );
   }
 }

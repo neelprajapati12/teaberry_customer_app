@@ -1,9 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/see_all_categories_page.dart';
+import 'package:teaberryapp_project/models/customer_model.dart';
+import 'package:teaberryapp_project/models/homepage_model.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/myprofile.screen.dart';
 // import 'package:teaberryapp_project/product_detailspage.dart';
 // import 'package:teaberryapp_project/see_all_categories_page.dart';
@@ -22,6 +30,65 @@ class _HomeScreenState extends State<HomeScreen> {
     {"name": "Pizza", "image": "assets/iamges/pizza.jpg"},
     {"name": "Sandwich", "image": "assets/iamges/sandwich.jpg"},
   ];
+
+  // List<dynamic> products = [];
+  bool isLoading = true;
+  String error = '';
+
+  // Update these class variables
+  List<Inventories1> products = [];
+
+  Future<void> fetchProducts() async {
+    try {
+      setState(() {
+        isLoading = true;
+        error = '';
+      });
+
+      print('Fetching products from: ${ApiConstant.baseUrl}/auth/profile');
+      final response = await http.get(
+        Uri.parse('${ApiConstant.baseUrl}/auth/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+        },
+      );
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final store = jsonResponse['store'];
+        if (store != null) {
+          final inventories = store['inventories'] as List;
+          setState(() {
+            products =
+                inventories.map((json) => Inventories1.fromJson(json)).toList();
+            isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          error = 'Failed to load products';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+      setState(() {
+        error = 'Error: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,12 +240,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SeeAllCategoriesPage(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => SeeAllCategoriesPage(),
+                      //   ),
+                      // );
                     },
                     child: Text(
                       "See All",
@@ -196,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: categories.length,
+                itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
@@ -204,14 +271,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   childAspectRatio: 3 / 2.5,
                 ),
                 itemBuilder: (context, index) {
-                  final item = categories[index];
+                  // final item = categories[index];
+                  // final product = products[index];
+                  final product = products[index];
                   return GestureDetector(
                     onTap: () {
                       // if (item['name'] == 'Coffee') {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SeeAllCategoriesPage(),
+                          builder:
+                              (context) =>
+                                  SeeAllCategoriesPage(product: products),
                         ),
                       );
                       // }
@@ -220,7 +291,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         image: DecorationImage(
-                          image: AssetImage(item["image"]!),
+                          image:
+                              product.photoUrl != null
+                                  ? NetworkImage(product.photoUrl!)
+                                  : AssetImage('assets/iamges/chai.jpg')
+                                      as ImageProvider,
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black.withOpacity(0.2),
@@ -233,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            item["name"]!,
+                            product.name ?? 'Unknown Product',
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

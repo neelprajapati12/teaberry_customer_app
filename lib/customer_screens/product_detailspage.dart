@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/models/customer_model.dart';
 
 class ProductDetailspage extends StatefulWidget {
+  final SubProducts1 subproduct;
+
+  const ProductDetailspage({super.key, required this.subproduct});
   @override
   _ProductDetailspageState createState() => _ProductDetailspageState();
 }

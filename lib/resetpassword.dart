@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
@@ -7,63 +6,67 @@ import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/verification_screen.dart';
-// import 'package:teaberryapp_project/customer_screens/verification_screen.dart';
-// import 'package:teaberryapp_project/verification_screen.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ResetpasswordScreen extends StatefulWidget {
+  final String? email;
+  final String? verificationOTP;
+  const ResetpasswordScreen({
+    required this.email,
+    required this.verificationOTP,
+    super.key,
+  });
+
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  State<ResetpasswordScreen> createState() => _ResetpasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController emailController = TextEditingController();
+class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
+  final TextEditingController passwordController = TextEditingController();
+  bool _hidePassword = true;
 
-  forgotpassword() async {
+  resetPassword() async {
     try {
-      final url = Uri.parse('${ApiConstant.baseUrl}/auth/password/forgot');
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final url = Uri.parse('${ApiConstant.baseUrl}/auth/password/reset');
       final headers = {'Content-Type': 'application/json'};
-      final body = jsonEncode({"email": emailController.text});
+      final body = jsonEncode({
+        "email": widget.email,
+        "otp": widget.verificationOTP,
+        "newPassword": passwordController.text,
+      });
 
       final response = await http.post(url, headers: headers, body: body);
 
       Navigator.of(context).pop(); // Hide loading dialog
 
       if (response.statusCode == 200) {
-        // Check if response is JSON or plain text
-        final contentType = response.headers['content-type'] ?? '';
-        if (contentType.contains('application/json')) {
-          final data = jsonDecode(response.body);
-          print("Parsed JSON response: $data");
-        } else {
-          print("Plain response: ${response.body}");
-        }
-
-        showAppToast("OTP sent to your email successfully");
-
-        Navigator.push(
+        showAppToast("Password reset successful");
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder:
-                (context) => VerificationScreen(email: emailController.text),
-          ),
+          MaterialPageRoute(builder: (context) => LoginPage()),
+          (route) => false,
         );
       } else {
-        print("SignUp failed: ${response.statusCode}");
+        print("Reset password failed: ${response.statusCode}");
         print("Response body: ${response.body}");
-        showErrorToast("Invalid email address. Please try again.");
+        showErrorToast("Failed to reset password. Please try again.");
       }
     } catch (e) {
-      // Navigator.of(context).pop(); // Ensure dialog is dismissed on error
-      print("Signup exception: $e");
+      Navigator.of(context).pop(); // Hide loading dialog
+      print("Reset password exception: $e");
       showErrorToast("Something went wrong. Please try again.");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [
@@ -91,14 +94,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                   ],
                 ),
-                // Image.asset(
-                //   'assets/iamges/teaberry_logo.jpg',
-                //   height: 80,
-                //   width: 80,
-                // ),
                 SizedBox(height: 15),
                 Text(
-                  'Forgot Password',
+                  'Reset Password',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -107,13 +105,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Please sign in to your existing account',
+                  'Please enter your new password',
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ],
             ),
           ),
-
           Positioned(
             top: MediaQuery.of(context).size.height * 0.28,
             left: 0,
@@ -134,7 +131,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   children: [
                     vSize(20),
                     Text(
-                      "EMAIL",
+                      "NEW PASSWORD",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -142,15 +139,64 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                     ),
                     SizedBox(height: 5),
-                    CustomTextFormField(
-                      controller: emailController,
-                      hintText: "example@gmail.com",
-                      keyboardType: TextInputType.emailAddress,
+                    TextFormField(
+                      controller: passwordController,
+                      obscureText:
+                          !_hidePassword, // Changed to !showPassword for correct behavior
+                      decoration: InputDecoration(
+                        hintText: "Enter New Password",
+                        hintStyle: TextStyle(color: Colors.black38),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _hidePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _hidePassword = !_hidePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter valid password";
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        forgotpassword();
+                        if (passwordController.text.isEmpty) {
+                          showErrorToast("Please enter a password");
+                          return;
+                        }
+                        resetPassword();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,
@@ -160,7 +206,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                       child: Text(
-                        "SEND CODE",
+                        "RESET PASSWORD",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

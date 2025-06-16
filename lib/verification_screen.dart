@@ -1,18 +1,22 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-// import 'package:teaberryapp_project/bottom_navbar.dart';
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
-// import 'package:teaberryapp_project/home_screen.dart';
-// import 'package:teaberryapp_project/resturantview_screen.dart';
+import 'package:teaberryapp_project/resetpassword.dart';
 
 class VerificationScreen extends StatefulWidget {
+  final String email;
+
+  VerificationScreen({required this.email});
+
   @override
   _VerificationScreenState createState() => _VerificationScreenState();
 }
@@ -20,11 +24,45 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   TextEditingController otpController = TextEditingController();
   String currentText = "";
+  String storedOTP = "";
   Timer? _timer;
   int _countdownSeconds = 60;
   bool _timerRunning = false;
   bool isOtpSent = false;
   bool showResend = false;
+
+  Future<void> resendotp() async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final url = Uri.parse('${ApiConstant.baseUrl}/admin/createUser');
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({"email": widget.email});
+
+      final response = await http.post(url, headers: headers, body: body);
+
+      // Hide loading dialog
+      Navigator.of(context).pop();
+
+      if (response.statusCode == 200) {
+        showAppToast("OTP sent to your email successfully");
+      } else {
+        print("Resend OTP failed: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        showErrorToast("Failed to resend OTP. Please try again.");
+      }
+    } catch (e) {
+      // Hide loading dialog
+      Navigator.of(context).pop();
+      print("Resend OTP exception: $e");
+      showErrorToast("Something went wrong. Please try again.");
+    }
+  }
 
   @override
   void codeUpdated() {
@@ -123,7 +161,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 ),
                 vSize(5),
                 Text(
-                  'example@gmail.com',
+                  widget.email,
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
@@ -185,6 +223,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       onChanged: (value) {
                         setState(() {
                           currentText = value;
+                          storedOTP = value;
                         });
                       },
                       pinTheme: PinTheme(
@@ -233,29 +272,31 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         ] else
                           GestureDetector(
                             onTap: () async {
-                              setState(() {
-                                isOtpSent = true;
-                              });
+                              if (showResend) {
+                                // Only allow resend when timer has expired
+                                setState(() {
+                                  isOtpSent = true;
+                                });
 
-                              // Add your resend OTP API call here
-                              // await apiValue.requestOTP(mobileNumber);
+                                // Call the resendotp function
+                                await resendotp();
 
-                              startTimer();
+                                // Restart the timer
+                                startTimer();
 
-                              setState(() {
-                                isOtpSent = false;
-                              });
-                              showAppToast("OTP sent successfully!");
-                              // Fluttertoast.showToast(
-                              //   msg: "OTP sent successfully!",
-                              //   backgroundColor: Colors.grey,
-                              // );
+                                setState(() {
+                                  isOtpSent = false;
+                                });
+                              }
                             },
                             child: Text(
                               'Resend OTP',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Appcolors.green,
+                                color:
+                                    showResend
+                                        ? Appcolors.green
+                                        : Colors.grey, // Grey when disabled
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -269,9 +310,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BottomNavbarCustomer(),
+                              builder:
+                                  (context) => ResetpasswordScreen(
+                                    verificationOTP: storedOTP, // Pass the OTP
+                                    email:
+                                        widget
+                                            .email, // Pass the email as well if needed
+                                  ),
                             ),
                           );
+                        } else {
+                          showErrorToast("Please enter complete OTP");
                         }
                       },
                       style: ElevatedButton.styleFrom(
