@@ -1,11 +1,21 @@
+import 'dart:ffi' hide Size;
+
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart'
+    as FlutterToast;
+import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 
 class ProductDetailspage extends StatefulWidget {
   final SubProducts1 subproduct;
+  final int? productId;
 
-  const ProductDetailspage({super.key, required this.subproduct});
+  const ProductDetailspage({
+    super.key,
+    required this.subproduct,
+    required this.productId,
+  });
   @override
   _ProductDetailspageState createState() => _ProductDetailspageState();
 }
@@ -13,10 +23,11 @@ class ProductDetailspage extends StatefulWidget {
 class _ProductDetailspageState extends State<ProductDetailspage> {
   // int quantity = widget.subproduct.quantity ?? 0;
   String selectedSize = "14\"";
+  int quantity = 1; // Default quantity set to 1
 
   @override
   Widget build(BuildContext context) {
-    int quantity = widget.subproduct.quantity ?? 0;
+    final int maxQuantity = widget.subproduct.quantity ?? 0;
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -264,7 +275,13 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                                   minWidth: 40,
                                   onPressed: () {
                                     setState(() {
-                                      quantity++;
+                                      if (quantity < maxQuantity)
+                                        quantity++;
+                                      else {
+                                        FlutterToast.showErrorToast(
+                                          "Sorry, we don't have enough stock available.",
+                                        );
+                                      }
                                     });
                                   },
                                   shape: CircleBorder(),
@@ -283,7 +300,28 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        // Add to cart logic
+                        // CartService.clearCart();
+                        CartService.addItem(
+                          productId:
+                              widget.productId ??
+                              0, // Use 0 if productId is null
+                          subProductId: widget.subproduct.id!,
+                          quantity: quantity,
+                          price: widget.subproduct.price?.toDouble() ?? 0.0,
+                        );
+                        print("Current Item Added to Cart:");
+                        print({
+                          'productId': widget.productId ?? 0,
+                          'subProductId': widget.subproduct.id!,
+                          'quantity': quantity,
+                          'pricePerUnit':
+                              widget.subproduct.price?.toDouble() ?? 0.0,
+                        });
+                        print("Current Cart Items:");
+                        for (var item in CartService.items) {
+                          print(item);
+                        }
+                        FlutterToast.showAppToast("Added to cart");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,

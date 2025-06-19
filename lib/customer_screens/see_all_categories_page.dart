@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
+import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 
 class SeeAllCategoriesPage extends StatefulWidget {
@@ -26,14 +27,16 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
   );
   int selectedIndex = 0;
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   // WidgetsBinding.instance.addPostFrameCallback((_) {
-  //   //   _showOfferDialog(context);
-  //   // });
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(CartService.totalPrice);
+    print(CartService.items.length);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _showOfferDialog(context);
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,19 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Icon(Icons.shopping_cart_outlined, size: 28, color: Colors.black),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                },
+                child: Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 28,
+                  color: Colors.black,
+                ),
+              ),
               Positioned(
                 top: 8,
                 right: 0,
@@ -73,7 +88,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                   backgroundColor: Appcolors.green,
                   radius: 8,
                   child: Text(
-                    '2',
+                    '${CartService.items.length}',
                     style: TextStyle(fontSize: 10, color: Colors.white),
                   ),
                 ),
@@ -140,10 +155,16 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) =>
-                                  ProductDetailspage(subproduct: subProduct),
+                              (context) => ProductDetailspage(
+                                subproduct: subProduct,
+
+                                productId: widget.product[selectedIndex].id!,
+                              ),
                         ),
-                      );
+                      ).then((_) {
+                        // Called when coming back from the product details page
+                        setState(() {});
+                      });
                     },
                     child: Card(
                       elevation: 2,
@@ -235,7 +256,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
               color: Appcolors.green.withOpacity(0.9),
               child: Center(
                 child: Text(
-                  '2 ITEMS ADDED; ₹295',
+                  '${CartService.items.length} ITEMS ADDED; ₹${CartService.totalPrice.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
