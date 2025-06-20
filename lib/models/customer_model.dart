@@ -13,7 +13,7 @@ class CustomerModel {
   String? referralCode;
   dynamic referredBy;
   bool? referralCodeActive;
-  int? walletBalance;
+  num? walletBalance;
   String? createdAt;
   String? updatedAt;
   String? lastLogin;

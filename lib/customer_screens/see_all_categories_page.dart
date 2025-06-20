@@ -251,7 +251,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
             },
             child: Container(
               width: double.infinity,
-              height: h * 0.065,
+              height: h * 0.09,
               padding: EdgeInsets.all(14),
               color: Appcolors.green.withOpacity(0.9),
               child: Center(

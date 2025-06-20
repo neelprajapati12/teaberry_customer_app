@@ -85,9 +85,35 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  login() async {
+    try {
+      final url = Uri.parse('${ApiConstant.baseUrl}/api/auth/login');
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        "mobile": SharedPreferencesHelper.getcustomermobno(),
+        "password": SharedPreferencesHelper.getcustomerpassword(),
+      });
+      print("Body" + body);
+
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final String token = data['token'];
+        SharedPreferencesHelper.setTokencustomer(apiKey: token);
+        print("Logged in as ${SharedPreferencesHelper.getRole()}");
+      } else {
+        print("Login failed: ${response.body}");
+      }
+    } catch (e) {
+      print("Login exception: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    login();
     fetchProducts();
   }
 
@@ -239,24 +265,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     "All Categories",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => SeeAllCategoriesPage(),
-                      //   ),
-                      // );
-                    },
-                    child: Text(
-                      "See All",
-                      style: TextStyle(
-                        color: Appcolors.green,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     // Navigator.push(
+                  //     //   context,
+                  //     //   MaterialPageRoute(
+                  //     //     builder: (context) => SeeAllCategoriesPage(),
+                  //     //   ),
+                  //     // );
+                  //   },
+                  //   child: Text(
+                  //     "See All",
+                  //     style: TextStyle(
+                  //       color: Appcolors.green,
+                  //       fontWeight: FontWeight.w600,
+                  //       fontSize: 14,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
 

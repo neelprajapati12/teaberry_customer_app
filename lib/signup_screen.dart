@@ -96,6 +96,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       print('Response Data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        SharedPreferencesHelper.setIsLoggedIn(status: true);
+        SharedPreferencesHelper.setcustomeraddress(
+          address: addressController.text,
+        );
+        // SharedPreferencesHelper.setcustomername(name: nameController.text);
+        // SharedPreferencesHelper.setcustomeremail(email: emailController.text);
+        // SharedPreferencesHelper.setcustomerid(
+        //   id: response.data['id'].toString(),
+        // );
+        SharedPreferencesHelper.setcustomerpassword(
+          password: passwordController.text,
+        );
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Signup successful!')));

@@ -146,6 +146,15 @@ class SharedPreferencesHelper {
     return _prefs.getString("deliveryboy_password") ?? "";
   }
 
+  //customer address
+  static void setcustomeraddress({required String address}) {
+    _prefs.setString("customer_address", address);
+  }
+
+  static String getcustomeraddress() {
+    return _prefs.getString("customer_address") ?? "";
+  }
+
   //clean role
   static void clearRole() {
     _prefs.remove("role");

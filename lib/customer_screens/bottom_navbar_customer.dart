@@ -22,7 +22,7 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
 
   // Properly initialize the screen widgets
   final List<Widget> _screens = [
-    WalletRechargeScreen(),
+    // WalletRechargeScreen(),
     HomeScreen(),
     ProfileScreenCustomer(),
   ];
@@ -30,7 +30,7 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
   @override
   void initState() {
     super.initState();
-    _index = widget.index ?? 1; // Initialize _index in initState
+    _index = widget.index ?? 0; // Initialize _index in initState
   }
 
   @override
@@ -91,10 +91,10 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
               _pageController.jumpToPage(index);
             },
             items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.wallet),
-                label: 'Wallet',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.wallet),
+              //   label: 'Wallet',
+              // ),
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
