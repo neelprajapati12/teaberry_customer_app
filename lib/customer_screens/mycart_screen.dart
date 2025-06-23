@@ -150,7 +150,7 @@ class _CartPageState extends State<CartPage> {
           print("Plain response: ${response.body}");
         }
         print("Order placed successfully");
-        // showAppToast("OTP sent to your email successfully");
+        showAppToast("Order Placed successfully");
 
         // Navigator.push(
         //   context,

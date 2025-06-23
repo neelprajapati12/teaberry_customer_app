@@ -4,6 +4,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
@@ -49,16 +50,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
         throw Exception('Please fill all required fields');
       }
 
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
       final userData = jsonEncode({
         'name': nameController.text,
         'email': emailController.text,
         'mobile': mobileController.text,
         'password': passwordController.text,
+        'address': addressController.text,
         'role': "ROLE_CUSTOMER",
         'storeId': 1,
       });
 
-      // Create form data with userData part
       final formData = FormData.fromMap({
         'userData': MultipartFile.fromString(
           userData,
@@ -66,7 +74,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       });
 
-      // Create Dio instance with base options
       final dio = Dio(
         BaseOptions(
           baseUrl: ApiConstant.baseUrl,
@@ -74,23 +81,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       );
 
-      // Print request details for debugging
       print('Request URL: ${ApiConstant.baseUrl}/auth/signup');
       print('Request Body: ${formData.fields}');
 
-      // Make API request
       final response = await dio.post(
         '/auth/signup',
         data: formData,
         options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            // 'Accept': 'application/json',
-          },
+          headers: {'Content-Type': 'multipart/form-data'},
           followRedirects: false,
           validateStatus: (status) => true,
         ),
       );
+
+      // Hide loading dialog
+      Navigator.of(context).pop();
 
       print('Response Status: ${response.statusCode}');
       print('Response Data: ${response.data}');
@@ -100,17 +105,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         SharedPreferencesHelper.setcustomeraddress(
           address: addressController.text,
         );
-        // SharedPreferencesHelper.setcustomername(name: nameController.text);
-        // SharedPreferencesHelper.setcustomeremail(email: emailController.text);
-        // SharedPreferencesHelper.setcustomerid(
-        //   id: response.data['id'].toString(),
-        // );
         SharedPreferencesHelper.setcustomerpassword(
           password: passwordController.text,
         );
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Signup successful!')));
+        showAppToast('Signup successful!');
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text('Signup successful!')));
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -136,6 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text(errorMessage)));
     } catch (e) {
+      Navigator.of(context).pop(); // Hide loading dialog
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -148,39 +150,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Appcolors.yellow,
+        // title: Text('Sign Up'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Stack(
         children: [
           // Yellow Header with Logo and Text
           Container(
             color: Appcolors.yellow,
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 20,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Container(
+                //       decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         shape: BoxShape.circle,
+                //       ),
+                //       child: IconButton(
+                //         icon: Icon(
+                //           Icons.arrow_back,
+                //           color: Colors.black,
+                //           size: 20,
+                //         ),
+                //         onPressed: () => Navigator.pop(context),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Image.asset(
                   'assets/iamges/removebckclr.png',
-                  height: 110,
-                  width: 110,
+                  fit: BoxFit.fill,
+                  height: 160,
+                  width: 200,
                 ),
-                SizedBox(height: 15),
+                // SizedBox(height: 5),
                 Text(
                   'Sign Up',
                   style: TextStyle(
@@ -200,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           // Form Body
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.3,
+            top: MediaQuery.of(context).size.height * 0.29,
             left: 0,
             right: 0,
             bottom: 0,

@@ -174,16 +174,16 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: Colors.white,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: IconButton(
+                //     icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
+                //     onPressed: () => Navigator.pop(context),
+                //   ),
+                // ),
                 SizedBox(height: 20),
                 Center(
                   child: Column(
@@ -373,77 +373,77 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Text("PASSWORD"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: passwordController,
-                      enabled: _isEditing,
-                      cursorColor: Colors.black,
-                      obscureText: _hidePassword,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                _hidePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                size: 16,
-                              ),
-                              onPressed:
-                                  () => setState(
-                                    () => _hidePassword = !_hidePassword,
-                                  ),
-                            ),
-                            // Icon(Icons.edit, size: 16, color: Colors.grey),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Text("PASSWORD"),
+                    // SizedBox(height: 5),
+                    // TextFormField(
+                    //   controller: passwordController,
+                    //   enabled: _isEditing,
+                    //   cursorColor: Colors.black,
+                    //   obscureText: _hidePassword,
+                    //   decoration: InputDecoration(
+                    //     filled: true,
+                    //     fillColor: Colors.grey[200],
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       borderSide: BorderSide.none,
+                    //     ),
+                    //     suffixIcon: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         IconButton(
+                    //           icon: Icon(
+                    //             _hidePassword
+                    //                 ? Icons.visibility_off
+                    //                 : Icons.visibility,
+                    //             size: 16,
+                    //           ),
+                    //           onPressed:
+                    //               () => setState(
+                    //                 () => _hidePassword = !_hidePassword,
+                    //               ),
+                    //         ),
+                    //         // Icon(Icons.edit, size: 16, color: Colors.grey),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 20),
-                    Text("RE-TYPE PASSWORD"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: confirmPasswordController,
-                      enabled: _isEditing,
-                      cursorColor: Colors.black,
-                      obscureText: _hideConfirmPassword,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                _hideConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                size: 16,
-                              ),
-                              onPressed:
-                                  () => setState(
-                                    () =>
-                                        _hideConfirmPassword =
-                                            !_hideConfirmPassword,
-                                  ),
-                            ),
-                            // Icon(Icons.edit, size: 16, color: Colors.grey),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Text("RE-TYPE PASSWORD"),
+                    // SizedBox(height: 5),
+                    // TextFormField(
+                    //   controller: confirmPasswordController,
+                    //   enabled: _isEditing,
+                    //   cursorColor: Colors.black,
+                    //   obscureText: _hideConfirmPassword,
+                    //   decoration: InputDecoration(
+                    //     filled: true,
+                    //     fillColor: Colors.grey[200],
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       borderSide: BorderSide.none,
+                    //     ),
+                    //     suffixIcon: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       children: [
+                    //         IconButton(
+                    //           icon: Icon(
+                    //             _hideConfirmPassword
+                    //                 ? Icons.visibility_off
+                    //                 : Icons.visibility,
+                    //             size: 16,
+                    //           ),
+                    //           onPressed:
+                    //               () => setState(
+                    //                 () =>
+                    //                     _hideConfirmPassword =
+                    //                         !_hideConfirmPassword,
+                    //               ),
+                    //         ),
+                    //         // Icon(Icons.edit, size: 16, color: Colors.grey),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
