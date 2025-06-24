@@ -1,12 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-// import 'package:teaberryapp_project/bottom_navbar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+
 import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/constants/customtextformfield.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
-import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
-import 'package:teaberryapp_project/forgotpassword_screen.dart';
-import 'package:teaberryapp_project/login_customerscreen.dart';
+
+import '../constants/api_constant.dart';
 
 class SignupDeliveryBoy extends StatefulWidget {
   @override
@@ -14,379 +14,223 @@ class SignupDeliveryBoy extends StatefulWidget {
 }
 
 class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
-  bool _hidePassword = true;
-  bool _hideConfirmPassword = true;
+  final _formKey = GlobalKey<FormState>();
+  final _picker = ImagePicker();
 
-  // Controllers for form fields
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController mobileController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final nameController = TextEditingController();
+  final mobileController = TextEditingController();
+  final emailController = TextEditingController();
+  final addressController = TextEditingController();
 
-  String? selectedRole;
   String? selectedStore;
-
-  final roles = ['Customer', 'Delivery Boy'];
   final stores = ['Store 1', 'Store 2'];
+
+  File? _photoFile;
+  File? _aadhaarFront;
+  File? _aadhaarBack;
+
+  Future<void> pickImage(Function(File) onPicked) async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) onPicked(File(picked.path));
+  }
+
+  Future<void> registerDeliveryBoy() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final uri = Uri.parse('${ApiConstant.baseUrl}/auth/login');
+
+    var request = http.MultipartRequest('POST', uri);
+
+    request.fields['name'] = nameController.text.trim();
+    request.fields['mobile'] = mobileController.text.trim();
+    request.fields['email'] = emailController.text.trim();
+    request.fields['address'] = addressController.text.trim();
+    request.fields['store'] = selectedStore ?? '';
+
+    if (_photoFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'photo',
+        _photoFile!.path,
+        contentType: MediaType('image', 'jpeg'),
+      ));
+    }
+    if (_aadhaarFront != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'aadhaar_front',
+        _aadhaarFront!.path,
+        contentType: MediaType('image', 'jpeg'),
+      ));
+    }
+    if (_aadhaarBack != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'aadhaar_back',
+        _aadhaarBack!.path,
+        contentType: MediaType('image', 'jpeg'),
+      ));
+    }
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registered successfully")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registration failed")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
+    final h = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Yellow Header with Logo and Text
-          Container(
-            color: Appcolors.yellow,
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                          size: 20,
+      body: Form(
+        key: _formKey,
+        child: Stack(
+          children: [
+            Container(
+              color: Appcolors.yellow,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back, color: Colors.black),
+                          onPressed: () => Navigator.pop(context),
                         ),
-                        onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  Image.asset('assets/iamges/removebckclr.png', height: 110),
+                  SizedBox(height: 10),
+                  Text("Sign Up", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+                  Text("Please sign up to get started", style: TextStyle(color: Colors.black54)),
+                ],
+              ),
+            ),
+            Positioned(
+              top: h * 0.32,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
-                Image.asset(
-                  'assets/iamges/removebckclr.png',
-                  height: 110,
-                  width: 110,
-                ),
-                SizedBox(height: 15),
-                Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildTextField("NAME", nameController),
+                      buildTextField("MOBILE", mobileController, TextInputType.phone),
+                      buildTextField("EMAIL", emailController, TextInputType.emailAddress),
+                      SizedBox(height: 10),
+                      Text("NEAREST STORE"),
+                      storeDropdown(),
+                      buildTextField("ADDRESS", addressController),
+                      imageUploader("UPLOAD PHOTO", _photoFile, () => pickImage((f) => setState(() => _photoFile = f))),
+                      imageUploader("AADHAAR FRONT", _aadhaarFront, () => pickImage((f) => setState(() => _aadhaarFront = f))),
+                      imageUploader("AADHAAR BACK", _aadhaarBack, () => pickImage((f) => setState(() => _aadhaarBack = f))),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: registerDeliveryBoy,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Appcolors.green,
+                          minimumSize: Size(double.infinity, 48),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text("SIGN UP", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Please sign up to get started',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-              ],
-            ),
-          ),
-
-          // Form Body
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.32,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    vSize(10),
-                    Text("NAME"),
-                    SizedBox(height: 5),
-                    CustomTextFormField(
-                      controller: nameController,
-                      hintText: "Adam Doe",
-                    ),
-                    SizedBox(height: 20),
-                    Text("MOBILE NO"),
-                    SizedBox(height: 5),
-                    CustomTextFormField(
-                      controller: mobileController,
-                      hintText: "+91 88888 34213",
-                      keyboardType: TextInputType.phone,
-                    ),
-                    SizedBox(height: 20),
-                    Text("EMAIL"),
-                    SizedBox(height: 5),
-                    CustomTextFormField(
-                      controller: emailController,
-                      hintText: "adam.doe@gmail.com",
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    SizedBox(height: 20),
-                    Text("NEAREST STORE"),
-                    SizedBox(height: 5),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text("Please select"),
-                        value: selectedStore,
-                        items:
-                            stores
-                                .map(
-                                  (store) => DropdownMenuItem(
-                                    value: store,
-                                    child: Text(store),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) => setState(() => selectedStore = val),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("ADDRESS"),
-                    SizedBox(height: 5),
-                    CustomTextFormField(
-                      controller: addressController,
-                      hintText: "27-A, Aparna apartments, Gandhinagar...",
-                    ),
-                    SizedBox(height: 20),
-
-                    Text("UPLOAD PHOTOGRAPH"),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "No file chosen",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add image picker functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Appcolors.green,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            "UPLOAD",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Text("UPLOAD AADHAAR CARD"),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "FRONT SIDE",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "SELECT",
-                                      style: TextStyle(color: Colors.black54),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("BACK SIDE", style: TextStyle(fontSize: 12)),
-                              SizedBox(height: 5),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "SELECT",
-                                      style: TextStyle(color: Colors.black54),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add front side upload functionality
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Appcolors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "UPLOAD",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add back side upload functionality
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Appcolors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "UPLOAD",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomepageDeliveryboy(),
-                          ),
-                        );
-                        // Add signup logic here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Appcolors.green,
-                        minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        "SIGN UP",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account? ",
-                          style: TextStyle(color: Colors.black54, fontSize: 14),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "LOG IN",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    vSize(20),
-                  ],
-                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget buildTextField(String label, TextEditingController controller, [TextInputType type = TextInputType.text]) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label),
+        SizedBox(height: 5),
+        TextFormField(
+          controller: controller,
+          keyboardType: type,
+          validator: (val) => val == null || val.isEmpty ? "Required" : null,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[200],
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget storeDropdown() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: DropdownButtonFormField<String>(
+        value: selectedStore,
+        hint: Text("Select Store"),
+        items: stores.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+        onChanged: (val) => setState(() => selectedStore = val),
+        validator: (val) => val == null ? "Select a store" : null,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.grey[200],
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+        ),
+      ),
+    );
+  }
+
+  Widget imageUploader(String label, File? file, VoidCallback onPick) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        SizedBox(height: 5),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(file != null ? "Selected" : "No file chosen", style: TextStyle(color: Colors.black54)),
+              ),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: onPick,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Appcolors.green,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Text("UPLOAD", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+        SizedBox(height: 15),
+      ],
     );
   }
 }
