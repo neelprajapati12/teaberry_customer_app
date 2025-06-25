@@ -12,7 +12,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   // @override
   @override
   void initState() {
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const BottomNavbarCustomer()),

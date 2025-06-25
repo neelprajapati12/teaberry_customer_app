@@ -81,6 +81,7 @@ class _LoginPageState extends State<LoginPage> {
           SharedPreferencesHelper.setsuperadminpassword(
             password: password.text,
           );
+          print(data);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => BottomNavbarCustomer()),
@@ -93,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
             mobno: numbercontroller.text,
           );
           SharedPreferencesHelper.setcustomerpassword(password: password.text);
+          print(data);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => BottomNavbarCustomer()),
@@ -107,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
           SharedPreferencesHelper.setdeliveryboypassword(
             password: password.text,
           );
+          print(data);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomepageDeliveryboy()),

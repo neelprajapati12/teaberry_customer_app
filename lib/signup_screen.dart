@@ -7,6 +7,7 @@ import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
+import 'package:teaberryapp_project/customer_screens/signup_otp_verification.dart';
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'dart:convert';
@@ -108,13 +109,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         SharedPreferencesHelper.setcustomerpassword(
           password: passwordController.text,
         );
-        showAppToast('Signup successful!');
+        showAppToast(response.data['message'] ?? 'Signup successful');
         // ScaffoldMessenger.of(
         //   context,
         // ).showSnackBar(SnackBar(content: Text('Signup successful!')));
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(
+            builder:
+                (context) => SignupOtpVerification(email: emailController.text),
+          ),
         );
       } else {
         final errorMessage = response.data['message'] ?? 'Signup failed';

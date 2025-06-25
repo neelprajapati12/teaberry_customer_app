@@ -151,7 +151,7 @@ class _CartPageState extends State<CartPage> {
           print("Plain response: ${response.body}");
         }
         print("Order placed successfully");
-        showAppToast("Order Placed successfully");
+        // showAppToast("Order Placed successfully");
 
         Navigator.push(
           context,
