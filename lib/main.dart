@@ -36,11 +36,12 @@ class MyApp extends StatelessWidget {
         '/homedeliveryboy':
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
-      home: LoginPage(),
-      // BottomNavbarCustomer(),
-      // SharedPreferencesHelper.getIsLoggedIn() == true
-      //     ? BottomNavbarCustomer()
-      //     : LoginPage(),
+      home:
+          // LoginPage(),
+          // BottomNavbarCustomer(),
+          SharedPreferencesHelper.getIsLoggedIn() == true
+              ? BottomNavbarCustomer()
+              : LoginPage(),
     );
   }
 }

@@ -40,7 +40,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      final url = Uri.parse('${ApiConstant.baseUrl}/admin/createUser');
+      final url = Uri.parse('${ApiConstant.baseUrl}/auth/password/forgot');
       final headers = {'Content-Type': 'application/json'};
       final body = jsonEncode({"email": widget.email});
 
