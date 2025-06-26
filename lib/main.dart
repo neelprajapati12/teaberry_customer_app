@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
+import 'package:teaberryapp_project/customer_screens/conformationscreen.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
@@ -15,6 +16,8 @@ import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/resturantview_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 import 'package:teaberryapp_project/verification_screen.dart';
+
+import 'customer_screens/signup_otp_verification.dart';
 // import 'package:teaberryapp_project/verification_screen.dart';
 
 void main() async {
