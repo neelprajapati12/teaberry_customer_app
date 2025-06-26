@@ -39,7 +39,9 @@ class MyApp extends StatelessWidget {
         '/homedeliveryboy':
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
-      home: LoginPage(),
+      home:
+          // ConfirmationScreen(),
+          LoginPage(),
       // BottomNavbarCustomer(),
       // SharedPreferencesHelper.getIsLoggedIn() == true
       //     ? BottomNavbarCustomer()

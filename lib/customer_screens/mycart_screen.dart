@@ -7,6 +7,7 @@ import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/customer_screens/conformationscreen.dart';
 import 'package:teaberryapp_project/customer_screens/payment_screen.dart';
 import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
@@ -150,15 +151,12 @@ class _CartPageState extends State<CartPage> {
           print("Plain response: ${response.body}");
         }
         print("Order placed successfully");
-        showAppToast("Order Placed successfully");
+        // showAppToast("Order Placed successfully");
 
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder:
-        //         (context) => VerificationScreen(email: emailController.text),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ConfirmationScreen()),
+        );
       } else {
         print("Place order failed: ${response.statusCode}");
         print("Response body: ${response.body}");

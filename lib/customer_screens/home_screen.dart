@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   login() async {
     try {
-      final url = Uri.parse('${ApiConstant.baseUrl}/api/auth/login');
+      final url = Uri.parse('${ApiConstant.baseUrl}/auth/login');
       final headers = {'Content-Type': 'application/json'};
       final body = jsonEncode({
         "mobile": SharedPreferencesHelper.getcustomermobno(),

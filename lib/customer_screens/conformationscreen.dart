@@ -1,24 +1,29 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 
-void main() {
-  runApp(ConfirmationApp());
+class ConfirmationScreen extends StatefulWidget {
+  @override
+  State<ConfirmationScreen> createState() => _ConfirmationScreenState();
 }
 
-class ConfirmationApp extends StatelessWidget {
+class _ConfirmationScreenState extends State<ConfirmationScreen> {
+  // @override
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ConfirmationScreen(),
-    );
+  void initState() {
+    Timer(Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const BottomNavbarCustomer()),
+      );
+    });
+    super.initState();
   }
-}
 
-class ConfirmationScreen extends StatelessWidget {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow,
+      backgroundColor: Color(0xffEED067),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
