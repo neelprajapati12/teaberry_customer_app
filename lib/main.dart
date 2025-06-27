@@ -10,6 +10,7 @@ import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliver
 import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
+import 'package:teaberryapp_project/getinitialpage.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/mycart_screen.dart';
@@ -37,9 +38,9 @@ class MyApp extends StatelessWidget {
         '/homedeliveryboy':
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
-      home:
-          // ConfirmationScreen(),
-          LoginPage(),
+      home: getInitialPage(),
+      // ConfirmationScreen(),
+      // LoginPage(),
       // BottomNavbarCustomer(),
       // SharedPreferencesHelper.getIsLoggedIn() == true
       //     ? BottomNavbarCustomer()

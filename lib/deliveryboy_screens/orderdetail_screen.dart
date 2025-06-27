@@ -1,16 +1,58 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
+  final int length;
+  final dynamic orderdetails;
+  const OrderDetailsScreen({
+    Key? key,
+    required this.orderdetails,
+    required this.length,
+  }) : super(key: key);
   @override
   _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  Map<int, String> subProductNames = {};
+  dynamic data;
+  fetchproducts() async {
+    // if (subProductNames.containsKey(subProductId)) {
+    //   return subProductNames[subProductId]!;
+    // }
+    final url = Uri.parse('${ApiConstant.baseUrl}/inventory/store/1');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+      },
+    );
+    if (response.statusCode == 200) {
+      data = json.decode(response.body);
+      print(data);
+      // final name = data['name'] ?? 'Unknown';
+      // subProductNames[subProductId] = name;
+      // return name;
+    }
+    return 'Unknown';
+  }
+
   @override
+  void initState() {
+    super.initState();
+    fetchproducts();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -67,7 +109,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Text(
-                            '5',
+                            widget.length.toString(),
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
@@ -91,19 +133,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               const SizedBox(height: 16),
 
               buildLabel("ORDER NUMBER"),
-              buildDisabledField("231-4521"),
+              buildDisabledField("${widget.orderdetails.id}"),
               buildLabel("CLIENT NAME"),
-              buildDisabledField("Vishal Sen"),
+              buildDisabledField("${widget.orderdetails.customer.name}"),
               buildLabel("CLIENT REGISTRATION NO."),
-              buildDisabledField("7654321"),
+              buildDisabledField("${widget.orderdetails.customer.id}"),
               buildLabel("ORDER DETAILS"),
-              buildDisabledField(
-                "1 Mac-n-cheese burger, 2 diet cokes, 1 small choco-lava cake",
-              ),
+              buildLabel("ORDER DETAILS"),
+              // buildOrderItems(widget.orderdetails.items),
               buildLabel("PAYMENT DONE?"),
               buildDisabledField("NO"),
               buildLabel("MODE OF PAYMENT"),
-              buildDisabledField("COD"),
+              buildDisabledField("${widget.orderdetails.paymentMethod}"),
 
               const SizedBox(height: 24),
 
@@ -115,9 +156,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DeliveryDetailsScreen(),
+                      builder:
+                          (context) => DeliveryDetailsScreen(
+                            orderdetails: widget.orderdetails,
+                            length: widget.length,
+                          ),
                     ),
-                  );
+                  ).then((_) {
+                    // Called when coming back from the product details page
+                    setState(() {});
+                  });
 
                   // ScaffoldMessenger.of(
                   //   context,
@@ -144,6 +192,26 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       ),
     );
   }
+
+  // Widget buildOrderItems(List items) {
+  //   return Column(
+  //     children:
+  //         items.map<Widget>((item) {
+  //           return FutureBuilder<String>(
+  //             future: fetchSubProductName(item.subProductId),
+  //             builder: (context, snapshot) {
+  //               final subProductName = snapshot.data ?? 'Loading...';
+  //               return Padding(
+  //                 padding: const EdgeInsets.symmetric(vertical: 4.0),
+  //                 child: buildDisabledField(
+  //                   "Qty: ${item.quantity}  |  Name: $subProductName",
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         }).toList(),
+  //   );
+  // }
 
   Widget buildLabel(String label) {
     return Padding(

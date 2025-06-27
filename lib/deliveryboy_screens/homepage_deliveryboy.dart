@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
+import 'package:teaberryapp_project/models/deliveryordermodel.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 
 class HomepageDeliveryboy extends StatefulWidget {
   @override
@@ -8,7 +14,52 @@ class HomepageDeliveryboy extends StatefulWidget {
 }
 
 class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
+  List<DeliveryOrderModel> orders = [];
+  bool isLoading = true;
+
+  Future<void> fetchAllDeliveries() async {
+    final url = Uri.parse(
+      '${ApiConstant.baseUrl}/deliveries/boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
+    );
+    print(url);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      print("Deliveries fetched successfully");
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        orders =
+            data
+                .map(
+                  (json) =>
+                      DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
+                )
+                .toList();
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      throw Exception('Failed to load deliveries');
+    }
+  }
+
   @override
+  void initState() {
+    super.initState();
+    fetchAllDeliveries();
+  }
+
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
@@ -72,8 +123,13 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => OrdersScreen()),
-                      );
+                        MaterialPageRoute(
+                          builder: (context) => OrdersScreen(orders: orders),
+                        ),
+                      ).then((_) {
+                        // Called when coming back from the product details page
+                        setState(() {});
+                      });
                     },
                     child: Stack(
                       children: [
@@ -88,7 +144,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                               shape: BoxShape.circle,
                             ),
                             child: Text(
-                              '5',
+                              "${orders.length}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,

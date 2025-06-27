@@ -1,22 +1,76 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
+import 'package:teaberryapp_project/models/deliveryordermodel.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 
 class OrdersScreen extends StatefulWidget {
+  final List<DeliveryOrderModel> orders;
+
+  const OrdersScreen({super.key, required this.orders});
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  final List<Map<String, String>> orders = [
-    {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
-    {"name": "Shraddha P.", "phone": "+91 96642 56729"},
-    {"name": "Robert Vadra", "phone": "+91 88657 99342"},
-    {"name": "Vishal Sen", "phone": "+91 76532 98735"},
-    {"name": "Vidya Sinha", "phone": "+91 88653 33240"},
-  ];
+  // final List<Map<String, String>> orders = [
+  //   {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
+  //   {"name": "Shraddha P.", "phone": "+91 96642 56729"},
+  //   {"name": "Robert Vadra", "phone": "+91 88657 99342"},
+  //   {"name": "Vishal Sen", "phone": "+91 76532 98735"},
+  //   {"name": "Vidya Sinha", "phone": "+91 88653 33240"},
+  // ];
+
+  // List<DeliveryOrderModel> orders = [];
+  // bool isLoading = true;
+
+  // Future<void> fetchAllDeliveries() async {
+  //   final url = Uri.parse(
+  //     '${ApiConstant.baseUrl}/deliveries/boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
+  //   );
+  //   print(url);
+
+  //   final response = await http.get(
+  //     url,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization':
+  //           'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+  //     },
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     print(response.body);
+  //     print("Deliveries fetched successfully");
+  //     final List<dynamic> data = json.decode(response.body);
+  //     setState(() {
+  //       orders =
+  //           data
+  //               .map(
+  //                 (json) =>
+  //                     DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
+  //               )
+  //               .toList();
+  //       isLoading = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     throw Exception('Failed to load deliveries');
+  //   }
+  // }
 
   @override
+  void initState() {
+    super.initState();
+    // fetchAllDeliveries();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,7 +111,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Text(
-                            '5',
+                            "${widget.orders.length}",
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
@@ -95,22 +149,30 @@ class _OrdersScreenState extends State<OrdersScreen> {
               // Orders list
               Expanded(
                 child: ListView.builder(
-                  itemCount: orders.length,
+                  itemCount: widget.orders.length,
                   itemBuilder: (context, index) {
-                    final order = orders[index];
+                    final order = widget.orders[index];
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(vertical: 4),
                       leading: Icon(Icons.check_circle, color: Appcolors.green),
-                      title: Text(order["name"]!),
-                      subtitle: Text(order["phone"]!),
+                      title: Text("${order.customer!.name}"),
+                      subtitle: Text("${order.customer!.mobile}"),
                       trailing: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OrderDetailsScreen(),
+                              builder:
+                                  (context) => OrderDetailsScreen(
+                                    orderdetails: order,
+                                    length: widget.orders.length,
+                                    // orderid:widget.orders.id,
+                                  ),
                             ),
-                          );
+                          ).then((_) {
+                            // Called when coming back from the product details page
+                            setState(() {});
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Appcolors.green,

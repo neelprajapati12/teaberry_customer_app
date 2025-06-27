@@ -5,6 +5,14 @@ import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 
 class DeliveryDetailsScreen extends StatefulWidget {
+  final dynamic orderdetails;
+  final int length;
+
+  const DeliveryDetailsScreen({
+    super.key,
+    this.orderdetails,
+    required this.length,
+  });
   @override
   State<DeliveryDetailsScreen> createState() => _DeliveryDetailsScreenState();
 }
@@ -48,7 +56,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Text(
-                            '5',
+                            "${widget.length}",
                             style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
@@ -88,16 +96,22 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    CustomField(label: 'DELIVERY STATUS', value: '231-4521'),
-                    CustomField(label: 'PAYMENT', value: 'COD'),
+                    CustomField(
+                      label: 'DELIVERY STATUS',
+                      value: '${widget.orderdetails.status}',
+                    ),
+                    CustomField(
+                      label: 'PAYMENT',
+                      value: '${widget.orderdetails.paymentMethod}',
+                    ),
                     CustomField(
                       label: 'ENTER AMOUNT',
                       value:
-                          'Rs.265/-\nAPPLICABLE TAX: 25.50/-\nTOTAL PAYABLE: 290.50/-',
+                          'Rs.${widget.orderdetails.totalPrice}/-\nAPPLICABLE TAX:  Rs.${widget.orderdetails.totalTax}/-\nTOTAL PAYABLE:  Rs.${widget.orderdetails.priceAfterTax}/-',
                     ),
                     CustomField(
                       label: 'COLLECTED AMOUNT',
-                      value: 'Rs.290.50/-',
+                      value: '${widget.orderdetails.priceAfterTax}',
                     ),
 
                     const SizedBox(height: 30),
