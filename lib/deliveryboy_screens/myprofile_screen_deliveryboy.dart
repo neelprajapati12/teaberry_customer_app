@@ -1,463 +1,278 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import '../constants/api_constant.dart';
 
 class ProfileScreenDeliveryboy extends StatefulWidget {
   @override
-  State<ProfileScreenDeliveryboy> createState() =>
-      _ProfileScreenDeliveryboyState();
+  State<ProfileScreenDeliveryboy> createState() => _ProfileScreenDeliveryboyState();
 }
 
 class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
-  bool _isEditing = false;
-  bool _hidePassword = true;
-  bool _hideConfirmPassword = true;
-  String? selectedStore;
+  final Dio dio = Dio();
+  final ImagePicker _picker = ImagePicker();
+  bool _isEditing = true;
 
-  final TextEditingController nameController = TextEditingController(
-    text: "Adam Doe",
-  );
-  final TextEditingController mobileController = TextEditingController(
-    text: "+91 88888 34213",
-  );
-  final TextEditingController emailController = TextEditingController(
-    text: "adam.doe@gmail.com",
-  );
-  final TextEditingController addressController = TextEditingController(
-    text: "27-A, Aparna apartments, Gurudev..",
-  );
-  final TextEditingController passwordController = TextEditingController(
-    text: "********",
-  );
-  final TextEditingController confirmPasswordController = TextEditingController(
-    text: "********",
-  );
+  TextEditingController nameController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
-  final stores = ['Store 1', 'Store 2'];
+  File? _photoFile;
+  File? _aadhaarFrontFile;
+  File? _aadhaarBackFile;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    loadTokenAndFetchProfile();
+  }
+
+  Future<void> loadTokenAndFetchProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('jwt_token');
+    if (token != null) {
+      fetchProfile();
+    } else {
+      print("Token not found");
+    }
+  }
+
+  Future<void> fetchProfile() async {
+    try {
+      final response = await dio.get(
+        "${ApiConstant.baseUrl}/auth/profile",
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        setState(() {
+          nameController.text = data['name'] ?? '';
+          emailController.text = data['email'] ?? '';
+          mobileController.text = data['mobile'] ?? '';
+        });
+      }
+    } catch (e) {
+      print("Error fetching profile: $e");
+    }
+  }
+
+  Future<void> pickImage(Function(File) onPicked) async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) onPicked(File(picked.path));
+  }
+
+  Future<void> updateProfile() async {
+    try {
+      final userData = {
+        "name": nameController.text,
+        "email": emailController.text,
+        "mobile": mobileController.text,
+      };
+
+      FormData formData = FormData.fromMap({
+        "userData": jsonEncode(userData),
+        if (_photoFile != null)
+          "photo": await MultipartFile.fromFile(_photoFile!.path),
+        if (_aadhaarFrontFile != null)
+          "aadharFront": await MultipartFile.fromFile(_aadhaarFrontFile!.path),
+        if (_aadhaarBackFile != null)
+          "aadharBack": await MultipartFile.fromFile(_aadhaarBackFile!.path),
+      });
+
+      final response = await dio.put(
+        "${ApiConstant.baseUrl}/auth/update-profile",
+        data: formData,
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Profile updated successfully")),
+        );
+        fetchProfile();
+      }
+    } catch (e) {
+      print("Update error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating profile")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Yellow Header with Back Button and Profile
           Container(
             color: Appcolors.yellow,
-            width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
+                CircleAvatar(
+                  backgroundColor: Colors.white,
                   child: IconButton(
                     icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                SizedBox(height: 20),
+                vSize(20),
                 Center(
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40, color: Colors.grey),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        'My Profile',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'You may edit your details here.',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
+                      CircleAvatar(radius: 40, backgroundColor: Colors.white, child: Icon(Icons.person, size: 40, color: Colors.grey)),
+                      vSize(15),
+                      Text('My Profile', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+                      vSize(8),
+                      Text('You may edit your details here.', style: TextStyle(fontSize: 16, color: Colors.black54)),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-
-          // White Container with Form
           Positioned(
             top: MediaQuery.of(context).size.height * 0.35,
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
+              padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(10),
-                    Text("NAME"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: nameController,
-                      enabled: _isEditing,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "Adam Doe",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("MOBILE NO"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: mobileController,
-                      enabled: _isEditing,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "+91 88888 34213",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("EMAIL"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: emailController,
-                      enabled: _isEditing,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "adam.doe@gmail.com",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("NEAREST STORE"),
-                    SizedBox(height: 5),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                          suffixIcon: Icon(
-                            Icons.edit,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        hint: Text("Please select"),
-                        value: selectedStore,
-                        items:
-                            stores
-                                .map(
-                                  (store) => DropdownMenuItem(
-                                    value: store,
-                                    child: Text(store),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged:
-                            _isEditing
-                                ? (val) => setState(() => selectedStore = val)
-                                : null,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("ADDRESS"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: addressController,
-                      enabled: _isEditing,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "27-A, Aparna apartments, Gurudev..",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.edit,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
-                    Text("UPLOAD PHOTOGRAPH"),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "No file chosen",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add image picker functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Appcolors.green,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            "UPLOAD",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+                    formField("NAME", nameController),
+                    formField("MOBILE NO", mobileController),
+                    formField("EMAIL", emailController),
+                    imageRow("UPLOAD PHOTOGRAPH", () => pickImage((f) => setState(() => _photoFile = f))),
+                    vSize(20),
                     Text("UPLOAD AADHAAR CARD"),
-                    SizedBox(height: 5),
+                    vSize(10),
+                    aadhaarRow(),
+                    vSize(20),
                     Row(
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "FRONT SIDE",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "SELECT",
-                                      style: TextStyle(color: Colors.black54),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("BACK SIDE", style: TextStyle(fontSize: 12)),
-                              SizedBox(height: 5),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "SELECT",
-                                      style: TextStyle(color: Colors.black54),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        expandedUploadBtn(() => pickImage((f) => setState(() => _aadhaarFrontFile = f))),
+                        hSize(10),
+                        expandedUploadBtn(() => pickImage((f) => setState(() => _aadhaarBackFile = f))),
                       ],
                     ),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add front side upload functionality
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Appcolors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "UPLOAD",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add back side upload functionality
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Appcolors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              "UPLOAD",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
+                    vSize(30),
                     ElevatedButton(
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => HomepageDeliveryboy(),
-                        //   ),
-                        // );
-                        // Add signup logic here
-                      },
+                      onPressed: updateProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,
                         minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      child: Text(
-                        "UPDATE",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: Text("UPDATE", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                     ),
-
-                    vSize(20),
                   ],
                 ),
               ),
             ),
-          ),
+          )
         ],
+      ),
+    );
+  }
+
+  Widget formField(String label, TextEditingController controller, {bool enabled = true}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        vSize(5),
+        TextFormField(
+          controller: controller,
+          enabled: enabled && _isEditing,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[200],
+            hintText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            suffixIcon: Icon(Icons.edit, size: 16, color: Colors.grey),
+          ),
+        ),
+        vSize(20),
+      ],
+    );
+  }
+
+  Widget imageRow(String label, VoidCallback onUpload) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        vSize(5),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+                child: Text("No file chosen", style: TextStyle(color: Colors.black54)),
+              ),
+            ),
+            hSize(10),
+            ElevatedButton(
+              onPressed: onUpload,
+              style: ElevatedButton.styleFrom(backgroundColor: Appcolors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+              child: Text("UPLOAD", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget aadhaarRow() {
+    return Row(
+      children: [
+        Expanded(child: aadhaarCardField("FRONT SIDE")),
+        hSize(10),
+        Expanded(child: aadhaarCardField("BACK SIDE")),
+      ],
+    );
+  }
+
+  Widget aadhaarCardField(String label) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 12)),
+        vSize(5),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text("SELECT", style: TextStyle(color: Colors.black54)), Icon(Icons.arrow_drop_down, color: Colors.black54)],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget expandedUploadBtn(VoidCallback onPressed) {
+    return Expanded(
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(backgroundColor: Appcolors.green, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+        child: Text("UPLOAD", style: TextStyle(color: Colors.white)),
       ),
     );
   }
