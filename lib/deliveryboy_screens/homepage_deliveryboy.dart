@@ -187,7 +187,10 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    String firstChar = profiledata["name"].toUpperCase().substring(0, 1);
+    String firstChar =
+        profiledata != null && profiledata["name"] != null
+            ? profiledata["name"].toUpperCase().substring(0, 1)
+            : "";
     return Scaffold(
       backgroundColor: Colors.white,
       body:

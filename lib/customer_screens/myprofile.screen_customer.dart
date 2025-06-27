@@ -38,12 +38,12 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
   final TextEditingController addressController = TextEditingController(
     text: "27-A, Aparna apartments, Gurudev..",
   );
-  final TextEditingController passwordController = TextEditingController(
-    text: "",
-  );
-  final TextEditingController confirmPasswordController = TextEditingController(
-    text: "",
-  );
+  // final TextEditingController passwordController = TextEditingController(
+  //   text: "",
+  // );
+  // final TextEditingController confirmPasswordController = TextEditingController(
+  //   text: "",
+  // );
 
   final stores = ['Store 1', 'Store 2'];
 
@@ -185,9 +185,9 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
         SharedPreferencesHelper.setcustomeraddress(
           address: addressController.text,
         );
-        SharedPreferencesHelper.setcustomerpassword(
-          password: passwordController.text,
-        );
+        // SharedPreferencesHelper.setcustomerpassword(
+        //   password: passwordController.text,
+        // );
         showAppToast(response.data['message'] ?? 'Profile Update successful');
       } else {
         final errorMessage =
