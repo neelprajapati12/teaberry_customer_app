@@ -10,61 +10,18 @@ import 'package:teaberryapp_project/shared_pref.dart';
 
 class OrdersScreen extends StatefulWidget {
   final List<DeliveryOrderModel> orders;
+  final String firstchar;
 
-  const OrdersScreen({super.key, required this.orders});
+  const OrdersScreen({
+    super.key,
+    required this.orders,
+    required this.firstchar,
+  });
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  // final List<Map<String, String>> orders = [
-  //   {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
-  //   {"name": "Shraddha P.", "phone": "+91 96642 56729"},
-  //   {"name": "Robert Vadra", "phone": "+91 88657 99342"},
-  //   {"name": "Vishal Sen", "phone": "+91 76532 98735"},
-  //   {"name": "Vidya Sinha", "phone": "+91 88653 33240"},
-  // ];
-
-  // List<DeliveryOrderModel> orders = [];
-  // bool isLoading = true;
-
-  // Future<void> fetchAllDeliveries() async {
-  //   final url = Uri.parse(
-  //     '${ApiConstant.baseUrl}/deliveries/boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
-  //   );
-  //   print(url);
-
-  //   final response = await http.get(
-  //     url,
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization':
-  //           'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
-  //     },
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     print(response.body);
-  //     print("Deliveries fetched successfully");
-  //     final List<dynamic> data = json.decode(response.body);
-  //     setState(() {
-  //       orders =
-  //           data
-  //               .map(
-  //                 (json) =>
-  //                     DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
-  //               )
-  //               .toList();
-  //       isLoading = false;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     throw Exception('Failed to load deliveries');
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -87,7 +44,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   CircleAvatar(
                     backgroundColor: Colors.grey.shade200,
                     child: Text(
-                      'S',
+                      widget.firstchar,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -166,6 +123,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   (context) => OrderDetailsScreen(
                                     orderdetails: order,
                                     length: widget.orders.length,
+                                    firstchar: widget.firstchar,
                                     // orderid:widget.orders.id,
                                   ),
                             ),
@@ -197,3 +155,52 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
   }
 }
+
+
+// final List<Map<String, String>> orders = [
+  //   {"name": "Anuradha Joshi", "phone": "+91 88657 84320"},
+  //   {"name": "Shraddha P.", "phone": "+91 96642 56729"},
+  //   {"name": "Robert Vadra", "phone": "+91 88657 99342"},
+  //   {"name": "Vishal Sen", "phone": "+91 76532 98735"},
+  //   {"name": "Vidya Sinha", "phone": "+91 88653 33240"},
+  // ];
+
+  // List<DeliveryOrderModel> orders = [];
+  // bool isLoading = true;
+
+  // Future<void> fetchAllDeliveries() async {
+  //   final url = Uri.parse(
+  //     '${ApiConstant.baseUrl}/deliveries/boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
+  //   );
+  //   print(url);
+
+  //   final response = await http.get(
+  //     url,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization':
+  //           'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+  //     },
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     print(response.body);
+  //     print("Deliveries fetched successfully");
+  //     final List<dynamic> data = json.decode(response.body);
+  //     setState(() {
+  //       orders =
+  //           data
+  //               .map(
+  //                 (json) =>
+  //                     DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
+  //               )
+  //               .toList();
+  //       isLoading = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     throw Exception('Failed to load deliveries');
+  //   }
+  // }

@@ -12,40 +12,19 @@ import 'package:teaberryapp_project/shared_pref.dart';
 class OrderDetailsScreen extends StatefulWidget {
   final int length;
   final dynamic orderdetails;
+  final String firstchar;
   const OrderDetailsScreen({
     Key? key,
     required this.orderdetails,
     required this.length,
+    required this.firstchar,
   }) : super(key: key);
   @override
   _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  Map<int, String> subProductNames = {};
-  dynamic data;
-  fetchproducts() async {
-    // if (subProductNames.containsKey(subProductId)) {
-    //   return subProductNames[subProductId]!;
-    // }
-    final url = Uri.parse('${ApiConstant.baseUrl}/inventory/store/1');
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
-      },
-    );
-    if (response.statusCode == 200) {
-      data = json.decode(response.body);
-      print(data);
-      // final name = data['name'] ?? 'Unknown';
-      // subProductNames[subProductId] = name;
-      // return name;
-    }
-    return 'Unknown';
-  }
+  List<dynamic> inventoryData = [];
 
   @override
   void initState() {
@@ -53,143 +32,212 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     fetchproducts();
   }
 
+  fetchproducts() async {
+    final token = SharedPreferencesHelper.getTokendeliveryboy();
+    final url = Uri.parse('${ApiConstant.baseUrl}/inventory/store/1');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      inventoryData = json.decode(response.body);
+      print(inventoryData);
+      setState(() {});
+    } else {
+      print("Error fetching products: ${response.statusCode}");
+    }
+  }
+
+  String getSubProductName(int productId, int subProductId) {
+    print(
+      "getSubProductName called with productId: $productId, subProductId: $subProductId",
+    );
+    try {
+      final product = inventoryData.firstWhere(
+        (prod) => prod['id'] == productId,
+        orElse: () => null,
+      );
+      if (product != null && product['subProducts'] != null) {
+        final subProduct = (product['subProducts'] as List).firstWhere(
+          (sp) => sp['id'] == subProductId,
+          orElse: () => null,
+        );
+        if (subProduct != null) {
+          return subProduct['name'] ?? 'Unknown';
+        }
+      }
+    } catch (e) {}
+    return 'Unknown';
+  }
+
+  Widget buildOrderItems(List items) {
+    print("build called");
+    return Column(
+      children:
+          items.map<Widget>((item) {
+            final int productId = item.productId;
+            final int subProductId = item.subProductId;
+            print("Product id - $productId");
+            print("SubProduct id - $subProductId");
+            final String subProductName = getSubProductName(
+              productId,
+              subProductId,
+            );
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: buildDisabledField(
+                "Qty: ${item.quantity}  |  Name: $subProductName",
+              ),
+            );
+          }).toList(),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor: Colors.green,
-      //   unselectedItemColor: Colors.grey,
-      //   currentIndex: 0,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home_outlined),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.shopping_cart_outlined),
-      //       label: 'Orders',
-      //     ),
-      //   ],
-      // ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Top bar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey.shade200,
-                    child: Text(
-                      'S',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+      body:
+          inventoryData.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  Stack(
-                    alignment: Alignment.topRight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.grey.shade200,
-                        child: Icon(
-                          Icons.notifications_none,
-                          color: Colors.black,
+                      // Top bar
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.grey.shade200,
+                            child: Text(
+                              widget.firstchar,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.grey.shade200,
+                                child: Icon(
+                                  Icons.notifications_none,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Positioned(
+                                right: 6,
+                                top: 4,
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Appcolors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    widget.length.toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Image.asset(
+                        'assets/iamges/removebckclr.png',
+                        height: 170,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      const Text(
+                        "Order Details",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Positioned(
-                        right: 6,
-                        top: 4,
-                        child: Container(
-                          padding: EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Appcolors.green,
-                            shape: BoxShape.circle,
+
+                      const SizedBox(height: 16),
+
+                      buildLabel("ORDER NUMBER"),
+                      buildDisabledField("${widget.orderdetails.id}"),
+                      buildLabel("CLIENT NAME"),
+                      buildDisabledField(
+                        "${widget.orderdetails.customer.name}",
+                      ),
+                      buildLabel("CLIENT REGISTRATION NO."),
+                      buildDisabledField("${widget.orderdetails.customer.id}"),
+                      buildLabel("ORDER DETAILS"),
+                      buildOrderItems(widget.orderdetails.items),
+                      // buildOrderItems(widget.orderdetails.items),
+                      buildLabel("PAYMENT DONE?"),
+                      buildDisabledField("NO"),
+                      buildLabel("MODE OF PAYMENT"),
+                      buildDisabledField(
+                        "${widget.orderdetails.paymentMethod}",
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Accept Button
+                      ElevatedButton(
+                        onPressed: () {
+                          showAppToast("Order Accepted");
+                          // showAppToast(msg: "Order Accepted");
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => DeliveryDetailsScreen(
+                                    orderdetails: widget.orderdetails,
+                                    length: widget.length,
+                                    firstchar: widget.firstchar,
+                                  ),
+                            ),
+                          ).then((_) {
+                            // Called when coming back from the product details page
+                            setState(() {});
+                          });
+
+                          // ScaffoldMessenger.of(
+                          //   context,
+                          // ).showSnackBar(SnackBar(content: Text("Order Accepted")));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Appcolors.green,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            widget.length.toString(),
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                        ),
+                        child: const Text(
+                          "ACCEPT ORDER",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              Image.asset('assets/iamges/removebckclr.png', height: 170),
-
-              const SizedBox(height: 16),
-
-              const Text(
-                "Order Details",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 16),
-
-              buildLabel("ORDER NUMBER"),
-              buildDisabledField("${widget.orderdetails.id}"),
-              buildLabel("CLIENT NAME"),
-              buildDisabledField("${widget.orderdetails.customer.name}"),
-              buildLabel("CLIENT REGISTRATION NO."),
-              buildDisabledField("${widget.orderdetails.customer.id}"),
-              buildLabel("ORDER DETAILS"),
-              buildLabel("ORDER DETAILS"),
-              // buildOrderItems(widget.orderdetails.items),
-              buildLabel("PAYMENT DONE?"),
-              buildDisabledField("NO"),
-              buildLabel("MODE OF PAYMENT"),
-              buildDisabledField("${widget.orderdetails.paymentMethod}"),
-
-              const SizedBox(height: 24),
-
-              // Accept Button
-              ElevatedButton(
-                onPressed: () {
-                  showAppToast("Order Accepted");
-                  // showAppToast(msg: "Order Accepted");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => DeliveryDetailsScreen(
-                            orderdetails: widget.orderdetails,
-                            length: widget.length,
-                          ),
-                    ),
-                  ).then((_) {
-                    // Called when coming back from the product details page
-                    setState(() {});
-                  });
-
-                  // ScaffoldMessenger.of(
-                  //   context,
-                  // ).showSnackBar(SnackBar(content: Text("Order Accepted")));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Appcolors.green,
-                  minimumSize: Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "ACCEPT ORDER",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -197,17 +245,32 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   //   return Column(
   //     children:
   //         items.map<Widget>((item) {
-  //           return FutureBuilder<String>(
-  //             future: fetchSubProductName(item.subProductId),
-  //             builder: (context, snapshot) {
-  //               final subProductName = snapshot.data ?? 'Loading...';
-  //               return Padding(
-  //                 padding: const EdgeInsets.symmetric(vertical: 4.0),
-  //                 child: buildDisabledField(
-  //                   "Qty: ${item.quantity}  |  Name: $subProductName",
-  //                 ),
+  //           final int productId = item.productId;
+  //           final int subProductId = item.subProductId;
+  //           String subProductName = 'Unknown';
+
+  //           // Find the product in the inventory data
+  //           if (data != null) {
+  //             final product = (data as List).firstWhere(
+  //               (prod) => prod['id'] == productId,
+  //               orElse: () => null,
+  //             );
+  //             if (product != null && product['subProducts'] != null) {
+  //               final subProduct = (product['subProducts'] as List).firstWhere(
+  //                 (sp) => sp['id'] == subProductId,
+  //                 orElse: () => null,
   //               );
-  //             },
+  //               if (subProduct != null) {
+  //                 subProductName = subProduct['name'] ?? 'Unknown';
+  //               }
+  //             }
+  //           }
+
+  //           return Padding(
+  //             padding: const EdgeInsets.symmetric(vertical: 4.0),
+  //             child: buildDisabledField(
+  //               "Qty: ${item.quantity}  |  Name: $subProductName",
+  //             ),
   //           );
   //         }).toList(),
   //   );

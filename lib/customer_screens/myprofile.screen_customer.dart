@@ -1,11 +1,15 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
@@ -106,50 +110,111 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
     }
   }
 
-  Future<void> updateProfile() async {
+  Future<void> updateProfile(
+    String name,
+    String email,
+    String mobileno,
+    String address,
+  ) async {
     try {
-      setState(() {
-        isLoading = true;
-        error = '';
-      });
+      // Input validation
+      // if (nameController.text.isEmpty ||
+      //     emailController.text.isEmpty ||
+      //     mobileController.text.isEmpty) {
+      //   showAppToast('Please fill all required fields');
+      //   return;
+      // }
+      print(name);
+      print(email);
+      print(mobileno);
+      print(address);
 
-      final body = {
-        "name": nameController.text,
-        "mobile": mobileController.text,
-        "email": emailController.text,
-        "address": addressController.text,
-        // Add other fields as needed
-      };
-
-      final response = await http.put(
-        Uri.parse('${ApiConstant.baseUrl}/auth/profile'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization':
-              'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
-        },
-        body: json.encode(body),
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      if (response.statusCode == 200) {
-        // Optionally, refresh profile data
-        fetchProfile();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile updated successfully!')),
+      final userData = jsonEncode({
+        'name': name,
+        'email': email,
+        'mobile': mobileno,
+        // 'password': passwordController.text,
+        'address': address,
+      });
+
+      final formData = FormData.fromMap({
+        'userData': MultipartFile.fromString(
+          userData,
+          contentType: MediaType('application', 'json'),
+        ),
+      });
+
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: ApiConstant.baseUrl,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      print('Request URL: ${ApiConstant.baseUrl}/auth/update-profile');
+      print('Request Body: ${formData.fields}');
+
+      final response = await dio.put(
+        '/auth/update-profile',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization':
+                'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+          },
+          followRedirects: false,
+          validateStatus: (status) => true,
+        ),
+      );
+
+      Navigator.of(context).pop(); // Hide loading dialog
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        SharedPreferencesHelper.setIsLoggedIn(status: true);
+        SharedPreferencesHelper.setcustomeraddress(
+          address: addressController.text,
         );
+        SharedPreferencesHelper.setcustomerpassword(
+          password: passwordController.text,
+        );
+        showAppToast(response.data['message'] ?? 'Profile Update successful');
       } else {
-        setState(() {
-          error = 'Failed to update profile: ${response.statusCode}';
-        });
+        final errorMessage =
+            response.data['message'] ?? 'Profile update failed';
+        showAppToast(errorMessage);
       }
+    } on DioException catch (e) {
+      Navigator.of(context).pop(); // Hide loading dialog
+      String errorMessage = 'An error occurred';
+
+      if (e.response != null) {
+        print('Error Response: ${e.response?.data}');
+        errorMessage = e.response?.data['message'] ?? 'Server error occurred';
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timed out';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection';
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
     } catch (e) {
-      setState(() {
-        error = 'Error: $e';
-      });
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
+      Navigator.of(context).pop(); // Hide loading dialog
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -164,13 +229,32 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Appcolors.yellow,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Appcolors.white),
+            onPressed: () {
+              // Handle notification icon press
+              SharedPreferencesHelper.setIsLoggedIn(status: false);
+              SharedPreferencesHelper.clearRole();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           // Yellow Header with Back Button and Profile
           Container(
             color: Appcolors.yellow,
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -184,7 +268,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                 //     onPressed: () => Navigator.pop(context),
                 //   ),
                 // ),
-                SizedBox(height: 20),
+                // SizedBox(height: 20),
                 Center(
                   child: Column(
                     children: [
@@ -216,7 +300,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
 
           // White Container with Form
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.33,
+            top: MediaQuery.of(context).size.height * 0.26,
             left: 0,
             right: 0,
             bottom: 0,
@@ -372,8 +456,54 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                         // ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    // Text("PASSWORD"),
+                    // SizedBox(height: 20),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        updateProfile(
+                          nameController.text,
+                          emailController.text,
+                          mobileController.text,
+                          addressController.text,
+                        );
+                        // setState(() {
+                        //   if (_isEditing) {
+                        //     // Save changes logic here
+                        //   }
+                        //   _isEditing = !_isEditing;
+                        // });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Appcolors.green,
+                        minimumSize: Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        "UPDATE",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    vSize(100),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+// Text("PASSWORD"),
                     // SizedBox(height: 5),
                     // TextFormField(
                     //   controller: passwordController,
@@ -407,7 +537,8 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                     //     ),
                     //   ),
                     // ),
-                    SizedBox(height: 20),
+                    
+                    // SizedBox(height: 20),
                     // Text("RE-TYPE PASSWORD"),
                     // SizedBox(height: 5),
                     // TextFormField(
@@ -444,40 +575,54 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                     //     ),
                     //   ),
                     // ),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (_isEditing) {
-                            // Save changes logic here
-                          }
-                          _isEditing = !_isEditing;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Appcolors.green,
-                        minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        "UPDATE",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    vSize(100),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+
+
+// Future<void> updateProfile() async {
+  //   print("Into update profile function");
+  //   try {
+  //     setState(() {
+  //       isLoading = true;
+  //       error = '';
+  //     });
+
+  //     final body = {
+  //       "name": nameController.text,
+  //       "mobile": mobileController.text,
+  //       "email": emailController.text,
+  //       "address": addressController.text,
+  //       // Add other fields as needed
+  //     };
+
+  //     final response = await http.put(
+  //       Uri.parse('${ApiConstant.baseUrl}/auth/update-profile'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization':
+  //             'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+  //       },
+  //       body: json.encode(body),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       print(response.body);
+  //       // Optionally, refresh profile data
+  //       fetchProfile();
+  //       showAppToast('Profile updated successfully!');
+  //       // ScaffoldMessenger.of(context).showSnackBar(
+  //       //   SnackBar(content: Text('Profile updated successfully!')),
+  //       // );
+  //     } else {
+  //       setState(() {
+  //         error = 'Failed to update profile: ${response.statusCode}';
+  //       });
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       error = 'Error: $e';
+  //     });
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }

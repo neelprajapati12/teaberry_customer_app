@@ -1,17 +1,23 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
 
 class DeliveryDetailsScreen extends StatefulWidget {
   final dynamic orderdetails;
   final int length;
+  final String firstchar;
 
   const DeliveryDetailsScreen({
     super.key,
     this.orderdetails,
     required this.length,
+    required this.firstchar,
   });
   @override
   State<DeliveryDetailsScreen> createState() => _DeliveryDetailsScreenState();
@@ -20,7 +26,41 @@ class DeliveryDetailsScreen extends StatefulWidget {
 class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
   int _currentIndex = 0;
 
+  updatedeliverystatus() async {
+    try {
+      final url = Uri.parse(
+        '${ApiConstant.baseUrl}/deliveries/${widget.orderdetails.id}/status',
+      );
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+      };
+      final body = jsonEncode({"status": "DELIVERED"});
+      print("Body" + body);
+
+      final response = await http.put(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        print("Delivery Successfully");
+        final data = jsonDecode(response.body);
+        print("Response Data: $data");
+        _showOfferDialog(context);
+      } else {
+        print("Delivery failed: ${response.body}");
+      }
+    } catch (e) {
+      print("Error exception: $e");
+    }
+  }
+
   @override
+  void initState() {
+    super.initState();
+    print("ORDER ID - ${widget.orderdetails.id}");
+    // fetchproducts();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -35,7 +75,10 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.grey[200],
-                    child: Text('S', style: TextStyle(color: Colors.black)),
+                    child: Text(
+                      widget.firstchar,
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
                   Stack(
                     children: [
@@ -105,20 +148,21 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                       value: '${widget.orderdetails.paymentMethod}',
                     ),
                     CustomField(
-                      label: 'ENTER AMOUNT',
+                      label: 'AMOUNT TO BE COLLECTED',
                       value:
                           'Rs.${widget.orderdetails.totalPrice}/-\nAPPLICABLE TAX:  Rs.${widget.orderdetails.totalTax}/-\nTOTAL PAYABLE:  Rs.${widget.orderdetails.priceAfterTax}/-',
                     ),
-                    CustomField(
-                      label: 'COLLECTED AMOUNT',
-                      value: '${widget.orderdetails.priceAfterTax}',
-                    ),
 
+                    // CustomField(
+                    //   label: 'COLLECTED AMOUNT',
+                    //   value: '${widget.orderdetails.priceAfterTax}',
+                    // ),
                     const SizedBox(height: 30),
 
                     ElevatedButton(
                       onPressed: () {
-                        _showOfferDialog(context);
+                        // _showOfferDialog(context);
+                        updatedeliverystatus();
                         // ScaffoldMessenger.of(context).showSnackBar(
                         //   SnackBar(content: Text("Details Submitted")),
                         // );
@@ -144,28 +188,6 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
           ],
         ),
       ),
-
-      // BottomNavigationBar with at least 2 items
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   selectedItemColor: Colors.green,
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home_outlined),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.receipt_long_outlined),
-      //       label: 'Orders',
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -226,14 +248,23 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                     top: -15,
                     right: 10,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/homedeliveryboy', // Replace with your home route name
-                          (Route<dynamic> route) =>
-                              false, // This will clear the entire stack
-                        );
+                        Navigator.of(context).pop(); // close dialog
+
+                        // Delay to ensure pop completes before navigating
+                        Future.delayed(Duration(milliseconds: 100), () {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/homedeliveryboy',
+                            (Route<dynamic> route) => false,
+                          );
+                        });
                       },
+
                       child: Container(
+                        width: 40, // make the hit area wider
+                        height: 40,
+                        alignment: Alignment.center,
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -249,7 +280,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         child: Icon(
                           Icons.close,
                           color: Colors.black54,
-                          size: 18,
+                          size: 22,
                         ),
                       ),
                     ),

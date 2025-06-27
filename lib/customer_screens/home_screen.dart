@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // List<dynamic> products = [];
   bool isLoading = true;
   String error = '';
+  dynamic profiledata;
 
   // Update these class variables
   List<Inventories1> products = [];
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final String token = data['token'];
-        SharedPreferencesHelper.setTokencustomer(apiKey: token);
+        SharedPreferencesHelper.setTokendeliveryboy(apiKey: token);
         print("Logged in as ${SharedPreferencesHelper.getRole()}");
       } else {
         print("Login failed: ${response.body}");
@@ -110,11 +111,37 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  getprofile() async {
+    final url = Uri.parse('${ApiConstant.baseUrl}/auth/profile');
+    print(url);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("Profile Data Fetched - ${response.body}");
+      print("Profile fetched successfully");
+      profiledata = json.decode(response.body);
+      setState(() {});
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      throw Exception('Failed to load Profile');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     login();
     fetchProducts();
+    getprofile();
   }
 
   @override
