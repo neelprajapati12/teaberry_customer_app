@@ -17,6 +17,8 @@ import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/resturantview_screen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 import 'package:teaberryapp_project/verification_screen.dart';
+
+import 'customer_screens/signup_otp_verification.dart';
 // import 'package:teaberryapp_project/verification_screen.dart';
 
 void main() async {
