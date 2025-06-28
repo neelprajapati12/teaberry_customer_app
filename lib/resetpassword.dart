@@ -23,7 +23,7 @@ class ResetpasswordScreen extends StatefulWidget {
 
 class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
-  bool _hidePassword = true;
+  bool _hidePassword = false;
 
   resetPassword() async {
     try {

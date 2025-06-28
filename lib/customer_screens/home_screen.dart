@@ -148,237 +148,261 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
+    String firstChar =
+        profiledata != null && profiledata["name"] != null
+            ? profiledata["name"].toUpperCase().substring(0, 1)
+            : "";
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              vSize(30),
-              // Top Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+      body:
+          profiledata == null
+              ? CircularProgressIndicator()
+              : Padding(
+                padding: const EdgeInsets.all(24),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on, color: Appcolors.green),
-                      const SizedBox(width: 4),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "DELIVER TO",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Appcolors.green,
-                            ),
-                          ),
-                          Text(
-                            "Adam Doe office",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.keyboard_arrow_down),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreenCustomer(),
-                            ),
-                          );
-                        },
-                        child: const CircleAvatar(child: Text('A')),
-                      ),
-                      Stack(
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.0),
-                            child: Icon(Icons.notifications),
-                          ),
-                          Positioned(
-                            right: 4,
-                            top: 1,
-                            child: CircleAvatar(
-                              backgroundColor: Appcolors.green,
-                              radius: 8,
-                              child: Text(
-                                '2',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
+                      vSize(30),
+                      // Top Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                color: Appcolors.green,
                               ),
+                              const SizedBox(width: 4),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "DELIVER TO",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Appcolors.green,
+                                    ),
+                                  ),
+                                  Text(
+                                    profiledata['address'] ?? 'Your Address',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // const Icon(Icons.keyboard_arrow_down),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ProfileScreenCustomer(),
+                                    ),
+                                  );
+                                },
+                                child: CircleAvatar(child: Text(firstChar)),
+                              ),
+                              Stack(
+                                children: const [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 4.0),
+                                    child: Icon(Icons.notifications),
+                                  ),
+                                  Positioned(
+                                    right: 4,
+                                    top: 1,
+                                    child: CircleAvatar(
+                                      backgroundColor: Appcolors.green,
+                                      radius: 8,
+                                      child: Text(
+                                        '0',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Greeting
+                      Text(
+                        "Hey ${profiledata["name"]},",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const Text(
+                        "Good Afternoon!",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Delivery Toggle as Radio Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text("Delivery"),
+                              value: "Delivery",
+                              groupValue: deliveryOption,
+                              activeColor: Appcolors.green,
+                              onChanged: (value) {
+                                setState(() {
+                                  deliveryOption = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: Text("Take Away"),
+                              value: "Take Away",
+                              groupValue: deliveryOption,
+                              activeColor: Appcolors.green,
+                              onChanged: (value) {
+                                setState(() {
+                                  deliveryOption = value!;
+                                });
+                              },
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
+                      const SizedBox(height: 16),
 
-              // Greeting
-              const Text("Hey Adam,", style: TextStyle(fontSize: 20)),
-              const Text(
-                "Good Afternoon!",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-
-              // Delivery Toggle as Radio Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text("Delivery"),
-                      value: "Delivery",
-                      groupValue: deliveryOption,
-                      activeColor: Appcolors.green,
-                      onChanged: (value) {
-                        setState(() {
-                          deliveryOption = value!;
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: Text("Take Away"),
-                      value: "Take Away",
-                      groupValue: deliveryOption,
-                      activeColor: Appcolors.green,
-                      onChanged: (value) {
-                        setState(() {
-                          deliveryOption = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Search Bar
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey.shade200,
-                ),
-                child: const TextField(
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.search),
-                    hintText: "Search dishes, restaurants",
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Categories Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "All Categories",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     // Navigator.push(
-                  //     //   context,
-                  //     //   MaterialPageRoute(
-                  //     //     builder: (context) => SeeAllCategoriesPage(),
-                  //     //   ),
-                  //     // );
-                  //   },
-                  //   child: Text(
-                  //     "See All",
-                  //     style: TextStyle(
-                  //       color: Appcolors.green,
-                  //       fontWeight: FontWeight.w600,
-                  //       fontSize: 14,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-
-              // Categories Grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 3 / 2.5,
-                ),
-                itemBuilder: (context, index) {
-                  // final item = categories[index];
-                  // final product = products[index];
-                  final product = products[index];
-                  return GestureDetector(
-                    onTap: () {
-                      // if (item['name'] == 'Coffee') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  SeeAllCategoriesPage(product: products),
+                      // Search Bar
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey.shade200,
                         ),
-                      );
-                      // }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image:
-                              product.photoUrl != null
-                                  ? NetworkImage(product.photoUrl!)
-                                  : AssetImage('assets/iamges/chai.jpg')
-                                      as ImageProvider,
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.2),
-                            BlendMode.darken,
+                        child: const TextField(
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.search),
+                            hintText: "Search dishes, restaurants",
+                            border: InputBorder.none,
                           ),
                         ),
                       ),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            product.name ?? 'Unknown Product',
-                            style: const TextStyle(
-                              color: Colors.white,
+                      const SizedBox(height: 24),
+
+                      // Categories Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "All Categories",
+                            style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
+                          // TextButton(
+                          //   onPressed: () {
+                          //     // Navigator.push(
+                          //     //   context,
+                          //     //   MaterialPageRoute(
+                          //     //     builder: (context) => SeeAllCategoriesPage(),
+                          //     //   ),
+                          //     // );
+                          //   },
+                          //   child: Text(
+                          //     "See All",
+                          //     style: TextStyle(
+                          //       color: Appcolors.green,
+                          //       fontWeight: FontWeight.w600,
+                          //       fontSize: 14,
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
                       ),
-                    ),
-                  );
-                },
+
+                      // Categories Grid
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: products.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childAspectRatio: 3 / 2.5,
+                            ),
+                        itemBuilder: (context, index) {
+                          // final item = categories[index];
+                          // final product = products[index];
+                          final product = products[index];
+                          return GestureDetector(
+                            onTap: () {
+                              // if (item['name'] == 'Coffee') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => SeeAllCategoriesPage(
+                                        product: products,
+                                      ),
+                                ),
+                              );
+                              // }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                image: DecorationImage(
+                                  image:
+                                      product.photoUrl != null
+                                          ? NetworkImage(product.photoUrl!)
+                                          : AssetImage('assets/iamges/chai.jpg')
+                                              as ImageProvider,
+                                  fit: BoxFit.cover,
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(0.2),
+                                    BlendMode.darken,
+                                  ),
+                                ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    product.name ?? 'Unknown Product',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      vSize(20),
+                    ],
+                  ),
+                ),
               ),
-              vSize(20),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

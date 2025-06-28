@@ -339,7 +339,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                     SizedBox(height: 5),
                     TextFormField(
                       controller: mobileController,
-                      enabled: _isEditing,
+                      enabled: false,
                       cursorColor: Colors.black,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
@@ -370,7 +370,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                     SizedBox(height: 5),
                     TextFormField(
                       controller: emailController,
-                      enabled: _isEditing,
+                      enabled: false,
                       cursorColor: Colors.black,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
@@ -401,7 +401,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                     SizedBox(height: 5),
                     TextFormField(
                       controller: storeController,
-                      enabled: _isEditing,
+                      enabled: false,
                       cursorColor: Colors.black,
                       decoration: InputDecoration(
                         filled: true,

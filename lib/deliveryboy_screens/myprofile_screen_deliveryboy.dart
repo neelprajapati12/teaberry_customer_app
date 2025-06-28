@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 import '../constants/api_constant.dart';
@@ -23,7 +24,7 @@ class ProfileScreenDeliveryboy extends StatefulWidget {
 class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
   final Dio dio = Dio();
   final ImagePicker _picker = ImagePicker();
-  bool _isEditing = true;
+  bool _isEditing = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
@@ -223,17 +224,23 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Appcolors.yellow,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Appcolors.white),
+            onPressed: () {
+              // Handle notification icon press
+              SharedPreferencesHelper.setIsLoggedIn(status: false);
+              SharedPreferencesHelper.clearRole();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
           ),
-        ),
+        ],
       ),
       body: Stack(
         children: [
@@ -286,11 +293,40 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildTextField(
-                      "NAME",
-                      nameController,
-                      hinttext: "Adam Doe",
+                    Text("NAME"),
+                    SizedBox(height: 5),
+                    TextFormField(
+                      controller: nameController,
+                      enabled: true,
+                      cursorColor: Colors.black,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        // hintText: "+91 88888 34213",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        // suffixIcon: GestureDetector(
+                        //   onTap: () {
+                        //     setState(() {
+                        //       _isEditing = !_isEditing;
+                        //     });
+                        //   },
+                        //   child: Icon(Icons.edit, size: 16, color: Colors.grey),
+                        // ),
+                      ),
                     ),
+                    vSize(20),
                     buildTextField(
                       "MOBILE",
                       mobileController,
@@ -412,6 +448,7 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
           Text(label),
           SizedBox(height: 5),
           TextFormField(
+            enabled: false,
             controller: controller,
             keyboardType: type,
             obscureText: isPassword,
