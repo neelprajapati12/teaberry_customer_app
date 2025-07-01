@@ -8,6 +8,7 @@ import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
+import 'package:teaberryapp_project/customer_screens/searchpage.dart';
 import 'package:teaberryapp_project/customer_screens/see_all_categories_page.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 import 'package:teaberryapp_project/models/homepage_model.dart';
@@ -111,7 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  getprofile() async {
+  CustomerModel? customerModel;
+
+  Future<void> getprofile() async {
     final url = Uri.parse('${ApiConstant.baseUrl}/auth/profile');
     print(url);
 
@@ -126,13 +129,18 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       print("Profile Data Fetched - ${response.body}");
       print("Profile fetched successfully");
-      profiledata = json.decode(response.body);
-      setState(() {});
-    } else {
+      final decoded = json.decode(response.body);
+      profiledata = decoded;
+      customerModel = CustomerModel.fromJson(decoded);
       setState(() {
         isLoading = false;
       });
-      throw Exception('Failed to load Profile');
+    } else {
+      setState(() {
+        isLoading = false;
+        error = 'Failed to load Profile';
+      });
+      print('Failed to load Profile: ${response.body}');
     }
   }
 
@@ -156,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       body:
           profiledata == null
-              ? CircularProgressIndicator()
+              ? Center(child: CircularProgressIndicator())
               : Padding(
                 padding: const EdgeInsets.all(24),
                 child: SingleChildScrollView(
@@ -287,17 +295,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 16),
 
                       // Search Bar
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.grey.shade200,
-                        ),
-                        child: const TextField(
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.search),
-                            hintText: "Search dishes, restaurants",
-                            border: InputBorder.none,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => SearchScreen(
+                                    customerData: customerModel!,
+                                  ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.grey.shade200,
+                          ),
+                          child: const TextField(
+                            enabled: false,
+                            decoration: InputDecoration(
+                              icon: Icon(Icons.search),
+                              hintText: "Search dishes, restaurants",
+                              border: InputBorder.none,
+                            ),
                           ),
                         ),
                       ),
@@ -359,7 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => SeeAllCategoriesPage(
+                                        customerData: customerModel!,
                                         product: products,
+                                        index: index,
                                       ),
                                 ),
                               );

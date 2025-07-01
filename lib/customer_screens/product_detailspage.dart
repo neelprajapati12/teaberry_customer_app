@@ -9,13 +9,13 @@ import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 
 class ProductDetailspage extends StatefulWidget {
-  final SubProducts1 subproduct;
+  final dynamic subproduct;
   final int? productId;
 
   const ProductDetailspage({
     super.key,
     required this.subproduct,
-    required this.productId,
+    this.productId,
   });
   @override
   _ProductDetailspageState createState() => _ProductDetailspageState();
@@ -38,22 +38,18 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back, color: Colors.black),
         ),
         title: Text(
           "Details",
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            // fontSize: 18,
           ),
         ),
         centerTitle: false,

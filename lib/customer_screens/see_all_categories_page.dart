@@ -4,13 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
+import 'package:teaberryapp_project/customer_screens/searchpage.dart';
 import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 
 class SeeAllCategoriesPage extends StatefulWidget {
   final List<Inventories1> product;
+  final CustomerModel customerData;
+  final index;
 
-  const SeeAllCategoriesPage({super.key, required this.product});
+  const SeeAllCategoriesPage({
+    super.key,
+    required this.product,
+    this.index,
+    required this.customerData,
+  });
   @override
   State<SeeAllCategoriesPage> createState() => _SeeAllCategoriesPageState();
 }
@@ -25,7 +33,6 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
       'image': 'https://i.imgur.com/3x0S9kD.jpg',
     },
   );
-  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -40,6 +47,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    int selectedIndex = widget.index ?? 0;
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -56,44 +64,56 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
         title: Text(
           'Menu',
           style: TextStyle(
-            fontSize: 18,
+            // fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),
         centerTitle: true,
         actions: [
-          Icon(Icons.search, color: Colors.black),
-          SizedBox(width: 16),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CartPage()),
-                  );
-                },
-                child: Icon(
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                          SearchScreen(customerData: widget.customerData),
+                ),
+              );
+            },
+            child: Icon(Icons.search, color: Colors.black, size: 28),
+          ),
+          SizedBox(width: 20),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartPage()),
+              );
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
                   Icons.shopping_cart_outlined,
                   size: 28,
                   color: Colors.black,
                 ),
-              ),
-              Positioned(
-                top: 8,
-                right: 0,
-                child: CircleAvatar(
-                  backgroundColor: Appcolors.green,
-                  radius: 8,
-                  child: Text(
-                    '${CartService.items.length}',
-                    style: TextStyle(fontSize: 10, color: Colors.white),
+                Positioned(
+                  top: 8,
+                  right: 0,
+                  child: CircleAvatar(
+                    backgroundColor: Appcolors.green,
+                    radius: 8,
+                    child: Text(
+                      '${CartService.items.length}',
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SizedBox(width: 16),
         ],
