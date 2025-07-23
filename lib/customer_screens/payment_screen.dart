@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/customer_screens/conformationscreen.dart';
 import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
+import 'package:teaberryapp_project/models/myorders_model.dart';
 // import 'package:teaberryapp_project/myprofile.screen.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  MyOrdersModel myorders;
+  PaymentScreen({super.key, required this.myorders});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -151,7 +155,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     style: TextStyle(fontSize: 15, color: Colors.grey),
                   ),
                   Text(
-                    "₹295",
+                    "₹${widget.myorders.totalPrice}",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ],
@@ -164,9 +168,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreenCustomer(),
-                  ),
+                  MaterialPageRoute(builder: (context) => ConfirmationScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -178,7 +180,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               child: Text(
                 "PAY & CONFIRM",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Appcolors.white,
+                ),
               ),
             ),
             SizedBox(height: 20),

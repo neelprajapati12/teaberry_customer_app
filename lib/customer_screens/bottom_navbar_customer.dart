@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/customer_screens/home_screen.dart';
+import 'package:teaberryapp_project/customer_screens/myorders.dart';
 import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
 
 class BottomNavbarCustomer extends StatefulWidget {
@@ -15,7 +16,11 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
   late int _index;
   late PageController _pageController;
 
-  final List<Widget> _screens = [HomeScreen(), ProfileScreenCustomer()];
+  final List<Widget> _screens = [
+    HomeScreen(),
+    MyordersPage(),
+    ProfileScreenCustomer(),
+  ];
 
   @override
   void initState() {
@@ -84,6 +89,10 @@ class _BottomNavbarCustomerState extends State<BottomNavbarCustomer> {
             },
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_bag),
+                label: 'My Orders',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle),
                 label: 'Profile',

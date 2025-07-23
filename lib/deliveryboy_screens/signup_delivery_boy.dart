@@ -2,12 +2,14 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 import '../constants/api_constant.dart';
 
@@ -26,6 +28,7 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
   final passwordController = TextEditingController();
+  final referralcontroller = TextEditingController();
 
   String? selectedStore;
   final stores = ['Store 1', 'Store 2'];
@@ -70,6 +73,13 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
       return;
     }
 
+    // Get the store ID for the selected store
+    final selectedStoreId = storeIdMap[selectedStore];
+    if (selectedStoreId == null) {
+      showErrorToast("Invalid store selection");
+      return;
+    }
+
     final dio = Dio();
 
     final userData = {
@@ -78,15 +88,24 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
       "mobile": mobileController.text.trim(),
       "password": passwordController.text.trim(),
       "role": "ROLE_DELIVERY_BOY",
-      "storeId": selectedStore == 'Store 1' ? 1 : 2,
+      "storeId": selectedStoreId, // Use the correct store ID from the map
+      "referredByDeliveryBoyId":
+          referralcontroller.text.trim().isNotEmpty
+              ? referralcontroller.text.trim()
+              : null,
     };
 
     try {
+      print('Registering with store ID: $selectedStoreId'); // Debug print
+
       final formData = FormData.fromMap({
         'userData': MultipartFile.fromString(
           json.encode(userData),
           contentType: MediaType("application", "json"),
         ),
+        // ...rest of your formData configuration
+
+        // ...rest of your registration code
         'photo': await MultipartFile.fromFile(
           _photoFile!.path,
           filename: _photoFile!.path.split('/').last,
@@ -134,7 +153,76 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
     }
   }
 
+  List<dynamic> data = [];
+  List<String> officialstores = [];
+  bool isLoadingStores = false;
+
+  Map<String, int> storeIdMap = {}; // To store name-to-id mapping
+
+  // Update the getstoresdata() function to store store IDs
+  Future<void> getstoresdata() async {
+    setState(() {
+      isLoadingStores = true;
+    });
+
+    try {
+      final url = Uri.parse('${ApiConstant.baseUrl}/users/2/complete-details');
+      print('Fetching stores from: $url');
+
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        print('Response body: ${response.body}');
+
+        if (decoded['stores'] != null) {
+          setState(() {
+            data = decoded['stores'];
+            // Clear existing data
+            officialstores.clear();
+            storeIdMap.clear();
+
+            // Populate both the names list and ID map
+            for (var store in data) {
+              if (store['name'] != null && store['id'] != null) {
+                officialstores.add(store['name'].toString());
+                storeIdMap[store['name'].toString()] = store['id'];
+              }
+            }
+
+            stores.clear();
+            stores.addAll(officialstores);
+
+            print('Successfully fetched ${officialstores.length} stores');
+            print('Store names and IDs: $storeIdMap');
+          });
+        } else {
+          throw Exception('No stores found in response');
+        }
+      } else {
+        throw Exception('Failed to load stores: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching stores: $e');
+      showAppToast('Failed to load stores. Please try again.');
+    } finally {
+      setState(() {
+        isLoadingStores = false;
+      });
+    }
+  }
+  // Update the dropdown widget in the build method to use the fetched stores
+
   @override
+  void initState() {
+    super.initState();
+    // Initialize any necessary data or state
+    getstoresdata();
+  }
+
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -232,7 +320,52 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                       ),
                       SizedBox(height: 10),
                       Text("NEAREST STORE"),
-                      storeDropdown(),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child:
+                            isLoadingStores
+                                ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                                : DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                  ),
+                                  hint: const Text("Select nearest store"),
+                                  value: selectedStore,
+                                  items:
+                                      officialstores
+                                          .map(
+                                            (store) => DropdownMenuItem(
+                                              value: store,
+                                              child: Text(store),
+                                            ),
+                                          )
+                                          .toList(),
+                                  onChanged:
+                                      (val) =>
+                                          setState(() => selectedStore = val),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please select a store';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                      ),
+                      vSize(15),
                       buildTextField(
                         "ADDRESS",
                         addressController,
@@ -263,6 +396,22 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                                 ),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 15),
+                      Text("REFERRAL ID (Optional)"),
+                      vSize(5),
+                      TextFormField(
+                        controller: referralcontroller,
+                        decoration: InputDecoration(
+                          hintText: "Enter a Delivery Boy Referral ID",
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        // Remove validator since it's optional
                       ),
                       SizedBox(height: 20),
                       // Upload PHOTO

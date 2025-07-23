@@ -10,7 +10,7 @@ import 'package:teaberryapp_project/models/customer_model.dart';
 class SearchResult {
   final SubProducts subProduct;
   final Inventories parentInventory;
-  final Stores parentStore;
+  final Store parentStore;
 
   SearchResult({
     required this.subProduct,
@@ -61,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     // Search through all stores
     if (widget.customerData.stores != null) {
-      for (Stores store in widget.customerData.stores!) {
+      for (Store store in widget.customerData.stores!) {
         if (store.inventories != null) {
           // Search through all inventories in each store
           for (var inventory in store.inventories!.cast<Inventories>()) {
@@ -93,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
             if (subProduct.name != null &&
                 subProduct.name!.toLowerCase().contains(query)) {
               // Create a dummy store object for main store
-              Stores mainStore = Stores(
+              Store mainStore = Store(
                 id: widget.customerData.store!.id,
                 name: widget.customerData.store!.name,
                 location: widget.customerData.store!.location,
@@ -259,6 +259,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => ProductDetailspage(
+                                        storelocation:
+                                            widget.customerData.store!.location,
                                         subproduct: result.subProduct,
                                         productId: result.parentInventory.id,
                                       ),

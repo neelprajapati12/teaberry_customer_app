@@ -9,7 +9,7 @@ import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 
 class SeeAllCategoriesPage extends StatefulWidget {
-  final List<Inventories1> product;
+  final List<Inventories> product;
   final CustomerModel customerData;
   final index;
 
@@ -24,20 +24,12 @@ class SeeAllCategoriesPage extends StatefulWidget {
 }
 
 class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
-  final List<Map<String, dynamic>> coffeeItems = List.generate(
-    3,
-    (index) => {
-      'name': 'Desi Filter Coffee',
-      'likedBy': '50.1k',
-      'price': 40,
-      'image': 'https://i.imgur.com/3x0S9kD.jpg',
-    },
-  );
-
+  late int selectedIndex;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    selectedIndex = widget.index ?? 0;
     print(CartService.totalPrice);
     print(CartService.items.length);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -47,7 +39,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    int selectedIndex = widget.index ?? 0;
+    // int selectedIndex = widget.index ?? 0;
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -120,22 +112,24 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
       ),
       body: Column(
         children: [
-          // Category Chips
-          // Replace the existing Container for Category Chips with this:
           Container(
             height: 40,
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.symmetric(horizontal: 12),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: widget.product.length,
               itemBuilder: (context, index) {
                 return CategoryChip(
                   label: widget.product[index].name ?? 'Unknown',
-                  selected: index == selectedIndex,
+                  selected:
+                      index == selectedIndex, // This will now work correctly
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
+                      print(
+                        'Selected category: ${widget.product[index].name}',
+                      ); // Debug print
                     });
                   },
                 );
@@ -161,7 +155,6 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
             child: ListView.builder(
               itemCount: widget.product[selectedIndex].subProducts!.length,
               itemBuilder: (context, index) {
-                var item = coffeeItems[index];
                 final subProduct =
                     widget.product[selectedIndex].subProducts![index];
                 return Padding(
@@ -176,13 +169,13 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                         MaterialPageRoute(
                           builder:
                               (context) => ProductDetailspage(
+                                storelocation:
+                                    widget.customerData.store!.location,
                                 subproduct: subProduct,
-
                                 productId: widget.product[selectedIndex].id!,
                               ),
                         ),
                       ).then((_) {
-                        // Called when coming back from the product details page
                         setState(() {});
                       });
                     },
@@ -212,40 +205,39 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                                         fit: BoxFit.cover,
                                       ),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     subProduct.name!,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                     ),
                                   ),
-                                  SizedBox(height: 6),
+                                  const SizedBox(height: 6),
                                   Text(
-                                    '❤️ Loved By ${item['likedBy']}',
-                                    style: TextStyle(fontSize: 12),
+                                    '❤️ Loved By ${(50 + index).toString()}k', // Dynamic count
+                                    style: const TextStyle(fontSize: 12),
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
                                         '₹${subProduct.price}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 25,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      Icon(
-                                        Icons.add_circle,
-                                        color: Appcolors.green,
-                                        size: 28,
-                                      ),
+                                      // Icon(
+                                      //   Icons.add_circle,
+                                      //   color: Appcolors.green,
+                                      //   size: 28,
+                                      // ),
                                     ],
                                   ),
                                 ],
@@ -266,8 +258,15 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
-              );
+                MaterialPageRoute(
+                  builder:
+                      (context) => CartPage(
+                        customeraddress: widget.customerData.address,
+                      ),
+                ),
+              ).then((_) {
+                setState(() {});
+              });
             },
             child: Container(
               width: double.infinity,
@@ -327,48 +326,3 @@ class CategoryChip extends StatelessWidget {
     );
   }
 }
-
-
- // Top Bar
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       CircleAvatar(
-            //         backgroundColor: Colors.grey[200],
-            //         child: Icon(Icons.arrow_back, color: Colors.black),
-            //       ),
-            //       Text(
-            //         'Menu',
-            //         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            //       ),
-            //       Row(
-            //         children: [
-            //           Icon(Icons.search, color: Colors.black),
-            //           SizedBox(width: 16),
-            //           Stack(
-            //             children: [
-            //               Icon(Icons.shopping_cart_outlined, size: 28),
-            //               Positioned(
-            //                 top: 0,
-            //                 right: 0,
-            //                 child: CircleAvatar(
-            //                   backgroundColor: Appcolors.green,
-            //                   radius: 8,
-            //                   child: Text(
-            //                     '2',
-            //                     style: TextStyle(
-            //                       fontSize: 10,
-            //                       color: Colors.white,
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),

@@ -3,6 +3,7 @@ import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -137,6 +138,34 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           fontSize: 16,
                         ),
                       ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account? ",
+                          style: TextStyle(color: Colors.black54, fontSize: 14),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "LOG IN",
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

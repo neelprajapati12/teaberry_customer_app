@@ -31,6 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController referralCodeController = TextEditingController();
 
   String? selectedRole;
   String? selectedStore;
@@ -47,8 +48,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (nameController.text.isEmpty ||
           emailController.text.isEmpty ||
           mobileController.text.isEmpty ||
-          passwordController.text.isEmpty) {
-        throw Exception('Please fill all required fields');
+          passwordController.text.isEmpty ||
+          selectedStore == null) {
+        throw Exception(
+          'Please fill all required fields including store selection',
+        );
+      }
+
+      // Get the store ID for the selected store
+      final selectedStoreId = storeIdMap[selectedStore];
+      if (selectedStoreId == null) {
+        throw Exception('Invalid store selection');
       }
 
       // Show loading dialog
@@ -65,7 +75,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'password': passwordController.text,
         'address': addressController.text,
         'role': "ROLE_CUSTOMER",
-        'storeId': 1,
+        'referralCode':
+            referralCodeController.text.isEmpty
+                ? ""
+                : referralCodeController.text,
+        'storeId': selectedStoreId, // Use the selected store's ID
       });
 
       final formData = FormData.fromMap({
@@ -142,13 +156,83 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ).showSnackBar(SnackBar(content: Text(errorMessage)));
     } catch (e) {
       Navigator.of(context).pop(); // Hide loading dialog
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      showErrorToast(e.toString());
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
+  List<dynamic> data = [];
+  List<String> officialstores = [];
+  bool isLoadingStores = false;
+
+  Map<String, int> storeIdMap = {}; // To store name-to-id mapping
+
+  // Update the getstoresdata() function to store store IDs
+  Future<void> getstoresdata() async {
+    setState(() {
+      isLoadingStores = true;
+    });
+
+    try {
+      final url = Uri.parse('${ApiConstant.baseUrl}/users/2/complete-details');
+      print('Fetching stores from: $url');
+
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        print('Response body: ${response.body}');
+
+        if (decoded['stores'] != null) {
+          setState(() {
+            data = decoded['stores'];
+            // Clear existing data
+            officialstores.clear();
+            storeIdMap.clear();
+
+            // Populate both the names list and ID map
+            for (var store in data) {
+              if (store['name'] != null && store['id'] != null) {
+                officialstores.add(store['name'].toString());
+                storeIdMap[store['name'].toString()] = store['id'];
+              }
+            }
+
+            stores.clear();
+            stores.addAll(officialstores);
+
+            print('Successfully fetched ${officialstores.length} stores');
+            print('Store names and IDs: $storeIdMap');
+          });
+        } else {
+          throw Exception('No stores found in response');
+        }
+      } else {
+        throw Exception('Failed to load stores: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching stores: $e');
+      showAppToast('Failed to load stores. Please try again.');
+    } finally {
+      setState(() {
+        isLoadingStores = false;
+      });
+    }
+  }
+  // Update the dropdown widget in the build method to use the fetched stores
+
   @override
+  void initState() {
+    super.initState();
+    // Initialize any necessary data or state
+    getstoresdata();
+  }
+
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
@@ -258,32 +342,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(height: 20),
                     Text("NEAREST STORE"),
                     SizedBox(height: 5),
+                    // Replace the existing stores DropdownButtonFormField with this:
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        hint: Text("Please select"),
-                        value: selectedStore,
-                        items:
-                            stores
-                                .map(
-                                  (store) => DropdownMenuItem(
-                                    value: store,
-                                    child: Text(store),
+                      child:
+                          isLoadingStores
+                              ? const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              )
+                              : DropdownButtonFormField<String>(
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
                                   ),
-                                )
-                                .toList(),
-                        onChanged: (val) => setState(() => selectedStore = val),
-                      ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                ),
+                                hint: const Text("Select nearest store"),
+                                value: selectedStore,
+                                items:
+                                    officialstores
+                                        .map(
+                                          (store) => DropdownMenuItem(
+                                            value: store,
+                                            child: Text(store),
+                                          ),
+                                        )
+                                        .toList(),
+                                onChanged:
+                                    (val) =>
+                                        setState(() => selectedStore = val),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a store';
+                                  }
+                                  return null;
+                                },
+                              ),
                     ),
                     SizedBox(height: 20),
                     Text("ADDRESS"),
@@ -347,6 +450,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                         ),
                       ),
+                    ),
+                    SizedBox(height: 20),
+                    Text("REFERRAL CODE (Optional)"),
+                    SizedBox(height: 5),
+                    CustomTextFormField(
+                      controller: referralCodeController,
+                      hintText: "Enter referral code (if any)",
                     ),
                     SizedBox(height: 30),
                     ElevatedButton(

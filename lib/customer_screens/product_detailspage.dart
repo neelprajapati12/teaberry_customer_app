@@ -11,9 +11,11 @@ import 'package:teaberryapp_project/models/customer_model.dart';
 class ProductDetailspage extends StatefulWidget {
   final dynamic subproduct;
   final int? productId;
+  final dynamic storelocation;
 
   const ProductDetailspage({
     super.key,
+    required this.storelocation,
     required this.subproduct,
     this.productId,
   });
@@ -54,222 +56,247 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
         ),
         centerTitle: false,
       ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child:
-                      widget.subproduct.photoUrl != null
-                          ? Image.network(
-                            widget.subproduct.photoUrl!,
-                            width: double.infinity,
-                            height: 160,
-                            fit: BoxFit.cover,
-                          )
-                          : Image.asset(
-                            'assets/iamges/coffee.jpg',
-                            width: double.infinity,
-                            height: 160,
-                            fit: BoxFit.cover,
-                          ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade300),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child:
+                            widget.subproduct.photoUrl != null
+                                ? Image.network(
+                                  widget.subproduct.photoUrl!,
+                                  width: double.infinity,
+                                  height: h * 0.21,
+                                  fit: BoxFit.cover,
+                                )
+                                : Image.asset(
+                                  'assets/iamges/coffee.jpg',
+                                  width: double.infinity,
+                                  height: h * 0.20,
+                                  fit: BoxFit.cover,
+                                ),
+                      ),
+                    ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.location_on, color: Colors.red, size: 16),
-                      SizedBox(width: 4),
-                      Text(
-                        "Malviya Nagar Outlet",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              widget.storelocation,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                widget.subproduct.name ?? 'N/A',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                "Prosciutto e funghi is a pizza variety that is topped with tomato sauce.",
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange, size: 18),
-                      SizedBox(width: 4),
-                      Text(
-                        "4.7",
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 18),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.delivery_dining,
-                        color: Colors.orange,
-                        size: 18,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        "Free",
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 18),
-                  Row(
-                    children: [
-                      Icon(Icons.access_time, color: Colors.orange, size: 18),
-                      SizedBox(width: 4),
-                      Text(
-                        "20 min",
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            // // Size Options
-            // const Text("SIZE:", style: TextStyle(fontWeight: FontWeight.bold)),
-            // const SizedBox(height: 8),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children:
-            //       [10, 14, 16].map((size) {
-            //         bool isSelected = size == selectedSize;
-            //         return Padding(
-            //           padding: const EdgeInsets.symmetric(horizontal: 8),
-            //           child: ChoiceChip(
-            //             label: Text('$size"'),
-            //             selected: isSelected,
-            //             onSelected: (_) {
-            //               // setState(() => selectedSize = size);
-            //             },
-            //             selectedColor: const Color(0xffF6933F),
-            //             backgroundColor: const Color(0xffE9ECF2),
-            //             labelStyle: TextStyle(
-            //               color: isSelected ? Colors.white : Colors.black,
-            //             ),
-            //           ),
-            //         );
-            //       }).toList(),
-            // ),
-            const Spacer(),
-
-            // Bottom Price and Button Section
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-              decoration: const BoxDecoration(
-                color: const Color(0xffF5F6FA),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // Price
-                  Text(
-                    "₹${widget.subproduct.price ?? 'N/A'}",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
                     ),
                   ),
-                  const Spacer(),
-
-                  // Quantity Selector
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xff151a33),
-                      borderRadius: BorderRadius.circular(30),
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      widget.subproduct.name ?? 'N/A',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      // widget.subproduct.description ??
+                      "Prosciutto e funghi is a pizza variety that is topped with tomato sauce.",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              if (quantity > 1) quantity--;
-                            });
-                          },
+                        Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.orange, size: 18),
+                            SizedBox(width: 4),
+                            Text(
+                              "4.7",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          quantity.toString(),
-                          style: const TextStyle(color: Colors.white),
+                        SizedBox(width: 18),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.delivery_dining,
+                              color: Colors.orange,
+                              size: 18,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              "Free",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.add, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              // quantity++;
-                              if (quantity < maxQuantity)
-                                quantity++;
-                              else {
-                                FlutterToast.showErrorToast(
-                                  "Sorry, we don't have enough stock available.",
-                                );
-                              }
-                            });
-                          },
+                        SizedBox(width: 18),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: Colors.orange,
+                              size: 18,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              "20 min",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 15),
+
+                  // // Size Options
+                  // const Text("SIZE:", style: TextStyle(fontWeight: FontWeight.bold)),
+                  // const SizedBox(height: 8),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children:
+                  //       [10, 14, 16].map((size) {
+                  //         bool isSelected = size == selectedSize;
+                  //         return Padding(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 8),
+                  //           child: ChoiceChip(
+                  //             label: Text('$size"'),
+                  //             selected: isSelected,
+                  //             onSelected: (_) {
+                  //               // setState(() => selectedSize = size);
+                  //             },
+                  //             selectedColor: const Color(0xffF6933F),
+                  //             backgroundColor: const Color(0xffE9ECF2),
+                  //             labelStyle: TextStyle(
+                  //               color: isSelected ? Colors.white : Colors.black,
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }).toList(),
+                  // ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+
+          // Bottom Price and Button Section
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+            decoration: const BoxDecoration(
+              color: Color(0xffF5F6FA),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, -2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Text(
+                  "₹${widget.subproduct.price ?? 'N/A'}",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xff151a33),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            if (quantity > 1) quantity--;
+                          });
+                        },
+                      ),
+                      Text(
+                        quantity.toString(),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            if (quantity < maxQuantity) {
+                              quantity++;
+                            } else {
+                              FlutterToast.showErrorToast(
+                                "Sorry, we don't have enough stock available.",
+                              );
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
 
       // Add to Cart Button pinned at bottom
@@ -301,7 +328,8 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
             FlutterToast.showAppToast("Added to cart");
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xff78AB4F),
+            backgroundColor: Appcolors.green,
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

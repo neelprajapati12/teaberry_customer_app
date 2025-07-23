@@ -10,6 +10,7 @@ import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.d
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/searchpage.dart';
 import 'package:teaberryapp_project/customer_screens/see_all_categories_page.dart';
+import 'package:teaberryapp_project/customer_screens/wallet_screen.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
 import 'package:teaberryapp_project/models/homepage_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   dynamic profiledata;
 
   // Update these class variables
-  List<Inventories1> products = [];
+  List<Inventories> products = [];
 
   Future<void> fetchProducts() async {
     try {
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final inventories = store['inventories'] as List;
           setState(() {
             products =
-                inventories.map((json) => Inventories1.fromJson(json)).toList();
+                inventories.map((json) => Inventories.fromJson(json)).toList();
             isLoading = false;
           });
         }
@@ -127,6 +128,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (response.statusCode == 200) {
+      SharedPreferencesHelper.setcustomerwalletbalance(
+        walletbalance: json.decode(response.body)['walletBalance'].toString(),
+      );
+      print(
+        'Wallet Balance: ${SharedPreferencesHelper.getcustomerwalletbalance()}',
+      );
       print("Profile Data Fetched - ${response.body}");
       print("Profile fetched successfully");
       final decoded = json.decode(response.body);
@@ -152,6 +159,16 @@ class _HomeScreenState extends State<HomeScreen> {
     getprofile();
   }
 
+  timeoftheday() {
+    if (DateTime.now().hour < 12) {
+      return "Good Morning!";
+    } else if (DateTime.now().hour < 17) {
+      return "Good Afternoon!";
+    } else {
+      return "Good Evening!";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
@@ -171,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      vSize(30),
+                      vSize(40),
                       // Top Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,41 +223,66 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Row(
                             children: [
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder:
+                              //             (context) => ProfileScreenCustomer(),
+                              //       ),
+                              //     );
+                              //   },
+                              //   child: CircleAvatar(
+                              //     backgroundColor: Colors.grey.shade200,
+                              //     child: Text(
+                              //       firstChar,
+                              //       style: TextStyle(color: Appcolors.green),
+                              //     ),
+                              //   ),
+                              // ),
+                              hSize(10),
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) => ProfileScreenCustomer(),
+                                      builder: (context) => WalletScreen(),
                                     ),
                                   );
                                 },
-                                child: CircleAvatar(child: Text(firstChar)),
-                              ),
-                              Stack(
-                                children: const [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 4.0),
-                                    child: Icon(Icons.notifications),
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey.shade200,
+                                  child: Icon(
+                                    Icons.wallet,
+                                    color: Appcolors.green,
                                   ),
-                                  Positioned(
-                                    right: 4,
-                                    top: 1,
-                                    child: CircleAvatar(
-                                      backgroundColor: Appcolors.green,
-                                      radius: 8,
-                                      child: Text(
-                                        '0',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
+
+                              // Stack(
+                              //   children: const [
+                              //     Padding(
+                              //       padding: EdgeInsets.only(left: 4.0),
+                              //       child: Icon(Icons.notifications),
+                              //     ),
+                              //     Positioned(
+                              //       right: 4,
+                              //       top: 1,
+                              //       child: CircleAvatar(
+                              //         backgroundColor: Appcolors.green,
+                              //         radius: 8,
+                              //         child: Text(
+                              //           '0',
+                              //           style: TextStyle(
+                              //             fontSize: 10,
+                              //             color: Colors.white,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ],
@@ -252,8 +294,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         "Hey ${profiledata["name"]},",
                         style: TextStyle(fontSize: 20),
                       ),
-                      const Text(
-                        "Good Afternoon!",
+                      Text(
+                        timeoftheday(),
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -358,6 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
 
                       // Categories Grid
+                      // In the GridView.builder section, update the itemBuilder:
                       GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -367,15 +410,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisCount: 2,
                               mainAxisSpacing: 16,
                               crossAxisSpacing: 16,
-                              childAspectRatio: 3 / 2.5,
+                              childAspectRatio:
+                                  3 /
+                                  3, // Adjusted ratio to accommodate text below
                             ),
                         itemBuilder: (context, index) {
-                          // final item = categories[index];
-                          // final product = products[index];
                           final product = products[index];
                           return GestureDetector(
                             onTap: () {
-                              // if (item['name'] == 'Coffee') {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -387,37 +429,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                 ),
                               );
-                              // }
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                image: DecorationImage(
-                                  image:
-                                      product.photoUrl != null
-                                          ? NetworkImage(product.photoUrl!)
-                                          : AssetImage('assets/iamges/chai.jpg')
-                                              as ImageProvider,
-                                  fit: BoxFit.cover,
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black.withOpacity(0.2),
-                                    BlendMode.darken,
-                                  ),
-                                ),
-                              ),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    product.name ?? 'Unknown Product',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      image: DecorationImage(
+                                        image:
+                                            product.photoUrl != null
+                                                ? NetworkImage(
+                                                  product.photoUrl!,
+                                                )
+                                                : AssetImage(
+                                                      'assets/iamges/chai.jpg',
+                                                    )
+                                                    as ImageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  product.name ?? 'Unknown Product',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },

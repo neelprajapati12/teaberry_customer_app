@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
@@ -57,6 +58,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
+  final TextEditingController referralcodecontroller = TextEditingController();
 
   // ...existing code...
 
@@ -91,6 +93,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
           mobileController.text = customer.mobile ?? '';
           emailController.text = customer.email ?? '';
           storeController.text = "Store ${customer.store!.id.toString()}" ?? '';
+          referralcodecontroller.text = customer.referralCode ?? '';
           // addressController.text = customer.address ?? '';
           isLoading = false;
           print(profile);
@@ -227,278 +230,340 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Appcolors.yellow,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Appcolors.white),
-            onPressed: () {
-              // Handle notification icon press
-              SharedPreferencesHelper.setIsLoggedIn(status: false);
-              SharedPreferencesHelper.clearRole();
+    return profile.isEmpty
+        ? Center(child: CircularProgressIndicator())
+        : Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Appcolors.yellow,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout, color: Appcolors.white),
+                onPressed: () {
+                  // Handle notification icon press
+                  SharedPreferencesHelper.setIsLoggedIn(status: false);
+                  SharedPreferencesHelper.clearRole();
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          // Yellow Header with Back Button and Profile
-          Container(
-            color: Appcolors.yellow,
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Container(
-                //   decoration: BoxDecoration(
-                //     color: Colors.white,
-                //     shape: BoxShape.circle,
-                //   ),
-                //   child: IconButton(
-                //     icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
-                //     onPressed: () => Navigator.pop(context),
-                //   ),
-                // ),
-                // SizedBox(height: 20),
-                Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40, color: Colors.grey),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        'My Profile',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'You may edit your details here.',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // White Container with Form
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.26,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
               ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
+            ],
+          ),
+          body: Stack(
+            children: [
+              // Yellow Header with Back Button and Profile
+              Container(
+                color: Appcolors.yellow,
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(10),
-                    Text("NAME"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: nameController,
-                      enabled: _isEditing,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "Adam Doe",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("MOBILE NO"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: mobileController,
-                      enabled: false,
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "+91 88888 34213",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        // suffixIcon: Icon(
-                        //   Icons.edit,
-                        //   size: 16,
-                        //   color: Colors.grey,
-                        // ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("EMAIL"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: emailController,
-                      enabled: false,
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "adam.doe@gmail.com",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        // suffixIcon: Icon(
-                        //   Icons.edit,
-                        //   size: 16,
-                        //   color: Colors.grey,
-                        // ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("NEAREST STORE"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: storeController,
-                      enabled: false,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "27-A, Aparna apartments, Gurudev..",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        // suffixIcon: Icon(
-                        //   Icons.edit,
-                        //   size: 16,
-                        //   color: Colors.grey,
-                        // ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("ADDRESS"),
-                    SizedBox(height: 5),
-                    TextFormField(
-                      controller: addressController,
-                      enabled: _isEditing,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        hintText: "27-A, Aparna apartments, Gurudev..",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        // suffixIcon: Icon(
-                        //   Icons.edit,
-                        //   size: 16,
-                        //   color: Colors.grey,
-                        // ),
-                      ),
-                    ),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     shape: BoxShape.circle,
+                    //   ),
+                    //   child: IconButton(
+                    //     icon: Icon(Icons.arrow_back, color: Colors.black, size: 20),
+                    //     onPressed: () => Navigator.pop(context),
+                    //   ),
+                    // ),
                     // SizedBox(height: 20),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        updateProfile(
-                          nameController.text,
-                          emailController.text,
-                          mobileController.text,
-                          addressController.text,
-                        );
-                        // setState(() {
-                        //   if (_isEditing) {
-                        //     // Save changes logic here
-                        //   }
-                        //   _isEditing = !_isEditing;
-                        // });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Appcolors.green,
-                        minimumSize: Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        "UPDATE",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.person,
+                              size: 40,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'My Profile',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'You may edit your details here.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-
-                    vSize(100),
                   ],
                 ),
               ),
-            ),
+
+              // White Container with Form
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.26,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        vSize(10),
+                        Text("NAME"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: nameController,
+                          enabled: _isEditing,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            hintText: "Adam Doe",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text("MOBILE NO"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: mobileController,
+                          enabled: false,
+                          cursorColor: Colors.black,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            hintText: "+91 88888 34213",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            // suffixIcon: Icon(
+                            //   Icons.edit,
+                            //   size: 16,
+                            //   color: Colors.grey,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text("EMAIL"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: emailController,
+                          enabled: false,
+                          cursorColor: Colors.black,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            hintText: "adam.doe@gmail.com",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            // suffixIcon: Icon(
+                            //   Icons.edit,
+                            //   size: 16,
+                            //   color: Colors.grey,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text("NEAREST STORE"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: storeController,
+                          enabled: false,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            hintText: "27-A, Aparna apartments, Gurudev..",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            // suffixIcon: Icon(
+                            //   Icons.edit,
+                            //   size: 16,
+                            //   color: Colors.grey,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text("ADDRESS"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: addressController,
+                          enabled: _isEditing,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            hintText: "27-A, Aparna apartments, Gurudev..",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            // suffixIcon: Icon(
+                            //   Icons.edit,
+                            //   size: 16,
+                            //   color: Colors.grey,
+                            // ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text("REFERRAL CODE"),
+                        SizedBox(height: 5),
+                        TextFormField(
+                          controller: referralcodecontroller,
+                          readOnly: true,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            // hintText: "27-A, Aparna apartments, Gurudev..",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            suffixIcon: IconButton(
+                              // Changed from GestureDetector to IconButton
+                              onPressed: () async {
+                                print("Share button pressed");
+                                final String referralCode =
+                                    referralcodecontroller.text;
+                                if (referralCode.isNotEmpty) {
+                                  try {
+                                    await Share.share(
+                                      'Hey! Use my referral code "$referralCode" to get exciting offers on TeaBerry App!',
+                                      subject: 'TeaBerry Referral Code',
+                                    );
+                                  } catch (e) {
+                                    print('Error sharing: $e');
+                                    showAppToast('Error sharing referral code');
+                                  }
+                                } else {
+                                  showAppToast(
+                                    'No referral code available to share',
+                                  );
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.share,
+                                size: 28,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 30),
+                        ElevatedButton(
+                          onPressed: () {
+                            updateProfile(
+                              nameController.text,
+                              emailController.text,
+                              mobileController.text,
+                              addressController.text,
+                            );
+                            // setState(() {
+                            //   if (_isEditing) {
+                            //     // Save changes logic here
+                            //   }
+                            //   _isEditing = !_isEditing;
+                            // });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Appcolors.green,
+                            minimumSize: Size(double.infinity, 48),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "UPDATE",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+
+                        vSize(100),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
   }
 }
 

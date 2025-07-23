@@ -155,6 +155,14 @@ class SharedPreferencesHelper {
     return _prefs.getString("customer_address") ?? "";
   }
 
+  static void setcustomerwalletbalance({required String walletbalance}) {
+    _prefs.setString("walletbalance", walletbalance);
+  }
+
+  static String getcustomerwalletbalance() {
+    return _prefs.getString("walletbalance") ?? "";
+  }
+
   //clean role
   static void clearRole() {
     _prefs.remove("role");

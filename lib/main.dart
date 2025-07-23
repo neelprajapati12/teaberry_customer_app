@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/customer_screens/conformationscreen.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
+import 'package:teaberryapp_project/customer_screens/myorders.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/selectionscreen.dart';
+import 'package:teaberryapp_project/customer_screens/wallet_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
@@ -40,7 +42,9 @@ class MyApp extends StatelessWidget {
         '/homedeliveryboy':
             (context) => HomepageDeliveryboy(), // Add your home screen route
       },
-      home: getInitialPage(),
+      home:
+          // WalletScreen(),
+          getInitialPage(),
       // ConfirmationScreen(),
       // LoginPage(),
       // BottomNavbarCustomer(),
