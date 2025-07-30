@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
 import 'package:teaberryapp_project/models/deliveryordermodel.dart';
@@ -15,6 +16,7 @@ class HomepageDeliveryboy extends StatefulWidget {
 
 class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
   List<DeliveryOrderModel> orders = [];
+  List<DeliveryOrderModel> deliveredorders = [];
   bool isLoading = true;
   dynamic orderdata;
   dynamic incentive;
@@ -43,6 +45,14 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
         orders =
             data
                 .where((json) => json['status'] != 'DELIVERED')
+                .map(
+                  (json) =>
+                      DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
+                )
+                .toList();
+        deliveredorders =
+            data
+                .where((json) => json['status'] == 'DELIVERED')
                 .map(
                   (json) =>
                       DeliveryOrderModel.fromJson(json as Map<String, dynamic>),
@@ -110,31 +120,41 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
     }
   }
 
+  var incentiveamount = 0;
   getincentivedata() async {
-    final url = Uri.parse(
-      '${ApiConstant.baseUrl}/api/incentives/delivery-boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
-    );
-    print(url);
+    try {
+      final url = Uri.parse(
+        '${ApiConstant.baseUrl}/api/incentives/delivery-boy/${SharedPreferencesHelper.getIDdeliveryboy()}',
+      );
+      print(url);
 
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
-      },
-    );
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      print("Incentive Data Fetched - ${response.body}");
-      print("Incentive data fetched successfully");
-      incentive = json.decode(response.body);
-      setState(() {});
-    } else {
+      if (response.statusCode == 200) {
+        print("Incentive Data Fetched - ${response.body}");
+        final data = json.decode(response.body);
+        setState(() {
+          incentive = data['incentiveAmount'] ?? 0;
+        });
+      } else {
+        setState(() {
+          incentive = 0;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error fetching incentives: $e");
       setState(() {
+        incentive = 0;
         isLoading = false;
       });
-      throw Exception('Failed to load inentives');
     }
   }
 
@@ -194,14 +214,12 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
     return Scaffold(
       backgroundColor: Colors.white,
       body:
-          orders.isEmpty && isLoading
+          isLoading ||
+                  orders == null ||
+                  orderdata == null ||
+                  // incentive == null ||
+                  profiledata == null
               ? Center(child: CircularProgressIndicator())
-              : orderdata.isEmpty
-              ? CircularProgressIndicator()
-              : incentive.isEmpty
-              ? CircularProgressIndicator()
-              : profiledata.isEmpty
-              ? CircularProgressIndicator()
               : SafeArea(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16),
@@ -222,7 +240,9 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                                   builder:
                                       (context) => ProfileScreenDeliveryboy(),
                                 ),
-                              );
+                              ).then((_) {
+                                setState(() {});
+                              });
                             },
                             child: CircleAvatar(
                               backgroundColor: Colors.grey[200],
@@ -264,6 +284,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => OrdersScreen(
+                                        deliveredorders: deliveredorders,
                                         orders: orders,
                                         firstchar: firstChar,
                                       ),
@@ -319,9 +340,12 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                           CircleAvatar(
                             radius: 30,
                             backgroundColor: Colors.amber[300],
-                            backgroundImage: AssetImage(
-                              'assets/iamges/user.png',
-                            ),
+                            backgroundImage:
+                                NetworkImage(profiledata["photoUrl"]) != null
+                                    ? NetworkImage(profiledata["photoUrl"])
+                                    : const AssetImage(
+                                      'assets/iamges/user.png',
+                                    ),
                           ),
                           SizedBox(width: 16),
                           Column(
@@ -336,7 +360,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '${profiledata["email"]}',
+                                'Email - ${profiledata["email"]}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -344,7 +368,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                               ),
                               SizedBox(height: 2),
                               Text(
-                                '${profiledata["mobile"]}',
+                                'Mobile No - ${profiledata["mobile"]}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -362,7 +386,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                         width: double.infinity,
                         padding: EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Color(0xFF76A04D),
+                          color: Appcolors.green,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -400,7 +424,8 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                             SizedBox(
                               width: w * 0.8,
                               child: Text(
-                                'Total Bonus This Month: Rs. ${incentive["incentiveAmount"]}/-',
+                                'Total Earnings This Month: Rs. ${incentive ?? 0}/-',
+                                // 'Total Bonus This Month: Rs. ${incentive["incentiveAmount"]}/-',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white,
