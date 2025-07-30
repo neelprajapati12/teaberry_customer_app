@@ -249,7 +249,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => WalletScreen(),
                                     ),
-                                  );
+                                  ).then((_) {
+                                    setState(() {});
+                                  });
                                 },
                                 child: CircleAvatar(
                                   backgroundColor: Colors.grey.shade200,
@@ -347,7 +349,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     customerData: customerModel!,
                                   ),
                             ),
-                          );
+                          ).then((_) {
+                            setState(() {});
+                          });
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -428,7 +432,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         index: index,
                                       ),
                                 ),
-                              );
+                              ).then((_) {
+                                setState(() {});
+                              });
                             },
                             child: Column(
                               children: [

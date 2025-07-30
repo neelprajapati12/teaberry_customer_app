@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
@@ -39,6 +43,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final roles = ['Customer', 'Delivery Boy'];
   final stores = ['Store 1', 'Store 2'];
 
+  File? _photoFile;
+  final _picker = ImagePicker();
+
+  Future<void> pickImage(Function(File) onPicked) async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) onPicked(File(picked.path));
+  }
+
+  Future<void> _uploadImage(Function(File) onPicked) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpeg', 'png', 'jpg'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      File file = File(result.files.single.path!);
+      onPicked(file);
+
+      // Optional: Save locally if needed
+      // await SharedPreferencesHelper.setUserImage(file);
+      showAppToast("Image Uploaded Successfully!");
+      // Fluttertoast.showToast(
+      //   msg: "Image Selected Successfully!",
+      //   backgroundColor: Color(0xffFFDFDF),
+      //   textColor: Appcolors.red,
+      // );
+    }
+  }
+
   // First, fix the imports at the top of the file
   // Remove or comment out: import 'package:http/http.dart' as http;
 
@@ -55,49 +88,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       }
 
-      // Get the store ID for the selected store
       final selectedStoreId = storeIdMap[selectedStore];
       if (selectedStoreId == null) {
         throw Exception('Invalid store selection');
       }
 
-      // Show loading dialog
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      final userData = jsonEncode({
-        'name': nameController.text,
-        'email': emailController.text,
-        'mobile': mobileController.text,
+      // Create user data map
+      final userData = {
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'mobile': mobileController.text.trim(),
         'password': passwordController.text,
-        'address': addressController.text,
+        'address': addressController.text.trim(),
         'role': "ROLE_CUSTOMER",
         'referralCode':
             referralCodeController.text.isEmpty
                 ? ""
-                : referralCodeController.text,
-        'storeId': selectedStoreId, // Use the selected store's ID
-      });
+                : referralCodeController.text.trim(),
+        'storeId': selectedStoreId,
+      };
 
+      // Create FormData similar to delivery boy signup
       final formData = FormData.fromMap({
         'userData': MultipartFile.fromString(
-          userData,
-          contentType: MediaType('application', 'json'),
+          json.encode(userData),
+          contentType: MediaType("application", "json"),
         ),
+        if (_photoFile != null)
+          'photo': await MultipartFile.fromFile(
+            _photoFile!.path,
+            filename: _photoFile!.path.split('/').last,
+            contentType: MediaType(
+              'image',
+              _photoFile!.path.toLowerCase().endsWith('.png') ? 'png' : 'jpeg',
+            ),
+          ),
       });
 
-      final dio = Dio(
-        BaseOptions(
-          baseUrl: ApiConstant.baseUrl,
-          validateStatus: (status) => status! < 500,
-        ),
-      );
+      final dio = Dio();
+      dio.options.baseUrl = ApiConstant.baseUrl;
 
       print('Request URL: ${ApiConstant.baseUrl}/auth/signup');
-      print('Request Body: ${formData.fields}');
+      print('Request Fields: ${formData.fields}');
+      if (_photoFile != null) {
+        print('Photo being sent: ${_photoFile!.path}');
+      }
 
       final response = await dio.post(
         '/auth/signup',
@@ -458,6 +499,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: referralCodeController,
                       hintText: "Enter referral code (if any)",
                     ),
+                    SizedBox(height: 20),
+                    // Upload PHOTO
+                    imageUploader(
+                      "UPLOAD PHOTO(Optional)",
+                      _photoFile,
+                      () => _uploadImage((f) => setState(() => _photoFile = f)),
+                    ),
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () async {
@@ -524,6 +572,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget imageUploader(String label, File? file, VoidCallback onPick) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        SizedBox(height: 5),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  file != null ? "Selected" : "No file chosen",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: onPick,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Appcolors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text("UPLOAD", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+        SizedBox(height: 15),
+      ],
     );
   }
 }

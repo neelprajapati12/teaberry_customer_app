@@ -89,10 +89,10 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
       "password": passwordController.text.trim(),
       "role": "ROLE_DELIVERY_BOY",
       "storeId": selectedStoreId, // Use the correct store ID from the map
-      "referredByDeliveryBoyId":
-          referralcontroller.text.trim().isNotEmpty
-              ? referralcontroller.text.trim()
-              : null,
+      // "referredByDeliveryBoyId":
+      //     referralcontroller.text.trim().isNotEmpty
+      //         ? referralcontroller.text.trim()
+      //         : null,
     };
 
     try {
@@ -397,22 +397,22 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 15),
-                      Text("REFERRAL ID (Optional)"),
-                      vSize(5),
-                      TextFormField(
-                        controller: referralcontroller,
-                        decoration: InputDecoration(
-                          hintText: "Enter a Delivery Boy Referral ID",
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        // Remove validator since it's optional
-                      ),
+                      // SizedBox(height: 15),
+                      // Text("REFERRAL ID (Optional)"),
+                      // vSize(5),
+                      // TextFormField(
+                      //   controller: referralcontroller,
+                      //   decoration: InputDecoration(
+                      //     hintText: "Enter a Delivery Boy Referral ID",
+                      //     filled: true,
+                      //     fillColor: Colors.grey[200],
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       borderSide: BorderSide.none,
+                      //     ),
+                      //   ),
+                      //   // Remove validator since it's optional
+                      // ),
                       SizedBox(height: 20),
                       // Upload PHOTO
                       imageUploader(

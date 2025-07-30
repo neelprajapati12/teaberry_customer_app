@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http show get;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/customer_screens/myorders_detailscreen.dart';
 import 'package:teaberryapp_project/models/myorders_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
@@ -88,29 +89,41 @@ class _MyordersPageState extends State<MyordersPage> {
               ? const Center(child: CircularProgressIndicator())
               : myOrders.isEmpty
               ? const Center(child: Text('No orders found'))
-              : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: myOrders.length,
-                itemBuilder: (context, index) {
-                  final order = myOrders[index];
-                  return OrderCard(
-                    orderNumber: 'ORDER NO ${order.id}',
-                    status: order.status ?? 'Processing',
-                    price: (order.totalPrice ?? 0.0).toDouble(),
-                    imageUrl:
-                        order.store?.photoUrl ??
-                        'https://picsum.photos/200?random=$index',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => OrderDetailsScreen(myorders: order),
-                        ),
-                      );
-                    },
-                  );
-                },
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: myOrders.length,
+                      itemBuilder: (context, index) {
+                        final order = myOrders[index];
+                        return OrderCard(
+                          orderNumber: 'ORDER NO ${order.id}',
+                          status: order.status ?? 'Processing',
+                          price: (order.totalPrice ?? 0.0).toDouble(),
+                          imageUrl:
+                              order.store?.photoUrl ??
+                              'https://picsum.photos/200?random=$index',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        OrderDetailsScreen(myorders: order),
+                              ),
+                            ).then((_) {
+                              setState(() {});
+                            });
+                          },
+                        );
+                      },
+                    ),
+                    vSize(100),
+                  ],
+                ),
               ),
     );
   }

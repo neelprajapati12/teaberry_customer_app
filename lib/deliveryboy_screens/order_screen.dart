@@ -4,29 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/delivered_order_detailspage.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart';
 import 'package:teaberryapp_project/models/deliveryordermodel.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
 class OrdersScreen extends StatefulWidget {
   final List<DeliveryOrderModel> orders;
+  final List<DeliveryOrderModel> deliveredorders;
   final String firstchar;
 
   const OrdersScreen({
     super.key,
     required this.orders,
     required this.firstchar,
+    required this.deliveredorders,
   });
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
+enum OrderFilter { latest, delivered }
+
 class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void initState() {
     super.initState();
+    print(widget.orders);
     // fetchAllDeliveries();
   }
+
+  OrderFilter selectedFilter = OrderFilter.latest;
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,11 +49,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey.shade200,
-                    child: Text(
-                      widget.firstchar,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey.shade200,
+                      child: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                   Stack(
@@ -87,13 +100,76 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ),
 
               const SizedBox(height: 16),
-
               // Orders section
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<OrderFilter>(
+                    value: selectedFilter,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    elevation: 2,
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    onChanged: (OrderFilter? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          selectedFilter = newValue;
+                        });
+                      }
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: OrderFilter.latest,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.local_shipping,
+                              color: Appcolors.green,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Latest Orders'),
+                          ],
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: OrderFilter.delivered,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Appcolors.green,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Delivered Orders'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Orders section title
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Orders",
-                  style: TextStyle(
+                  selectedFilter == OrderFilter.latest
+                      ? "Latest Orders (${widget.orders.length})"
+                      : "Delivered Orders (${widget.deliveredorders.length})",
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -105,53 +181,91 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
               // Orders list
               Expanded(
-                child: ListView.builder(
-                  itemCount: widget.orders.length,
-                  itemBuilder: (context, index) {
-                    final order = widget.orders[index];
-                    return ListTile(
-                      contentPadding: EdgeInsets.symmetric(vertical: 4),
-                      leading: Icon(Icons.check_circle, color: Appcolors.green),
-                      title: Text("${order.customer!.name}"),
-                      subtitle: Text("${order.customer!.mobile}"),
-                      trailing: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => OrderDetailsScreen(
-                                    orderdetails: order,
-                                    length: widget.orders.length,
-                                    firstchar: widget.firstchar,
-                                    // orderid:widget.orders.id,
-                                  ),
-                            ),
-                          ).then((_) {
-                            // Called when coming back from the product details page
-                            setState(() {});
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Appcolors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        child: Text(
-                          "DETAILS",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                child:
+                    selectedFilter == OrderFilter.latest
+                        ? _buildOrdersList(widget.orders)
+                        : _buildOrdersList(widget.deliveredorders),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildOrdersList(List<DeliveryOrderModel> orders) {
+    if (orders.isEmpty) {
+      return const Center(
+        child: Text(
+          "No orders available",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: orders.length,
+      itemBuilder: (context, index) {
+        final order = orders[index];
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 4),
+          leading: Icon(
+            selectedFilter == OrderFilter.latest
+                ? Icons.local_shipping
+                : Icons.check_circle,
+            color: Appcolors.green,
+          ),
+          title: Text(order.customer?.name ?? 'Unknown'),
+          subtitle: Text(order.customer?.mobile ?? 'No contact'),
+          trailing: ElevatedButton(
+            onPressed: () {
+              if (selectedFilter == OrderFilter.latest) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => OrderDetailsScreen(
+                          orderdetails: order,
+                          length: orders.length,
+                          firstchar: widget.firstchar,
+                        ),
+                  ),
+                ).then((_) => setState(() {}));
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => DeliveredOrderDetailspage(
+                          orderdetails: order,
+                          length: orders.length,
+                          firstchar: widget.firstchar,
+                        ),
+                  ),
+                ).then((_) => setState(() {}));
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  selectedFilter == OrderFilter.latest
+                      ? Appcolors.green
+                      : Appcolors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            child: Text(
+              selectedFilter == OrderFilter.latest ? "DETAILS" : "VIEW",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
     );
   }
 }

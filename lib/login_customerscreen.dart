@@ -235,6 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                     CustomTextFormField(
                       controller: numbercontroller,
                       hintText: "9888888888",
+                      keyboardType: TextInputType.phone,
                     ),
                     // TextField(
                     //   decoration: InputDecoration(

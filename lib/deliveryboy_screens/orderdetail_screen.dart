@@ -97,6 +97,51 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
+  updatedeliverystatus() async {
+    try {
+      final url = Uri.parse(
+        '${ApiConstant.baseUrl}/deliveries/${widget.orderdetails.id}/status',
+      );
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer ${SharedPreferencesHelper.getTokendeliveryboy()}',
+      };
+      final body = jsonEncode({"status": "OUT_FOR_DELIVERY"});
+      print("Body" + body);
+
+      final response = await http.put(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        print("Delivery Status Updated Successfully");
+        final data = jsonDecode(response.body);
+        print("Response Data: $data");
+        showAppToast("Order Accepted");
+        // showAppToast(msg: "Order Accepted");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => DeliveryDetailsScreen(
+                  orderdetails: widget.orderdetails,
+                  length: widget.length,
+                  firstchar: widget.firstchar,
+                ),
+          ),
+        ).then((_) {
+          // Called when coming back from the product details page
+          setState(() {});
+        });
+        // _showOfferDialog(context);
+      } else {
+        print("Delivery failed: ${response.body}");
+        showAppToast("Failed to update delivery status");
+      }
+    } catch (e) {
+      print("Error exception: $e");
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -116,11 +161,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.grey.shade200,
-                            child: Text(
-                              widget.firstchar,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey.shade200,
+                              child: Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                           Stack(
@@ -187,7 +237,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       buildOrderItems(widget.orderdetails.items),
                       // buildOrderItems(widget.orderdetails.items),
                       buildLabel("PAYMENT DONE?"),
-                      buildDisabledField("NO"),
+                      buildDisabledField("YES"),
                       buildLabel("MODE OF PAYMENT"),
                       buildDisabledField(
                         "${widget.orderdetails.paymentMethod}",
@@ -198,22 +248,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       // Accept Button
                       ElevatedButton(
                         onPressed: () {
-                          showAppToast("Order Accepted");
-                          // showAppToast(msg: "Order Accepted");
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => DeliveryDetailsScreen(
-                                    orderdetails: widget.orderdetails,
-                                    length: widget.length,
-                                    firstchar: widget.firstchar,
-                                  ),
-                            ),
-                          ).then((_) {
-                            // Called when coming back from the product details page
-                            setState(() {});
-                          });
+                          updatedeliverystatus();
 
                           // ScaffoldMessenger.of(
                           //   context,

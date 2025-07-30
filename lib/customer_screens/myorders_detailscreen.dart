@@ -279,7 +279,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ),
                               ],
                             ),
-                            if (widget.myorders.discountAmount! > 0)
+                            if (widget.myorders.discountAmount! > 0) ...{
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 8,
@@ -305,26 +305,28 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ],
                                 ),
                               ),
-                            const Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'After Discount',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                              const Divider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'After Discount',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${widget.myorders.totalPrice}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                  Text(
+                                    '${widget.myorders.totalPrice}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
+                            },
                           ],
                         ),
                       ),
