@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 
 class ConfirmationScreen extends StatefulWidget {
@@ -26,20 +27,22 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
       backgroundColor: Color(0xffEED067),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveSize.width(context, 6),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 '🎉 Congratulations!',
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: ResponsiveSize.font(context, 8),
                   fontWeight: FontWeight.bold,
-                  color: Colors.black, // Changed here
+                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: ResponsiveSize.height(context, 2.5)),
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -52,18 +55,18 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.all(30),
+                padding: EdgeInsets.all(ResponsiveSize.width(context, 8)),
                 child: Icon(
                   Icons.check_circle_rounded,
-                  size: 80,
+                  size: ResponsiveSize.width(context, 20),
                   color: Color(0xFF28C76F),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: ResponsiveSize.height(context, 3.5)),
               Text(
                 'Your order has been successfully placed!',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: ResponsiveSize.font(context, 5),
                   fontWeight: FontWeight.w500,
                   color: Colors.black87,
                 ),

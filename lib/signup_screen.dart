@@ -17,6 +17,7 @@ import 'package:teaberryapp_project/login_customerscreen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/shared_pref.dart';
+import 'constants/responsivesize.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -99,26 +100,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      // Create user data map
-      final userData = {
+      // 1. Core userData payload
+      final Map<String, dynamic> userData = {
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'mobile': mobileController.text.trim(),
         'password': passwordController.text,
         'address': addressController.text.trim(),
-        'role': "ROLE_CUSTOMER",
-        'referralCode':
-            referralCodeController.text.isEmpty
-                ? ""
-                : referralCodeController.text.trim(),
+        'role': 'ROLE_CUSTOMER',
         'storeId': selectedStoreId,
       };
 
-      // Create FormData similar to delivery boy signup
+      // 2. Conditionally add referral info
+      final String refText = referralCodeController.text.trim();
+      if (refText.isNotEmpty) {
+        if (RegExp(r'^\d+$').hasMatch(refText)) {
+          // all digits → delivery boy ID
+          userData['referredByDeliveryBoyId'] = int.parse(refText);
+        } else {
+          // non‐digit → referral code
+          userData['referralCode'] = refText;
+        }
+      }
+
+      // 3. Build FormData (photo is still optional)
       final formData = FormData.fromMap({
         'userData': MultipartFile.fromString(
-          json.encode(userData),
-          contentType: MediaType("application", "json"),
+          jsonEncode(userData),
+          contentType: MediaType('application', 'json'),
         ),
         if (_photoFile != null)
           'photo': await MultipartFile.fromFile(
@@ -130,6 +139,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
       });
+
+      // 4. Send the request as before...
 
       final dio = Dio();
       dio.options.baseUrl = ApiConstant.baseUrl;
@@ -275,16 +286,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Appcolors.yellow,
-        // title: Text('Sign Up'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: EdgeInsets.only(left: ResponsiveSize.width(context, 4)),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: ResponsiveSize.width(context, 7),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+                // size: ResponsiveSize.font(context, ,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
         ),
       ),
       body: Stack(
@@ -293,46 +312,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Container(
             color: Appcolors.yellow,
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 6),
+              // vertical: ResponsiveSize.height(context, 5),
+            ),
             child: Column(
               children: [
-                // Row(
-                //   children: [
-                //     Container(
-                //       decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         shape: BoxShape.circle,
-                //       ),
-                //       child: IconButton(
-                //         icon: Icon(
-                //           Icons.arrow_back,
-                //           color: Colors.black,
-                //           size: 20,
-                //         ),
-                //         onPressed: () => Navigator.pop(context),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Image.asset(
-                  'assets/iamges/removebckclr.png',
+                  'assets/iamges/logo.png',
                   fit: BoxFit.fill,
-                  height: 160,
-                  width: 200,
+                  height: ResponsiveSize.height(context, 18),
+                  width: ResponsiveSize.width(context, 45),
                 ),
-                // SizedBox(height: 5),
+                SizedBox(height: ResponsiveSize.height(context, 2)),
                 Text(
                   'Sign Up',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: ResponsiveSize.font(context, 7.5),
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: ResponsiveSize.height(context, 1)),
                 Text(
                   'Please sign up to get started',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.font(context, 4),
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
@@ -340,7 +347,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           // Form Body
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.29,
+            top: ResponsiveSize.height(context, 32),
             left: 0,
             right: 0,
             bottom: 0,
@@ -348,46 +355,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(ResponsiveSize.width(context, 8)),
+                  topRight: Radius.circular(ResponsiveSize.width(context, 8)),
                 ),
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 6),
+                  vertical: ResponsiveSize.height(context, 2.5),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(10),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("NAME"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: nameController,
                       hintText: "Adam Doe",
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("MOBILE NO"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: mobileController,
                       hintText: "+91 88888 34213",
                       keyboardType: TextInputType.phone,
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("EMAIL"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: emailController,
                       hintText: "adam.doe@gmail.com",
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("NEAREST STORE"),
-                    SizedBox(height: 5),
-                    // Replace the existing stores DropdownButtonFormField with this:
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.width(context, 2),
+                        ),
                       ),
                       child:
                           isLoadingStores
@@ -400,11 +411,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               : DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.width(context, 2),
+                                    ),
                                     borderSide: BorderSide.none,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveSize.width(
+                                      context,
+                                      4,
+                                    ),
                                   ),
                                 ),
                                 hint: const Text("Select nearest store"),
@@ -429,16 +445,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                               ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("ADDRESS"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: addressController,
                       hintText: "27-A, Aparna apartments, Gandhinagar...",
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("PASSWORD"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     TextFormField(
                       controller: passwordController,
                       obscureText: _hidePassword,
@@ -463,9 +479,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("RE-TYPE PASSWORD"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     TextFormField(
                       controller: confirmPasswordController,
                       obscureText: _hideConfirmPassword,
@@ -492,21 +508,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Text("REFERRAL CODE (Optional)"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
+                    Text("REFERRAL CODE or REFERRAL ID(Optional)"),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: referralCodeController,
-                      hintText: "Enter referral code (if any)",
+                      hintText: "Enter referral code or referral id(if any)",
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     // Upload PHOTO
                     imageUploader(
                       "UPLOAD PHOTO(Optional)",
                       _photoFile,
                       () => _uploadImage((f) => setState(() => _photoFile = f)),
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: ResponsiveSize.height(context, 3)),
                     ElevatedButton(
                       onPressed: () async {
                         print("Sign Up button pressed");
@@ -536,7 +552,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -564,7 +580,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ],
                     ),
-                    vSize(20),
+                    vSize(ResponsiveSize.height(context, 2)),
                   ],
                 ),
               ),

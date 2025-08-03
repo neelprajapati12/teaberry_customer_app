@@ -45,11 +45,7 @@ class _WalletRechargeScreenState extends State<WalletRechargeScreen> {
             child: Column(
               children: [
                 vSize(10),
-                Image.asset(
-                  'assets/iamges/removebckclr.png',
-                  height: 120,
-                  width: 100,
-                ),
+                Image.asset('assets/iamges/.png', height: 120, width: 100),
                 SizedBox(height: 15),
                 Text(
                   'Wallet Recharge',

@@ -14,6 +14,7 @@ import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dar
 import 'package:teaberryapp_project/forgotpassword_screen.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 import 'package:teaberryapp_project/signup_screen.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -149,8 +150,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       // backgroundColor: Color.fromRGBO(227, 177, 1, 0.6),
       body: Stack(
@@ -159,130 +158,91 @@ class _LoginPageState extends State<LoginPage> {
             color: Color(0xffEED067), // Yellow background color
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 40,
-            ), // Increased vertical padding
+              horizontal: ResponsiveSize.width(context, 6), // 6% of width
+              vertical: ResponsiveSize.height(context, 5), // 5% of height
+            ),
             child: Column(
               children: [
                 Image.asset(
-                  'assets/iamges/removebckclr.png',
+                  'assets/iamges/logo.png',
                   fit: BoxFit.fill,
-                  height: 160,
-                  width: 190,
-                ), // Adjusted size
-                vSize(15),
+                  height: ResponsiveSize.height(context, 18), // 18% of height
+                  width: ResponsiveSize.width(context, 45), // 45% of width
+                ),
+                vSize(ResponsiveSize.height(context, 2)),
                 Text(
                   'Log In',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: ResponsiveSize.font(
+                      context,
+                      7.5,
+                    ), // 7.5% of width
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                vSize(10),
+                vSize(ResponsiveSize.height(context, 1)),
                 Text(
                   'Please sign in to your existing account',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: ResponsiveSize.font(context, 4), // 4% of width
                     color: Colors.black54,
-                    // fontFamily: "Sen",
                   ),
                 ),
               ],
             ),
           ),
           Positioned(
-            top:
-                MediaQuery.of(context).size.height *
-                0.35, // Adjust this value to position the white container
+            top: ResponsiveSize.height(context, 37), // 37% of height
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveSize.width(context, 6), // 6% of width
+                vertical: ResponsiveSize.height(context, 2.5), // 2.5% of height
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(ResponsiveSize.width(context, 8)),
+                  topRight: Radius.circular(ResponsiveSize.width(context, 8)),
                 ),
               ),
-              // child: ListView(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
-                    // Text(
-                    //   'Log In',
-                    //   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    // ),
-                    // Text(
-                    //   'Please sign in to your existing account',
-                    //   style: TextStyle(fontSize: 14),
-                    // ),
-                    SizedBox(height: 30),
-                    // Update the USER ID field
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text(
                       "Mobile Number",
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: ResponsiveSize.font(context, 3.5),
                         fontWeight: FontWeight.w500,
                         color: Colors.black54,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     CustomTextFormField(
                       controller: numbercontroller,
                       hintText: "9888888888",
                       keyboardType: TextInputType.phone,
                     ),
-                    // TextField(
-                    //   decoration: InputDecoration(
-                    //     hintText: "+91 88888 34213",
-                    //     hintStyle: TextStyle(color: Colors.black38),
-                    //     filled: true,
-                    //     fillColor: Colors.grey[100],
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(8),
-                    //       borderSide: BorderSide.none,
-                    //     ),
-                    //     contentPadding: EdgeInsets.symmetric(
-                    //       horizontal: 16,
-                    //       vertical: 14,
-                    //     ),
-                    //   ),
-                    // ),
-                    SizedBox(height: 20),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     Text("PASSWORD"),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     TextFormField(
                       controller: password,
-                      obscureText:
-                          !showPassword, // Changed to !showPassword for correct behavior
+                      obscureText: !showPassword,
                       decoration: InputDecoration(
                         hintText: "Password",
                         hintStyle: TextStyle(color: Colors.black38),
                         filled: true,
                         fillColor: Colors.grey[200],
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 2),
+                          ),
                           borderSide: BorderSide.none,
                         ),
                         suffixIcon: IconButton(

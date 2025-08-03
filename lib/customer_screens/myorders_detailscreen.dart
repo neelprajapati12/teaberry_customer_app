@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/models/myorders_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
@@ -157,8 +158,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   }
 
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -174,7 +173,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            // fontSize: 18,
+            fontSize: ResponsiveSize.font(context, 5),
           ),
         ),
         centerTitle: false,
@@ -185,28 +184,34 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               : error.isNotEmpty
               ? Center(child: Text(error))
               : SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(ResponsiveSize.width(context, 4)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(
+                          ResponsiveSize.width(context, 4),
+                        ),
                         child: Column(
                           children: [
                             Row(
                               children: [
                                 ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveSize.width(context, 2),
+                                  ),
                                   child: Image.network(
                                     widget.myorders.store?.photoUrl ??
                                         'https://picsum.photos/200?random=1',
-                                    width: 100,
-                                    height: 100,
+                                    width: ResponsiveSize.width(context, 25),
+                                    height: ResponsiveSize.width(context, 25),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(
+                                  width: ResponsiveSize.width(context, 4),
+                                ),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -247,81 +252,89 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            const Divider(),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: ResponsiveSize.height(context, 2)),
+                            Divider(),
+                            SizedBox(height: ResponsiveSize.height(context, 2)),
+                            Text(
                               'Order Summary',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: ResponsiveSize.font(context, 5),
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(
+                              height: ResponsiveSize.height(context, 1.5),
+                            ),
                             buildOrderItems(widget.myorders.items!),
-                            const Divider(),
+                            Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Total',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                    fontSize: ResponsiveSize.font(context, 5),
                                   ),
                                 ),
                                 Text(
                                   '${widget.myorders.originalPrice}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                    fontSize: ResponsiveSize.font(context, 5),
                                   ),
                                 ),
                               ],
                             ),
                             if (widget.myorders.discountAmount! > 0) ...{
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: ResponsiveSize.height(context, 1),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Discount',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                        fontSize: ResponsiveSize.font(
+                                          context,
+                                          5,
+                                        ),
                                       ),
                                     ),
                                     Text(
                                       '- ₹${widget.myorders.discountAmount}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                        fontSize: ResponsiveSize.font(
+                                          context,
+                                          5,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const Divider(),
+                              Divider(),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'After Discount',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: ResponsiveSize.font(context, 5),
                                     ),
                                   ),
                                   Text(
                                     '${widget.myorders.totalPrice}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: ResponsiveSize.font(context, 5),
                                     ),
                                   ),
                                 ],
@@ -331,56 +344,38 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ),
                       ),
                     ),
-                    vSize(10),
+                    SizedBox(height: ResponsiveSize.height(context, 2.5)),
                     Card(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(
+                          ResponsiveSize.width(context, 4),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Delivery Address',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: ResponsiveSize.font(context, 5),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: ResponsiveSize.height(context, 1)),
                             Text('${widget.myorders.address}'),
-                            const SizedBox(height: 16),
-                            const Text(
+                            SizedBox(height: ResponsiveSize.height(context, 2)),
+                            Text(
                               'Mobile Number',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: ResponsiveSize.font(context, 5),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: ResponsiveSize.height(context, 1)),
                             Text('${widget.myorders.customer!.mobile}'),
                           ],
                         ),
                       ),
                     ),
-                    // const SizedBox(height: 16),
-                    // const Text(
-                    //   'Delivery Address',
-                    //   style: TextStyle(
-                    //     fontWeight: FontWeight.bold,
-                    //     fontSize: 18,
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 8),
-                    // Text('${widget.myorders.address}'),
-                    // const SizedBox(height: 16),
-                    // const Text(
-                    //   'Mobile Number',
-                    //   style: TextStyle(
-                    //     fontWeight: FontWeight.bold,
-                    //     fontSize: 18,
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 8),
-                    // Text('${widget.myorders.customer!.mobile}'),
                   ],
                 ),
               ),

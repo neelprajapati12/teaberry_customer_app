@@ -3,6 +3,8 @@ import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
+
 // Import your model file here
 // import 'your_model_file.dart';
 
@@ -126,8 +128,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -167,7 +167,7 @@ class _SearchScreenState extends State<SearchScreen> {
           // ),
           // Search TextField
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(ResponsiveSize.width(context, 4)),
             child: TextField(
               cursorColor: Colors.black,
               controller: _searchController,
@@ -187,16 +187,22 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintStyle: TextStyle(color: Colors.black38),
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.width(context, 2),
+                  ),
                   borderSide: BorderSide.none,
                 ),
                 // Apply the same border style to all states
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.width(context, 2),
+                  ),
                   borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.width(context, 2),
+                  ),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -211,12 +217,16 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off, size: 64, color: Colors.grey),
-                          SizedBox(height: 16),
+                          Icon(
+                            Icons.search_off,
+                            size: ResponsiveSize.width(context, 16),
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: ResponsiveSize.height(context, 2)),
                           Text(
                             'No results found',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: ResponsiveSize.font(context, 4.5),
                               color: Colors.grey[600],
                             ),
                           ),
@@ -228,12 +238,16 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search, size: 64, color: Colors.grey),
-                          SizedBox(height: 16),
+                          Icon(
+                            Icons.search,
+                            size: ResponsiveSize.width(context, 16),
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: ResponsiveSize.height(context, 2)),
                           Text(
                             'Start typing to search',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: ResponsiveSize.font(context, 4.5),
                               color: Colors.grey[600],
                             ),
                           ),
@@ -246,11 +260,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         final result = _searchResults[index];
                         print(result);
                         final subProduct = result.subProduct;
-                        final parentInventory = result.parentInventory;
-                        final parentStore = result.parentStore;
 
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(
+                            ResponsiveSize.width(context, 2),
+                          ),
                           child: GestureDetector(
                             onTap: () {
                               print(result);
@@ -265,36 +279,58 @@ class _SearchScreenState extends State<SearchScreen> {
                                         productId: result.parentInventory.id,
                                       ),
                                 ),
-                              );
+                              ).then((_) {
+                                setState(() {});
+                              });
                             },
                             child: Card(
                               color: const Color.fromARGB(255, 243, 243, 243),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.width(context, 4),
+                                ),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(
+                                  ResponsiveSize.width(context, 2),
+                                ),
                                 child: Row(
                                   children: [
                                     ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.width(context, 4),
+                                      ),
                                       child:
                                           subProduct.photoUrl != null
                                               ? Image.network(
                                                 subProduct.photoUrl!,
-                                                width: 120,
-                                                height: 120,
+                                                width: ResponsiveSize.width(
+                                                  context,
+                                                  30,
+                                                ),
+                                                height: ResponsiveSize.height(
+                                                  context,
+                                                  15,
+                                                ),
                                                 fit: BoxFit.cover,
                                               )
                                               : Image.asset(
                                                 'assets/iamges/coffee.jpg',
-                                                width: 120,
-                                                height: 120,
+                                                width: ResponsiveSize.width(
+                                                  context,
+                                                  30,
+                                                ),
+                                                height: ResponsiveSize.height(
+                                                  context,
+                                                  15,
+                                                ),
                                                 fit: BoxFit.cover,
                                               ),
                                     ),
-                                    SizedBox(width: 12),
+                                    SizedBox(
+                                      width: ResponsiveSize.width(context, 3),
+                                    ),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -304,15 +340,28 @@ class _SearchScreenState extends State<SearchScreen> {
                                             subProduct.name!,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                              fontSize: ResponsiveSize.font(
+                                                context,
+                                                4,
+                                              ),
                                             ),
                                           ),
-                                          SizedBox(height: 6),
+                                          SizedBox(
+                                            height: ResponsiveSize.height(
+                                              context,
+                                              1.5,
+                                            ),
+                                          ),
                                           // Text(
                                           //   '❤️ Loved By ${item['likedBy']}',
                                           //   style: TextStyle(fontSize: 12),
                                           // ),
-                                          SizedBox(height: 10),
+                                          SizedBox(
+                                            height: ResponsiveSize.height(
+                                              context,
+                                              2,
+                                            ),
+                                          ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
@@ -320,14 +369,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                               Text(
                                                 '₹${subProduct.price}',
                                                 style: TextStyle(
-                                                  fontSize: 25,
+                                                  fontSize: ResponsiveSize.font(
+                                                    context,
+                                                    6,
+                                                  ),
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                               Icon(
                                                 Icons.arrow_forward_ios_rounded,
                                                 color: Appcolors.green,
-                                                size: 28,
+                                                size: ResponsiveSize.width(
+                                                  context,
+                                                  6.5,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -539,47 +594,3 @@ class _SearchScreenState extends State<SearchScreen> {
 //                                 'Qty: ${currentSubProduct.quantity ?? 0}',
 //                               ),
 //                             ),
-//                           );
-//                         },
-//                       )
-//                       : Center(
-//                         child: Text(
-//                           'No sub-products available',
-//                           style: TextStyle(
-//                             color: Colors.grey[600],
-//                             fontSize: 16,
-//                           ),
-//                         ),
-//                       ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _buildInfoRow(String label, String value) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 4.0),
-//       child: Row(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           SizedBox(
-//             width: 140,
-//             child: Text(label, style: TextStyle(fontWeight: FontWeight.w600)),
-//           ),
-//           Expanded(child: Text(value)),
-//         ],
-//       ),
-//     );
-//   }
-
-//   String _formatDate(String dateString) {
-//     try {
-//       final date = DateTime.parse(dateString);
-//       return '${date.day}/${date.month}/${date.year}';
-//     } catch (e) {
-//       return dateString;
-//     }
-//   }
-// }

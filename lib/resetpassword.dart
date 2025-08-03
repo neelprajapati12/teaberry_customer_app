@@ -5,7 +5,7 @@ import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
 
 class ResetpasswordScreen extends StatefulWidget {
@@ -73,7 +73,10 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
           Container(
             color: Appcolors.yellow,
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 6),
+              vertical: ResponsiveSize.height(context, 5),
+            ),
             child: Column(
               children: [
                 Row(
@@ -87,32 +90,35 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
                         icon: Icon(
                           Icons.arrow_back,
                           color: Colors.black,
-                          size: 20,
+                          // size: ResponsiveSize.font(context, 3),
                         ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: ResponsiveSize.height(context, 2)),
                 Text(
                   'Reset Password',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: ResponsiveSize.font(context, 6),
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: ResponsiveSize.height(context, 1)),
                 Text(
                   'Please enter your new password',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.font(context, 4),
+                    color: Colors.black54,
+                  ),
                 ),
               ],
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.28,
+            top: ResponsiveSize.height(context, 28),
             left: 0,
             right: 0,
             bottom: 0,
@@ -120,25 +126,28 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(ResponsiveSize.width(context, 8)),
+                  topRight: Radius.circular(ResponsiveSize.width(context, 8)),
                 ),
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 6),
+                  vertical: ResponsiveSize.height(context, 2.5),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(20),
+                    SizedBox(height: ResponsiveSize.height(context, 2.5)),
                     Text(
                       "NEW PASSWORD",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: ResponsiveSize.font(context, 3.5),
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: ResponsiveSize.height(context, 1)),
                     TextFormField(
                       controller: passwordController,
                       obscureText:
@@ -189,7 +198,7 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: ResponsiveSize.height(context, 3.5)),
                     ElevatedButton(
                       onPressed: () {
                         if (passwordController.text.isEmpty) {
@@ -200,15 +209,20 @@ class _ResetpasswordScreenState extends State<ResetpasswordScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,
-                        minimumSize: Size(double.infinity, 48),
+                        minimumSize: Size(
+                          double.infinity,
+                          ResponsiveSize.height(context, 6),
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 2),
+                          ),
                         ),
                       ),
                       child: Text(
                         "RESET PASSWORD",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: ResponsiveSize.font(context, 4),
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

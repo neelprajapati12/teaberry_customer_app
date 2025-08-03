@@ -5,7 +5,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
+import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
+import 'package:teaberryapp_project/shared_pref.dart';
+import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
@@ -150,9 +155,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ? Center(child: CircularProgressIndicator())
               : SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.width(context, 4),
+                    vertical: ResponsiveSize.height(context, 1.5),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -187,7 +192,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 right: 6,
                                 top: 4,
                                 child: Container(
-                                  padding: EdgeInsets.all(4),
+                                  padding: EdgeInsets.all(
+                                    ResponsiveSize.width(context, 1),
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Appcolors.green,
                                     shape: BoxShape.circle,
@@ -196,7 +203,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     widget.length.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 10,
+                                      fontSize: ResponsiveSize.font(
+                                        context,
+                                        2.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -209,13 +219,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       const SizedBox(height: 10),
 
                       Image.asset(
-                        'assets/iamges/removebckclr.png',
-                        height: 170,
+                        'assets/iamges/logo.png',
+                        height: ResponsiveSize.height(context, 20),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
 
-                      const Text(
+                      Text(
                         "Order Details",
                         style: TextStyle(
                           fontSize: 18,
@@ -249,23 +259,28 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ElevatedButton(
                         onPressed: () {
                           updatedeliverystatus();
-
-                          // ScaffoldMessenger.of(
-                          //   context,
-                          // ).showSnackBar(SnackBar(content: Text("Order Accepted")));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Appcolors.green,
-                          minimumSize: Size(double.infinity, 50),
+                          minimumSize: Size(
+                            double.infinity,
+                            ResponsiveSize.height(context, 6),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.width(context, 3),
+                            ),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: ResponsiveSize.height(context, 1.5),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           "ACCEPT ORDER",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: ResponsiveSize.font(context, 4),
                           ),
                         ),
                       ),
@@ -313,7 +328,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget buildLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      padding: EdgeInsets.only(
+        top: ResponsiveSize.height(context, 1.5),
+        bottom: ResponsiveSize.height(context, 0.5),
+      ),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
@@ -321,7 +339,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
-            fontSize: 13,
+            fontSize: ResponsiveSize.font(context, 3.2),
           ),
         ),
       ),
@@ -332,15 +350,23 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     return TextFormField(
       initialValue: text,
       readOnly: true,
-      style: TextStyle(color: Colors.black87),
+      style: TextStyle(
+        color: Colors.black87,
+        fontSize: ResponsiveSize.font(context, 3.5),
+      ),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey.shade100,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(
+            ResponsiveSize.width(context, 2.5),
+          ),
           borderSide: BorderSide.none,
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: ResponsiveSize.height(context, 1.5),
+          horizontal: ResponsiveSize.width(context, 3),
+        ),
       ),
     );
   }

@@ -14,6 +14,7 @@ import 'package:teaberryapp_project/deliveryboy_screens/orderdetail_screen.dart'
 import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
 import 'package:teaberryapp_project/getinitialpage.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
+import 'package:teaberryapp_project/resetpassword.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 // import 'package:teaberryapp_project/mycart_screen.dart';
 // import 'package:teaberryapp_project/resturantview_screen.dart';

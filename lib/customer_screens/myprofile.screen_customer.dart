@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
@@ -27,24 +30,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
   bool _hideConfirmPassword = true;
   String? selectedStore;
 
-  // final TextEditingController nameController = TextEditingController(
-  //   text: "Adam Doe",
-  // );
-  // final TextEditingController mobileController = TextEditingController(
-  //   text: "+91 88888 34213",
-  // );
-  // final TextEditingController emailController = TextEditingController(
-  //   text: "adam.doe@gmail.com",
-  // );
-  final TextEditingController addressController = TextEditingController(
-    text: "27-A, Aparna apartments, Gurudev..",
-  );
-  // final TextEditingController passwordController = TextEditingController(
-  //   text: "",
-  // );
-  // final TextEditingController confirmPasswordController = TextEditingController(
-  //   text: "",
-  // );
+  final website = 'http://teaberry-web.s3-website.ap-south-1.amazonaws.com/';
 
   final stores = ['Store 1', 'Store 2'];
 
@@ -58,6 +44,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   final TextEditingController referralcodecontroller = TextEditingController();
 
   // ...existing code...
@@ -94,7 +81,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
           emailController.text = customer.email ?? '';
           storeController.text = "Store ${customer.store!.id.toString()}" ?? '';
           referralcodecontroller.text = customer.referralCode ?? '';
-          // addressController.text = customer.address ?? '';
+          addressController.text = customer.address ?? '';
           isLoading = false;
           print(profile);
         });
@@ -152,6 +139,15 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
           userData,
           contentType: MediaType('application', 'json'),
         ),
+        if (_photoFile != null)
+          'photo': await MultipartFile.fromFile(
+            _photoFile!.path,
+            filename: _photoFile!.path.split('/').last,
+            contentType: MediaType(
+              'image',
+              _photoFile!.path.toLowerCase().endsWith('.png') ? 'png' : 'jpeg',
+            ),
+          ),
       });
 
       final dio = Dio(
@@ -192,10 +188,12 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
         //   password: passwordController.text,
         // );
         showAppToast(response.data['message'] ?? 'Profile Update successful');
+        fetchProfile();
       } else {
         final errorMessage =
             response.data['message'] ?? 'Profile update failed';
         showAppToast(errorMessage);
+        fetchProfile();
       }
     } on DioException catch (e) {
       Navigator.of(context).pop(); // Hide loading dialog
@@ -221,6 +219,28 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
     }
   }
 
+  final ImagePicker _picker = ImagePicker();
+  String? profilePhotoUrl;
+  File? _photoFile;
+
+  Future<void> pickImage(Function(File) onPicked) async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) onPicked(File(picked.path));
+  }
+
+  Future<void> _uploadImage(Function(File) onPicked) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpeg', 'png', 'jpg'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      File file = File(result.files.single.path!);
+      onPicked(file);
+      showAppToast("Image Uploaded Successfully!");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -239,7 +259,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
             backgroundColor: Appcolors.yellow,
             actions: [
               IconButton(
-                icon: const Icon(Icons.logout, color: Appcolors.white),
+                icon: const Icon(Icons.logout, color: Appcolors.black),
                 onPressed: () {
                   // Handle notification icon press
                   SharedPreferencesHelper.setIsLoggedIn(status: false);
@@ -278,13 +298,15 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                       child: Column(
                         children: [
                           CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.person,
-                              size: 40,
-                              color: Colors.grey,
-                            ),
+                            radius: 30,
+                            backgroundColor: Colors.amber[300],
+                            backgroundImage:
+                                profile.isNotEmpty &&
+                                        profile[0].photoUrl != null &&
+                                        profile[0].photoUrl!.isNotEmpty
+                                    ? NetworkImage(profile[0].photoUrl!)
+                                    : const AssetImage('assets/iamges/user.png')
+                                        as ImageProvider,
                           ),
                           SizedBox(height: 15),
                           Text(
@@ -500,7 +522,7 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                                 if (referralCode.isNotEmpty) {
                                   try {
                                     await Share.share(
-                                      'Hey! Use my referral code "$referralCode" to get exciting offers on TeaBerry App!',
+                                      'Hey! Use my referral code "$referralCode" to get exciting offers on TeaBerry App!\n Checkout the website $website',
                                       subject: 'TeaBerry Referral Code',
                                     );
                                   } catch (e) {
@@ -519,6 +541,14 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
                                 color: Colors.black,
                               ),
                             ),
+                          ),
+                        ),
+                        vSize(20),
+                        imageUploader(
+                          "CHANGE PROFILE PHOTO",
+                          _photoFile,
+                          () => _uploadImage(
+                            (f) => setState(() => _photoFile = f),
                           ),
                         ),
 
@@ -564,6 +594,45 @@ class _ProfileScreenCustomerState extends State<ProfileScreenCustomer> {
             ],
           ),
         );
+  }
+
+  Widget imageUploader(String label, File? file, VoidCallback onPick) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        SizedBox(height: 5),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  file != null ? "Selected" : "No file chosen",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: onPick,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Appcolors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text("UPLOAD", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+        SizedBox(height: 15),
+      ],
+    );
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/customtextformfield.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/signup_delivery_boy.dart';
 import 'package:teaberryapp_project/login_customerscreen.dart';
@@ -16,70 +17,69 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
-      // backgroundColor: Color.fromRGBO(227, 177, 1, 0.6),
       body: Stack(
         children: [
           Container(
             color: Color(0xffEED067), // Yellow background color
             width: double.infinity,
             padding: EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 40,
-            ), // Increased vertical padding
+              horizontal: ResponsiveSize.width(context, 6), // 6% of width
+              vertical: ResponsiveSize.height(context, 5), // 5% of height
+            ),
             child: Column(
               children: [
                 Image.asset(
-                  'assets/iamges/removebckclr.png',
+                  'assets/iamges/logo.png',
                   fit: BoxFit.fill,
-                  height: 160,
-                  width: 190,
-                ), // Adjusted size
-                vSize(15),
+                  height: ResponsiveSize.height(context, 18), // 18% of height
+                  width: ResponsiveSize.width(context, 45), // 45% of width
+                ),
+                vSize(ResponsiveSize.height(context, 2)),
                 Text(
                   'Sign Up',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: ResponsiveSize.font(
+                      context,
+                      7.5,
+                    ), // 7.5% of width
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                vSize(10),
+                vSize(ResponsiveSize.height(context, 1)),
                 Text(
                   'Please Choose a role to sign up as',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: ResponsiveSize.font(context, 4), // 4% of width
                     color: Colors.black54,
-                    // fontFamily: "Sen",
                   ),
                 ),
               ],
             ),
           ),
           Positioned(
-            top:
-                MediaQuery.of(context).size.height *
-                0.35, // Adjust this value to position the white container
+            top: ResponsiveSize.height(context, 37), // 37% of height
             left: 0,
             right: 0,
             bottom: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveSize.width(context, 6), // 6% of width
+                vertical: ResponsiveSize.height(context, 2.5), // 2.5% of height
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(ResponsiveSize.width(context, 8)),
+                  topRight: Radius.circular(ResponsiveSize.width(context, 8)),
                 ),
               ),
-              // child: ListView(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    vSize(10),
+                    vSize(ResponsiveSize.height(context, 2)),
                     RadioListTile<String>(
                       value: 'Customer',
                       groupValue: userType,
@@ -102,16 +102,19 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       title: const Text('Delivery boy'),
                       activeColor: Appcolors.green,
                     ),
-                    vSize(20),
+                    vSize(ResponsiveSize.height(context, 4)),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(
-                          0xFF76A04D,
-                        ), // Green color from design
+                        backgroundColor: Color(0xFF76A04D), // Green color
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 2),
+                          ),
                         ),
-                        minimumSize: Size(double.infinity, 48),
+                        minimumSize: Size(
+                          double.infinity,
+                          ResponsiveSize.height(context, 6),
+                        ),
                       ),
                       onPressed: () {
                         if (userType == 'Customer') {
@@ -135,17 +138,20 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: ResponsiveSize.font(context, 4),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    vSize(ResponsiveSize.height(context, 4)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Already have an account? ",
-                          style: TextStyle(color: Colors.black54, fontSize: 14),
+                          "Already have an account?",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: ResponsiveSize.font(context, 3.5),
+                          ),
                         ),
                         TextButton(
                           onPressed: () {
@@ -161,7 +167,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                             style: TextStyle(
                               color: Colors.orange,
                               fontWeight: FontWeight.w600,
-                              fontSize: 14,
+                              fontSize: ResponsiveSize.font(context, 3.5),
                             ),
                           ),
                         ),
@@ -177,84 +183,3 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: const Color(0xFFFDFDFD),
-//       body: Column(
-//         children: [
-//           Container(
-//             width: double.infinity,
-//             decoration: const BoxDecoration(
-//               color: Color(0xFFF4D35E),
-//               borderRadius: BorderRadius.only(
-//                 bottomLeft: Radius.circular(30),
-//                 bottomRight: Radius.circular(30),
-//               ),
-//             ),
-//             padding: const EdgeInsets.symmetric(vertical: 40),
-//             child: Column(
-//               children: [
-//                 Image.asset('assets/iamges/removebckclr.png', height: 170),
-//                 const SizedBox(height: 20),
-//                 const Text(
-//                   'Log In',
-//                   style: TextStyle(
-//                     fontSize: 24,
-//                     fontWeight: FontWeight.bold,
-//                     color: Colors.black87,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 const Text(
-//                   'Please sign in to your existing account',
-//                   style: TextStyle(fontSize: 14, color: Colors.black54),
-//                 ),
-//               ],
-//             ),
-//           ),
-
-//           Expanded(
-//             child: Container(
-//               width: double.infinity,
-//               decoration: const BoxDecoration(
-//                 color: Color(0xFFFDFDFD),
-//                 borderRadius: BorderRadius.only(
-//                   topLeft: Radius.circular(30),
-//                   topRight: Radius.circular(30),
-//                 ),
-//               ),
-//               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   RadioListTile<String>(
-//                     value: 'Customer',
-//                     groupValue: userType,
-//                     onChanged: (value) {
-//                       setState(() {
-//                         userType = value!;
-//                       });
-//                     },
-//                     title: const Text('Customer'),
-//                   ),
-//                   RadioListTile<String>(
-//                     value: 'Delivery boy',
-//                     groupValue: userType,
-//                     onChanged: (value) {
-//                       setState(() {
-//                         userType = value!;
-//                       });
-//                     },
-//                     title: const Text('Delivery boy'),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }

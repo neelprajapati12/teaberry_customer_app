@@ -203,10 +203,12 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
         showAppToast(
           response.data['message'] ?? "Profile Updated successfully",
         );
+        fetchProfile();
       } else {
         showErrorToast(
           "Registration failed: ${response.data['error'] ?? response.statusMessage}",
         );
+        fetchProfile();
       }
     } catch (e) {
       print("Dio error: $e");
@@ -228,7 +230,7 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
         backgroundColor: Appcolors.yellow,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Appcolors.white),
+            icon: const Icon(Icons.logout, color: Appcolors.black),
             onPressed: () {
               // Handle notification icon press
               SharedPreferencesHelper.setIsLoggedIn(status: false);
@@ -255,9 +257,15 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                   child: Column(
                     children: [
                       CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.person, size: 40, color: Colors.grey),
+                        radius: 30,
+                        backgroundColor: Colors.amber[300],
+                        backgroundImage:
+                            profile.isNotEmpty &&
+                                    profile[0].photoUrl != null &&
+                                    profile[0].photoUrl!.isNotEmpty
+                                ? NetworkImage(profile[0].photoUrl!)
+                                : const AssetImage('assets/iamges/user.png')
+                                    as ImageProvider,
                       ),
                       vSize(15),
                       Text(
@@ -344,14 +352,14 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
                     SizedBox(height: 20),
                     // Upload PHOTO
                     imageUploader(
-                      "UPLOAD PHOTO",
+                      "CHANGE PROFILE PHOTO",
                       _photoFile,
                       () => _uploadImage((f) => setState(() => _photoFile = f)),
                     ),
 
                     // Upload AADHAAR FRONT
                     imageUploader(
-                      "AADHAAR FRONT",
+                      "CHANGE AADHAR FRONT",
                       _aadhaarFront,
                       () => _uploadImage(
                         (f) => setState(() => _aadhaarFront = f),
@@ -360,7 +368,7 @@ class _ProfileScreenDeliveryboyState extends State<ProfileScreenDeliveryboy> {
 
                     // Upload AADHAAR BACK
                     imageUploader(
-                      "AADHAAR BACK",
+                      "CHANGE AADHAAR BACK",
                       _aadhaarBack,
                       () =>
                           _uploadImage((f) => setState(() => _aadhaarBack = f)),

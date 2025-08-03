@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/deliverydetail_screen.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
@@ -89,7 +90,9 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
             );
 
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: EdgeInsets.symmetric(
+                vertical: ResponsiveSize.height(context, 0.5),
+              ),
               child: buildDisabledField(
                 "Qty: ${item.quantity}  |  Name: $subProductName",
               ),
@@ -106,9 +109,9 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
               ? Center(child: CircularProgressIndicator())
               : SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.width(context, 4),
+                    vertical: ResponsiveSize.height(context, 1.5),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,7 +146,9 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
                                 right: 6,
                                 top: 4,
                                 child: Container(
-                                  padding: EdgeInsets.all(4),
+                                  padding: EdgeInsets.all(
+                                    ResponsiveSize.width(context, 1),
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Appcolors.green,
                                     shape: BoxShape.circle,
@@ -152,7 +157,10 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
                                     widget.length.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 10,
+                                      fontSize: ResponsiveSize.font(
+                                        context,
+                                        2.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -162,19 +170,19 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
                         ],
                       ),
 
-                      const SizedBox(height: 10),
+                      SizedBox(height: ResponsiveSize.height(context, 1.5)),
 
                       Image.asset(
-                        'assets/iamges/removebckclr.png',
-                        height: 170,
+                        'assets/iamges/logo.png',
+                        height: ResponsiveSize.height(context, 20),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
 
-                      const Text(
+                      Text(
                         "Order Details",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: ResponsiveSize.font(context, 4.5),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -269,7 +277,10 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
 
   Widget buildLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 4),
+      padding: EdgeInsets.only(
+        top: ResponsiveSize.height(context, 1.5),
+        bottom: ResponsiveSize.height(context, 0.5),
+      ),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
@@ -277,7 +288,7 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
-            fontSize: 13,
+            fontSize: ResponsiveSize.font(context, 3.2),
           ),
         ),
       ),
@@ -293,10 +304,15 @@ class _DeliveredOrderDetailspageState extends State<DeliveredOrderDetailspage> {
         filled: true,
         fillColor: Colors.grey.shade100,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(
+            ResponsiveSize.width(context, 2.5),
+          ),
           borderSide: BorderSide.none,
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: ResponsiveSize.height(context, 1.5),
+          horizontal: ResponsiveSize.width(context, 3),
+        ),
       ),
     );
   }

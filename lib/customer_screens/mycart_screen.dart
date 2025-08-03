@@ -6,20 +6,26 @@ import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/constants/discount_dialog.dart';
+import 'package:teaberryapp_project/constants/referral_dialog.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/customer_screens/conformationscreen.dart';
 import 'package:teaberryapp_project/customer_screens/payment_screen.dart';
 import 'package:teaberryapp_project/models/cartservice.dart';
+import 'package:teaberryapp_project/models/myorders_model.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
 class CartPage extends StatefulWidget {
+  final dynamic customeraddress;
+
+  const CartPage({super.key, this.customeraddress});
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
   String address = "27-A, Aparna apartments, Gurudev Nanak Road , Delhi ";
-  bool isLoading = true;
+  bool isLoading = false;
   String error = '';
 
   // List<Inventories1> products = [];
@@ -121,7 +127,13 @@ class _CartPageState extends State<CartPage> {
         };
       }).toList();
 
+  var orderid;
+
   Future<void> placeorder() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final url = Uri.parse('${ApiConstant.baseUrl}/orders');
       final headers = {
@@ -146,26 +158,113 @@ class _CartPageState extends State<CartPage> {
         final contentType = response.headers['content-type'] ?? '';
         if (contentType.contains('application/json')) {
           final data = jsonDecode(response.body);
+          orderid = data['id'];
           print("Parsed JSON response: $data");
         } else {
           print("Plain response: ${response.body}");
         }
         print("Order placed successfully");
-        // showAppToast("Order Placed successfully");
+        print("CHECKING DISCOUNT OR REFERRAL");
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ConfirmationScreen()),
-        );
+        checkfordiscountORreferral(orderid);
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => ConfirmationScreen()),
+        // );
       } else {
         print("Place order failed: ${response.statusCode}");
         print("Response body: ${response.body}");
         showErrorToast(" Please try again.");
       }
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       // Navigator.of(context).pop(); // Ensure dialog is dismissed on error
       print("Signup exception: $e");
       showErrorToast("Something went wrong. Please try again.");
+    }
+  }
+
+  List<MyOrdersModel> myOrders = [];
+
+  Future<void> checkfordiscountORreferral(var orderid) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse('${ApiConstant.baseUrl}/orders/my-orders');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer ${SharedPreferencesHelper.getTokencustomer()}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print("CHECKING DISCOUNT OR REFERRAL FUNC STATUS 200");
+        final List<dynamic> decoded = json.decode(response.body);
+        setState(() {
+          myOrders =
+              decoded.map((order) => MyOrdersModel.fromJson(order)).toList();
+
+          // Fix the return type error by providing a default MyOrdersModel
+          MyOrdersModel? currentOrder = myOrders.firstWhere(
+            (order) => order.id == orderid,
+            orElse: () => MyOrdersModel(), // Return empty model instead of null
+          );
+          fetchedCartData.clear();
+          CartService.items.clear();
+          CartService.clearCart();
+          // CartService.totalPrice = 0;
+
+          if (currentOrder.id != null) {
+            // Check if it's a valid order
+            if (currentOrder.discountAmount != null &&
+                currentOrder.discountAmount! > 0) {
+              print("LOYALTY BONUS APPLIED");
+              DiscountDialog.show(context, currentOrder);
+            } else if (currentOrder.customer?.walletBalance != null &&
+                currentOrder.customer!.walletBalance! > 0 &&
+                CartService.totalPrice > 500 &&
+                currentOrder.ordersUntilNextDiscount != 4) {
+              print("REFFREAL BONUS APPLIED");
+              ReferralDialog.show(context, currentOrder);
+            } else {
+              print("NOTHING APPLIED");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentScreen(myorders: currentOrder),
+                ),
+              );
+            }
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PaymentScreen(myorders: currentOrder),
+              ),
+            );
+          }
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load orders: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      showErrorToast('Error loading orders: $e');
+      print('Error loading orders: $e');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ConfirmationScreen()),
+      );
     }
   }
 
@@ -179,8 +278,6 @@ class _CartPageState extends State<CartPage> {
 
   Widget build(BuildContext context) {
     print("Cart total price is " + CartService.totalPrice.toStringAsFixed(2));
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -193,7 +290,7 @@ class _CartPageState extends State<CartPage> {
         title: Text(
           "Cart",
           style: TextStyle(
-            // fontSize: 16,
+            fontSize: ResponsiveSize.font(context, 4.5),
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
@@ -221,537 +318,395 @@ class _CartPageState extends State<CartPage> {
                         ? Text(error)
                         : Text("Your cart is empty!"),
               )
-              : Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: fetchedCartData.length,
-                        separatorBuilder:
-                            (context, index) => SizedBox(height: 15),
-                        itemBuilder: (context, index) {
-                          final item = fetchedCartData[index];
-                          return Container(
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF8F9FB),
-                              borderRadius: BorderRadius.circular(12),
+              : SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.all(ResponsiveSize.width(context, 5)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isLoading)
+                        const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Appcolors.green,
                             ),
-                            child: Row(
-                              children: [
-                                // Product Image
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child:
-                                      item['photoUrl'] != null
-                                          ? Image.network(
-                                            item['photoUrl'],
-                                            width: 120,
-                                            height: 120,
-                                            fit: BoxFit.cover,
-                                          )
-                                          : Image.asset(
-                                            'assets/iamges/coffee.jpg', // also fix typo in 'images'
-                                            width: 120,
-                                            height: 120,
-                                            fit: BoxFit.cover,
-                                          ),
+                          ),
+                        ),
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: fetchedCartData.length,
+                          separatorBuilder:
+                              (context, index) => SizedBox(
+                                height: ResponsiveSize.height(context, 1.8),
+                              ),
+                          itemBuilder: (context, index) {
+                            final item = fetchedCartData[index];
+                            return Container(
+                              padding: EdgeInsets.all(
+                                ResponsiveSize.width(context, 3),
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF8F9FB),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveSize.width(context, 3),
                                 ),
-                                SizedBox(width: 12),
-
-                                // Product Details
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // First Row: Title and Remove Button
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SizedBox(
-                                          width: w * 0.3,
-                                          child: Text(
-                                            item['subProductName'] ?? '',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        hSize(w * 0.1),
-                                        Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                          ),
-                                          child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                fetchedCartData.removeAt(index);
-                                                CartService.removeItem(
-                                                  item['productId'],
-                                                  item['subProductId'],
-                                                );
-                                                print(
-                                                  "Item removed is " +
-                                                      item['subProductName'],
-                                                );
-                                                print(
-                                                  "Cart items after removing is " +
-                                                      jsonEncode(
-                                                        CartService.items,
-                                                      ),
-                                                );
-                                                print(
-                                                  "Cart items after removing is " +
-                                                      jsonEncode(
-                                                        fetchedCartData,
-                                                      ),
-                                                );
-                                              });
-                                            },
-                                            child: Icon(
-                                              Icons.close,
-                                              color: Colors.red,
-                                              size: 18,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                              ),
+                              child: Row(
+                                children: [
+                                  // Product Image
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveSize.width(context, 2),
                                     ),
-                                    SizedBox(height: 8),
+                                    child:
+                                        item['photoUrl'] != null
+                                            ? Image.network(
+                                              item['photoUrl'],
+                                              width: ResponsiveSize.width(
+                                                context,
+                                                30,
+                                              ),
+                                              height: ResponsiveSize.height(
+                                                context,
+                                                15,
+                                              ),
+                                              fit: BoxFit.cover,
+                                            )
+                                            : Image.asset(
+                                              'assets/iamges/coffee.jpg',
+                                              width: ResponsiveSize.width(
+                                                context,
+                                                30,
+                                              ),
+                                              height: ResponsiveSize.height(
+                                                context,
+                                                15,
+                                              ),
+                                              fit: BoxFit.cover,
+                                            ),
+                                  ),
+                                  SizedBox(
+                                    width: ResponsiveSize.width(context, 3),
+                                  ),
 
-                                    // Second Row: Price
-                                    Text(
-                                      "₹${item['price'] ?? ''}",
-                                      style: TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(height: 8),
-
-                                    // Third Row: Size and Quantity Controls
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                  // Product Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        // SizedBox(
-                                        //   width: w * 0.15,
-                                        //   child: Text(
-                                        //     item.size,
-                                        //     style: TextStyle(
-                                        //       fontSize: 18,
-                                        //       color: Colors.grey,
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        Container(
-                                          width: w * 0.15,
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFF8F9FB),
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        hSize(w * 0.1),
-                                        Container(
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(
-                                              16,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  if (item['quantity'] > 1) {
-                                                    setState(() {
-                                                      item['quantity']--;
-                                                      CartService.updateQuantity(
-                                                        item['productId'],
-                                                        item['subProductId'],
-                                                        item['quantity'],
-                                                      );
-                                                      print(
-                                                        "Item subproduct name ${item['subProductName']}quantity decreased to " +
-                                                            item['quantity']
-                                                                .toString(),
-                                                      );
-                                                    });
-                                                  }
-                                                },
-                                                child: Container(
-                                                  width: 32,
-                                                  height: 32,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.white,
+                                        // First Row: Title and Remove Button
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                item['subProductName'] ?? '',
+                                                style: TextStyle(
+                                                  fontSize: ResponsiveSize.font(
+                                                    context,
+                                                    4.5,
                                                   ),
-                                                  child: Icon(
-                                                    Icons.remove,
-                                                    size: 18,
-                                                    color: Colors.black54,
-                                                  ),
+                                                  fontWeight: FontWeight.w600,
                                                 ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 12,
-                                                ),
-                                                child: Text(
-                                                  item['quantity'].toString(),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
+                                            ),
+                                            SizedBox(
+                                              width: ResponsiveSize.width(
+                                                context,
+                                                2,
                                               ),
-                                              InkWell(
+                                            ),
+                                            Container(
+                                              width: ResponsiveSize.width(
+                                                context,
+                                                8,
+                                              ),
+                                              height: ResponsiveSize.width(
+                                                context,
+                                                8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.white,
+                                              ),
+                                              child: InkWell(
                                                 onTap: () {
                                                   setState(() {
-                                                    item['quantity']++;
-                                                    CartService.updateQuantity(
+                                                    fetchedCartData.removeAt(
+                                                      index,
+                                                    );
+                                                    CartService.removeItem(
                                                       item['productId'],
                                                       item['subProductId'],
-                                                      item['quantity'],
-                                                    );
-                                                    print(
-                                                      "Item subproduct name ${item['subProductName']} quantity increased to " +
-                                                          item['quantity']
-                                                              .toString(),
                                                     );
                                                   });
                                                 },
-                                                child: Container(
-                                                  width: 32,
-                                                  height: 32,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.white,
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.add,
-                                                    size: 18,
-                                                    color: Colors.black54,
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: Colors.red,
+                                                  size: ResponsiveSize.width(
+                                                    context,
+                                                    4.5,
                                                   ),
                                                 ),
                                               ),
-                                            ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: ResponsiveSize.height(
+                                            context,
+                                            1,
                                           ),
+                                        ),
+
+                                        // Second Row: Price
+                                        Text(
+                                          "₹${item['price'] ?? ''}",
+                                          style: TextStyle(
+                                            fontSize: ResponsiveSize.font(
+                                              context,
+                                              6,
+                                            ),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: ResponsiveSize.height(
+                                            context,
+                                            1,
+                                          ),
+                                        ),
+
+                                        // Third Row: Quantity Controls
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              height: ResponsiveSize.width(
+                                                context,
+                                                8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey[200],
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                      ResponsiveSize.width(
+                                                        context,
+                                                        4,
+                                                      ),
+                                                    ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      if (item['quantity'] >
+                                                          1) {
+                                                        setState(() {
+                                                          item['quantity']--;
+                                                          CartService.updateQuantity(
+                                                            item['productId'],
+                                                            item['subProductId'],
+                                                            item['quantity'],
+                                                          );
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      width:
+                                                          ResponsiveSize.width(
+                                                            context,
+                                                            8,
+                                                          ),
+                                                      height:
+                                                          ResponsiveSize.width(
+                                                            context,
+                                                            8,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Colors.white,
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.remove,
+                                                        size:
+                                                            ResponsiveSize.width(
+                                                              context,
+                                                              4.5,
+                                                            ),
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                      horizontal:
+                                                          ResponsiveSize.width(
+                                                            context,
+                                                            3,
+                                                          ),
+                                                    ),
+                                                    child: Text(
+                                                      item['quantity']
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                        fontSize:
+                                                            ResponsiveSize.font(
+                                                              context,
+                                                              3.5,
+                                                            ),
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        item['quantity']++;
+                                                        CartService.updateQuantity(
+                                                          item['productId'],
+                                                          item['subProductId'],
+                                                          item['quantity'],
+                                                        );
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      width:
+                                                          ResponsiveSize.width(
+                                                            context,
+                                                            8,
+                                                          ),
+                                                      height:
+                                                          ResponsiveSize.width(
+                                                            context,
+                                                            8,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Colors.white,
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        size:
+                                                            ResponsiveSize.width(
+                                                              context,
+                                                              4.5,
+                                                            ),
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    // Delivery Address
-                    Text(
-                      "DELIVERY ADDRESS",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      height: h * 0.06,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFF8F9FB),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: Text(
-                          address,
-                          style: TextStyle(
-                            fontSize: 14,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-
-                    // Total Amount
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "TOTAL:",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          "₹${CartService.totalPrice.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-
-                    // Place Order Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // => _showOfferDialog(context)
-                        placeorder();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF76A04D),
-                        minimumSize: Size(double.infinity, 55),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        "PLACE ORDER",
+                      SizedBox(height: ResponsiveSize.height(context, 1.2)),
+                      // Delivery Address
+                      Text(
+                        "DELIVERY ADDRESS",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          fontSize: ResponsiveSize.font(context, 3),
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
+                      SizedBox(height: ResponsiveSize.height(context, 1)),
+                      Container(
+                        height: ResponsiveSize.height(context, 6),
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveSize.width(context, 4),
+                          vertical: ResponsiveSize.height(context, 1.5),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF8F9FB),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 3),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            widget.customeraddress,
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.font(context, 3.5),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.height(context, 1.2)),
+
+                      // Total Amount
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "TOTAL:",
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.font(context, 3.5),
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "₹${CartService.totalPrice.toStringAsFixed(2)}",
+                            style: TextStyle(
+                              fontSize: ResponsiveSize.font(context, 4.5),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: ResponsiveSize.height(context, 1.2)),
+
+                      // Place Order Button
+                      ElevatedButton(
+                        onPressed: () {
+                          placeorder();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF76A04D),
+                          minimumSize: Size(
+                            double.infinity,
+                            ResponsiveSize.height(context, 7),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.width(context, 3),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          "PLACE ORDER",
+                          style: TextStyle(
+                            fontSize: ResponsiveSize.font(context, 4),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveSize.height(context, 1.2)),
+                    ],
+                  ),
                 ),
               ),
     );
   }
-
-  void _showOfferDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.6),
-      builder:
-          (context) => BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-            child: Dialog(
-              backgroundColor: Colors.transparent,
-              insetPadding: EdgeInsets.zero,
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  // Main Container
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 50),
-                    padding: EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        // stops: ,
-                        // transform: ,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFFCEC15C).withOpacity(0.8),
-                          Color(0xFF67903D).withOpacity(0.8),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 15,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Content
-                        Stack(
-                          children: [
-                            // Decorative Triangles
-                            ...List.generate(6, (index) {
-                              return Positioned(
-                                left: (index * 40.0) % 300,
-                                top: (index * 25.0) % 150,
-                                child: Transform.rotate(
-                                  angle: index * 0.7,
-                                  child: Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white.withOpacity(0.2),
-                                    size: 14,
-                                  ),
-                                ),
-                              );
-                            }),
-                            Column(
-                              children: [
-                                Text(
-                                  'Offers!',
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 16),
-                                Text(
-                                  'Congrats!',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Text(
-                                  'Your first order is free!',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-
-                        // Bonus section
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                              bottom: BorderSide(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                '#Referral bonus: Rs. 200',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                '#Loyalty bonus: Rs. 180',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 16),
-                        Text(
-                          'Use these offers for discounts!',
-                          style: TextStyle(fontSize: 14, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Close Button
-                  Positioned(
-                    top: -15,
-                    right: 25,
-                    child: GestureDetector(
-                      onTap: () {
-                        // Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 5,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.black54,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-    );
-  }
 }
-
-// class CartItem {
-//   String name;
-//   int price;
-//   int quantity;
-//   String image;
-//   String size;
-
-//   CartItem({
-//     required this.name,
-//     required this.price,
-//     required this.quantity,
-//     required this.image,
-//     required this.size,
-//   });
-// }
-
-// List<CartItem> cartItems = [
-//     CartItem(
-//       name: "Desi Filter Coffee",
-//       price: 40,
-//       quantity: 2,
-//       image: "assets/iamges/coffee.jpg",
-//       size: "400ml",
-//     ),
-//     CartItem(
-//       name: "Pizza Calzone European",
-//       price: 230,
-//       quantity: 1,
-//       image: "assets/iamges/pizza.jpg",
-//       size: '14"',
-//     ),
-//   ];
-
-  // int get totalAmount =>
-  //     cartItems.fold(0, (sum, item) => sum + item.price * item.quantity);

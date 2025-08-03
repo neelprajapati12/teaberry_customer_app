@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/deliveryboy_screens/homepage_deliveryboy.dart';
+import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/shared_pref.dart';
 
 class DeliveryDetailsScreen extends StatefulWidget {
@@ -24,8 +25,6 @@ class DeliveryDetailsScreen extends StatefulWidget {
 }
 
 class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
-  int _currentIndex = 0;
-
   updatedeliverystatus() async {
     try {
       final url = Uri.parse(
@@ -48,6 +47,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
         _showOfferDialog(context);
       } else {
         print("Delivery failed: ${response.body}");
+        showAppToast("Failed to update delivery status");
       }
     } catch (e) {
       print("Error exception: $e");
@@ -69,17 +69,19 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
           children: [
             // Top Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveSize.width(context, 5),
+                vertical: ResponsiveSize.height(context, 1.5),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    child: Text(
-                      widget.firstchar,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   child: CircleAvatar(
+                  //     backgroundColor: Colors.grey.shade200,
+                  //     child: Icon(Icons.arrow_back_ios_new, color: Colors.black),
+                  //   ),
+                  // ),
                   Stack(
                     children: [
                       CircleAvatar(
@@ -93,14 +95,19 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         right: 2,
                         top: 2,
                         child: Container(
-                          padding: EdgeInsets.all(4),
+                          padding: EdgeInsets.all(
+                            ResponsiveSize.width(context, 1),
+                          ),
                           decoration: BoxDecoration(
                             color: Appcolors.green,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             "${widget.length}",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: ResponsiveSize.font(context, 2.5),
+                            ),
                           ),
                         ),
                       ),
@@ -113,7 +120,10 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
             // Logo Only (Text removed)
             Column(
               children: [
-                Image.asset('assets/iamges/removebckclr.png', height: 120),
+                Image.asset(
+                  'assets/iamges/logo.png',
+                  height: ResponsiveSize.height(context, 18),
+                ),
               ],
             ),
 
@@ -121,12 +131,17 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
 
             // Delivery Details Heading
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveSize.width(context, 5),
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Delivery Details',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.font(context, 5),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -136,7 +151,9 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
             // Delivery Form
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 5),
+                ),
                 child: Column(
                   children: [
                     CustomField(
@@ -168,15 +185,23 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         // );
                       },
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
+                        minimumSize: Size(
+                          double.infinity,
+                          ResponsiveSize.height(context, 6),
+                        ),
                         backgroundColor: Appcolors.green,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 3),
+                          ),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'SUBMIT',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.font(context, 4),
+                          color: Colors.white,
+                        ),
                       ),
                     ),
 
@@ -207,8 +232,13 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                 children: [
                   // Main Container
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: ResponsiveSize.width(context, 5),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: ResponsiveSize.height(context, 2.5),
+                      horizontal: ResponsiveSize.width(context, 6),
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -218,12 +248,14 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                           Color(0xFF67903D).withOpacity(0.8),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveSize.width(context, 5),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.15),
-                          blurRadius: 15,
-                          spreadRadius: 2,
+                          blurRadius: ResponsiveSize.width(context, 3.75),
+                          spreadRadius: ResponsiveSize.width(context, 0.5),
                         ),
                       ],
                     ),
@@ -234,7 +266,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                           'The order has been delivered!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: ResponsiveSize.font(context, 6),
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -262,17 +294,19 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                       },
 
                       child: Container(
-                        width: 40, // make the hit area wider
-                        height: 40,
+                        width: ResponsiveSize.width(context, 10),
+                        height: ResponsiveSize.width(context, 10),
                         alignment: Alignment.center,
-                        padding: EdgeInsets.all(4),
+                        padding: EdgeInsets.all(
+                          ResponsiveSize.width(context, 1),
+                        ),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
-                              blurRadius: 5,
+                              blurRadius: ResponsiveSize.width(context, 1.25),
                               spreadRadius: 1,
                             ),
                           ],
@@ -280,7 +314,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
                         child: Icon(
                           Icons.close,
                           color: Colors.black54,
-                          size: 22,
+                          size: ResponsiveSize.width(context, 5.5),
                         ),
                       ),
                     ),
@@ -302,21 +336,26 @@ class CustomField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: ResponsiveSize.height(context, 2)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: ResponsiveSize.font(context, 3.2),
+            ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: ResponsiveSize.height(context, 0.8)),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(ResponsiveSize.width(context, 3)),
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                ResponsiveSize.width(context, 2.5),
+              ),
             ),
             child: Text(value, style: TextStyle(color: Colors.grey[800])),
           ),

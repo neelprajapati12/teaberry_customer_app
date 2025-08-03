@@ -8,7 +8,7 @@ import 'package:sms_autofill/sms_autofill.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/customer_screens/bottom_navbar_customer.dart';
 import 'package:teaberryapp_project/resetpassword.dart';
 
@@ -109,8 +109,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -119,7 +117,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
           Container(
             color: Color(0xffEED067),
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 6),
+              vertical: ResponsiveSize.height(context, 5),
+            ),
             child: Column(
               children: [
                 Row(
@@ -133,33 +134,31 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         icon: Icon(
                           Icons.arrow_back,
                           color: Colors.black,
-                          size: 20,
+                          // size: ResponsiveSize.font(context, 3),
                         ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
                   ],
                 ),
-                // Image.asset(
-                //   'assets/iamges/teaberry_logo.jpg',
-                //   height: 80,
-                //   width: 80,
-                // ),
-                SizedBox(height: 15),
+                SizedBox(height: ResponsiveSize.height(context, 2)),
                 Text(
                   'Verification',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: ResponsiveSize.font(context, 7.5),
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: ResponsiveSize.height(context, 1)),
                 Text(
                   'We have sent a code to your email',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.font(context, 4),
+                    color: Colors.black54,
+                  ),
                 ),
-                vSize(5),
+                SizedBox(height: ResponsiveSize.height(context, 1)),
                 Text(
                   widget.email,
                   style: TextStyle(
@@ -173,7 +172,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
           // White Container with Verification Form
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.28,
+            top: ResponsiveSize.height(context, 28),
             left: 0,
             right: 0,
             bottom: 0,
@@ -181,12 +180,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+                  topLeft: Radius.circular(ResponsiveSize.width(context, 8)),
+                  topRight: Radius.circular(ResponsiveSize.width(context, 8)),
                 ),
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 6),
+                  vertical: ResponsiveSize.height(context, 2.5),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -196,7 +198,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         Text(
                           'CODE',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: ResponsiveSize.font(context, 3.5),
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),
@@ -208,14 +210,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           child: Text(
                             'Resend in ${_countdownSeconds}s',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: ResponsiveSize.font(context, 3.5),
                               color: Colors.black87,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                    SizedBox(height: ResponsiveSize.height(context, 2)),
                     PinCodeTextField(
                       appContext: context,
                       length: 6,
@@ -228,9 +230,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       },
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
-                        borderRadius: BorderRadius.circular(8),
-                        fieldHeight: 60,
-                        fieldWidth: 50,
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.width(context, 2),
+                        ),
+                        fieldHeight: ResponsiveSize.height(context, 7),
+                        fieldWidth: ResponsiveSize.width(context, 12),
                         activeFillColor: Colors.grey[200],
                         inactiveFillColor: Colors.grey[200],
                         selectedFillColor: Colors.grey[200],
@@ -250,7 +254,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: ResponsiveSize.height(context, 3.5)),
 
                     // Add Resend OTP section
                     Row(
@@ -303,7 +307,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           ),
                       ],
                     ),
-                    SizedBox(height: 30),
+                    SizedBox(height: ResponsiveSize.height(context, 6)),
                     ElevatedButton(
                       onPressed: () {
                         if (currentText.length == 6) {
@@ -325,15 +329,20 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Appcolors.green,
-                        minimumSize: Size(double.infinity, 48),
+                        minimumSize: Size(
+                          double.infinity,
+                          ResponsiveSize.height(context, 6),
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 2),
+                          ),
                         ),
                       ),
                       child: Text(
                         "VERIFY",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: ResponsiveSize.font(context, 4),
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),

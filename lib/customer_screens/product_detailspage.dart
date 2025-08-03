@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart'
     as FlutterToast;
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
 import 'package:teaberryapp_project/models/cartservice.dart';
 import 'package:teaberryapp_project/models/customer_model.dart';
@@ -32,8 +33,6 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
   Widget build(BuildContext context) {
     // int quantity = widget.subproduct.quantity ?? 0;Add commentMore actions
     final int maxQuantity = widget.subproduct.quantity ?? 0;
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       // backgroundColor: const Color(0xffF5F6FA),
       backgroundColor: Color(0xFFF7F7F7),
@@ -51,7 +50,7 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            // fontSize: 18,
+            // fontSize: ResponsiveSize.font(context, 4.5),
           ),
         ),
         centerTitle: false,
@@ -63,41 +62,45 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
+                  SizedBox(height: ResponsiveSize.height(context, 1.2)),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(ResponsiveSize.width(context, 4)),
                     child: Center(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.width(context, 4),
+                        ),
                         child:
                             widget.subproduct.photoUrl != null
                                 ? Image.network(
                                   widget.subproduct.photoUrl!,
                                   width: double.infinity,
-                                  height: h * 0.21,
+                                  height: ResponsiveSize.height(context, 25),
                                   fit: BoxFit.cover,
                                 )
                                 : Image.asset(
                                   'assets/iamges/coffee.jpg',
                                   width: double.infinity,
-                                  height: h * 0.20,
+                                  height: ResponsiveSize.height(context, 25),
                                   fit: BoxFit.cover,
                                 ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: ResponsiveSize.height(context, 1.2)),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(ResponsiveSize.width(context, 4)),
                     child: Center(
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
+                          horizontal: ResponsiveSize.width(context, 3),
+                          vertical: ResponsiveSize.height(context, 0.8),
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 5),
+                          ),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: Row(
@@ -106,14 +109,14 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                             Icon(
                               Icons.location_on,
                               color: Colors.red,
-                              size: 16,
+                              size: ResponsiveSize.width(context, 4),
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: ResponsiveSize.width(context, 1)),
                             Text(
                               widget.storelocation,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: ResponsiveSize.font(context, 4),
                               ),
                             ),
                           ],
@@ -121,77 +124,90 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  SizedBox(height: ResponsiveSize.height(context, 2.2)),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
+                    padding: EdgeInsets.only(
+                      left: ResponsiveSize.width(context, 4),
+                    ),
                     child: Text(
                       widget.subproduct.name ?? 'N/A',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: ResponsiveSize.font(context, 5.5),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: ResponsiveSize.height(context, 0.5)),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
+                    padding: EdgeInsets.only(
+                      left: ResponsiveSize.width(context, 4),
+                    ),
                     child: Text(
                       // widget.subproduct.description ??
                       "Prosciutto e funghi is a pizza variety that is topped with tomato sauce.",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: ResponsiveSize.font(context, 4),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  SizedBox(height: ResponsiveSize.height(context, 2.2)),
                   Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
+                    padding: EdgeInsets.only(
+                      left: ResponsiveSize.width(context, 4),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.star, color: Colors.orange, size: 18),
-                            SizedBox(width: 4),
+                            Icon(
+                              Icons.star,
+                              color: Colors.orange,
+                              size: ResponsiveSize.width(context, 4.5),
+                            ),
+                            SizedBox(width: ResponsiveSize.width(context, 1)),
                             Text(
                               "4.7",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: ResponsiveSize.font(context, 4),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(width: 18),
+                        SizedBox(width: ResponsiveSize.width(context, 4.5)),
                         Row(
                           children: [
                             Icon(
                               Icons.delivery_dining,
                               color: Colors.orange,
-                              size: 18,
+                              size: ResponsiveSize.width(context, 4.5),
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: ResponsiveSize.width(context, 1)),
                             Text(
                               "Free",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: ResponsiveSize.font(context, 4),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(width: 18),
+                        SizedBox(width: ResponsiveSize.width(context, 4.5)),
                         Row(
                           children: [
                             Icon(
                               Icons.access_time,
                               color: Colors.orange,
-                              size: 18,
+                              size: ResponsiveSize.width(context, 4.5),
                             ),
-                            SizedBox(width: 4),
+                            SizedBox(width: ResponsiveSize.width(context, 1)),
                             Text(
                               "20 min",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                fontSize: 16,
+                                fontSize: ResponsiveSize.font(context, 4),
                               ),
                             ),
                           ],
@@ -200,7 +216,7 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                     ),
                   ),
 
-                  const SizedBox(height: 15),
+                  SizedBox(height: ResponsiveSize.height(context, 1.8)),
 
                   // // Size Options
                   // const Text("SIZE:", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -234,10 +250,15 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
 
           // Bottom Price and Button Section
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-            decoration: const BoxDecoration(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 4),
+              vertical: ResponsiveSize.height(context, 1.8),
+            ),
+            decoration: BoxDecoration(
               color: Color(0xffF5F6FA),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(ResponsiveSize.width(context, 5)),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
@@ -251,7 +272,7 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                 Text(
                   "₹${widget.subproduct.price ?? 'N/A'}",
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: ResponsiveSize.font(context, 5.5),
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
@@ -260,12 +281,18 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                 Container(
                   decoration: BoxDecoration(
                     color: const Color(0xff151a33),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveSize.width(context, 7.5),
+                    ),
                   ),
                   child: Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.remove, color: Colors.white),
+                        icon: Icon(
+                          Icons.remove,
+                          color: Colors.white,
+                          size: ResponsiveSize.width(context, 5),
+                        ),
                         onPressed: () {
                           setState(() {
                             if (quantity > 1) quantity--;
@@ -274,10 +301,17 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
                       ),
                       Text(
                         quantity.toString(),
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: ResponsiveSize.font(context, 4),
+                        ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add, color: Colors.white),
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: ResponsiveSize.width(context, 5),
+                        ),
                         onPressed: () {
                           setState(() {
                             if (quantity < maxQuantity) {
@@ -300,42 +334,56 @@ class _ProductDetailspageState extends State<ProductDetailspage> {
       ),
 
       // Add to Cart Button pinned at bottom
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(bottom: 40, right: 16, left: 16),
-        color: const Color(0xffF5F6FA),
-        child: ElevatedButton(
-          onPressed: () {
-            // Add commentMore actions
-            // Add to cart logic
-            // CartService.clearCart();
-            CartService.addItem(
-              productId: widget.productId ?? 0, // Use 0 if productId is null
-              subProductId: widget.subproduct.id!,
-              quantity: quantity,
-              price: widget.subproduct.price?.toDouble() ?? 0.0,
-            );
-            print("Current Item Added to Cart:");
-            print({
-              'productId': widget.productId ?? 0,
-              'subProductId': widget.subproduct.id!,
-              'quantity': quantity,
-              'pricePerUnit': widget.subproduct.price?.toDouble() ?? 0.0,
-            });
-            print("Current Cart Items:");
-            for (var item in CartService.items) {
-              print(item);
-            }
-            FlutterToast.showAppToast("Added to cart");
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Appcolors.green,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(
+            bottom: ResponsiveSize.height(context, 2),
+            right: ResponsiveSize.width(context, 4),
+            left: ResponsiveSize.width(context, 4),
+            top: ResponsiveSize.height(context, 1),
+          ),
+          color: const Color(0xffF5F6FA),
+          child: ElevatedButton(
+            onPressed: () {
+              // Add commentMore actions
+              // Add to cart logic
+              // CartService.clearCart();
+              CartService.addItem(
+                productId: widget.productId ?? 0, // Use 0 if productId is null
+                subProductId: widget.subproduct.id!,
+                quantity: quantity,
+                price: widget.subproduct.price?.toDouble() ?? 0.0,
+              );
+              print("Current Item Added to Cart:");
+              print({
+                'productId': widget.productId ?? 0,
+                'subProductId': widget.subproduct.id!,
+                'quantity': quantity,
+                'pricePerUnit': widget.subproduct.price?.toDouble() ?? 0.0,
+              });
+              print("Current Cart Items:");
+              for (var item in CartService.items) {
+                print(item);
+              }
+              FlutterToast.showAppToast("Added to cart");
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Appcolors.green,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(
+                vertical: ResponsiveSize.height(context, 2),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  ResponsiveSize.width(context, 3),
+                ),
+              ),
+            ),
+            child: Text(
+              "ADD TO CART",
+              style: TextStyle(fontSize: ResponsiveSize.font(context, 4)),
             ),
           ),
-          child: const Text("ADD TO CART", style: TextStyle(fontSize: 16)),
         ),
       ),
     );

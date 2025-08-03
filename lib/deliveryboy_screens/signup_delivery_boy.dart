@@ -9,9 +9,10 @@ import 'package:dio/dio.dart';
 
 import 'package:teaberryapp_project/constants/app_colors.dart';
 import 'package:teaberryapp_project/constants/fluttertoast.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/constants/sizedbox_util.dart';
-import 'package:teaberryapp_project/login_customerscreen.dart';
 import '../constants/api_constant.dart';
+import 'package:teaberryapp_project/login_customerscreen.dart';
 
 class SignupDeliveryBoy extends StatefulWidget {
   @override
@@ -224,14 +225,23 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
   }
 
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Appcolors.yellow,
-
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: EdgeInsets.only(left: ResponsiveSize.width(context, 4)),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: ResponsiveSize.width(context, 7),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+                // size: ResponsiveSize.font(context, ,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
         ),
       ),
       backgroundColor: Colors.white,
@@ -242,88 +252,87 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
             Container(
               color: Appcolors.yellow,
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveSize.width(context, 6),
+                // vertical: ResponsiveSize.height(context, 5),
+              ),
               child: Column(
                 children: [
-                  // Row(
-                  //   children: [
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.white,
-                  //         shape: BoxShape.circle,
-                  //       ),
-                  //       child: IconButton(
-                  //         icon: Icon(
-                  //           Icons.arrow_back,
-                  //           color: Colors.black,
-                  //           size: 20,
-                  //         ),
-                  //         onPressed: () => Navigator.pop(context),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   Image.asset(
-                    'assets/iamges/removebckclr.png',
+                    'assets/iamges/logo.png',
                     fit: BoxFit.fill,
-                    height: 160,
-                    width: 200,
+                    height: ResponsiveSize.height(context, 18),
+                    width: ResponsiveSize.width(context, 45),
                   ),
-                  // SizedBox(height: 5),
+                  SizedBox(height: ResponsiveSize.height(context, 2)),
                   Text(
                     'Sign Up',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: ResponsiveSize.font(context, 7.5),
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: ResponsiveSize.height(context, 1)),
                   Text(
                     'Please sign up to get started',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.font(context, 4),
+                      color: Colors.black54,
+                    ),
                   ),
                 ],
               ),
             ),
             Positioned(
-              top: h * 0.29,
+              top: ResponsiveSize.height(context, 32),
               left: 0,
               right: 0,
               bottom: 0,
               child: Container(
-                padding: EdgeInsets.all(24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 6),
+                  vertical: ResponsiveSize.height(context, 2.5),
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(ResponsiveSize.width(context, 8)),
+                  ),
                 ),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       buildTextField(
                         "NAME",
                         nameController,
                         hinttext: "Adam Doe",
                       ),
+                      SizedBox(height: ResponsiveSize.height(context, 1)),
                       buildTextField(
                         "MOBILE",
                         mobileController,
                         type: TextInputType.phone,
                         hinttext: "+91 88888 34213",
                       ),
+                      SizedBox(height: ResponsiveSize.height(context, 1)),
                       buildTextField(
                         "EMAIL",
                         emailController,
                         type: TextInputType.emailAddress,
                         hinttext: "example@gmail.com",
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       Text("NEAREST STORE"),
+                      SizedBox(height: ResponsiveSize.height(context, 1)),
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 2),
+                          ),
                         ),
                         child:
                             isLoadingStores
@@ -336,11 +345,16 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                                 : DropdownButtonFormField<String>(
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.width(context, 2),
+                                      ),
                                       borderSide: BorderSide.none,
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: ResponsiveSize.width(
+                                        context,
+                                        4,
+                                      ),
                                     ),
                                   ),
                                   hint: const Text("Select nearest store"),
@@ -365,14 +379,15 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                                   },
                                 ),
                       ),
-                      vSize(15),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       buildTextField(
                         "ADDRESS",
                         addressController,
                         hinttext: "27-A, Aparna apartments, Gandhinagar...",
                       ),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       Text("PASSWORD"),
-                      SizedBox(height: 5),
+                      SizedBox(height: ResponsiveSize.height(context, 1)),
                       TextFormField(
                         controller: passwordController,
                         obscureText: _hidePassword,
@@ -381,7 +396,9 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           filled: true,
                           fillColor: Colors.grey[200],
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.width(context, 2),
+                            ),
                             borderSide: BorderSide.none,
                           ),
                           suffixIcon: IconButton(
@@ -397,32 +414,13 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           ),
                         ),
                       ),
-                      // SizedBox(height: 15),
-                      // Text("REFERRAL ID (Optional)"),
-                      // vSize(5),
-                      // TextFormField(
-                      //   controller: referralcontroller,
-                      //   decoration: InputDecoration(
-                      //     hintText: "Enter a Delivery Boy Referral ID",
-                      //     filled: true,
-                      //     fillColor: Colors.grey[200],
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(8),
-                      //       borderSide: BorderSide.none,
-                      //     ),
-                      //   ),
-                      //   // Remove validator since it's optional
-                      // ),
-                      SizedBox(height: 20),
-                      // Upload PHOTO
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       imageUploader(
                         "UPLOAD PHOTO",
                         _photoFile,
                         () =>
                             _uploadImage((f) => setState(() => _photoFile = f)),
                       ),
-
-                      // Upload AADHAAR FRONT
                       imageUploader(
                         "AADHAAR FRONT",
                         _aadhaarFront,
@@ -430,8 +428,6 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           (f) => setState(() => _aadhaarFront = f),
                         ),
                       ),
-
-                      // Upload AADHAAR BACK
                       imageUploader(
                         "AADHAAR BACK",
                         _aadhaarBack,
@@ -439,15 +435,19 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           (f) => setState(() => _aadhaarBack = f),
                         ),
                       ),
-
-                      SizedBox(height: 20),
+                      SizedBox(height: ResponsiveSize.height(context, 2)),
                       ElevatedButton(
                         onPressed: registerDeliveryBoy,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Appcolors.green,
-                          minimumSize: Size(double.infinity, 48),
+                          minimumSize: Size(
+                            double.infinity,
+                            ResponsiveSize.height(context, 6),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.width(context, 2),
+                            ),
                           ),
                         ),
                         child: Text(
@@ -455,9 +455,11 @@ class _SignupDeliveryBoyState extends State<SignupDeliveryBoy> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: ResponsiveSize.font(context, 4),
                           ),
                         ),
                       ),
+                      vSize(ResponsiveSize.height(context, 2.5)),
                     ],
                   ),
                 ),

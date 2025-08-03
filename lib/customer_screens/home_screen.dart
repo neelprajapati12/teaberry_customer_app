@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
-import 'package:teaberryapp_project/constants/sizedbox_util.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/customer_screens/myprofile.screen_customer.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/searchpage.dart';
@@ -171,24 +171,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
-    String firstChar =
-        profiledata != null && profiledata["name"] != null
-            ? profiledata["name"].toUpperCase().substring(0, 1)
-            : "";
     return Scaffold(
       backgroundColor: Colors.white,
       body:
           profiledata == null
               ? Center(child: CircularProgressIndicator())
               : Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveSize.width(context, 6),
+                  vertical: ResponsiveSize.height(context, 2.5),
+                ),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      vSize(40),
+                      SizedBox(height: ResponsiveSize.height(context, 5)),
                       // Top Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -241,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               //     ),
                               //   ),
                               // ),
-                              hSize(10),
+                              SizedBox(width: ResponsiveSize.width(context, 3)),
                               GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -289,22 +286,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-
+                      SizedBox(
+                        height: ResponsiveSize.height(context, 2.5),
+                      ), // was 20
                       // Greeting
                       Text(
                         "Hey ${profiledata["name"]},",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                          fontSize: ResponsiveSize.font(context, 5),
+                        ),
                       ),
                       Text(
                         timeoftheday(),
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: ResponsiveSize.font(context, 5.5),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 16),
-
+                      SizedBox(
+                        height: ResponsiveSize.height(context, 2.5),
+                      ), // was 16
                       // Delivery Toggle as Radio Buttons
                       Row(
                         children: [
@@ -336,8 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-
+                      SizedBox(
+                        height: ResponsiveSize.height(context, 2.5),
+                      ), // was 16
                       // Search Bar
                       GestureDetector(
                         onTap: () {
@@ -354,9 +356,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           });
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveSize.width(context, 3),
+                          ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveSize.width(context, 3),
+                            ),
                             color: Colors.grey.shade200,
                           ),
                           child: const TextField(
@@ -369,8 +375,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
-
+                      SizedBox(
+                        height: ResponsiveSize.height(context, 3),
+                      ), // was 24
                       // Categories Header
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -378,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             "All Categories",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: ResponsiveSize.font(context, 5),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -409,15 +416,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: products.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio:
-                                  3 /
-                                  3, // Adjusted ratio to accommodate text below
-                            ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: ResponsiveSize.width(context, 4),
+                          crossAxisSpacing: ResponsiveSize.width(context, 4),
+                          childAspectRatio: 1,
+                        ),
                         itemBuilder: (context, index) {
                           final product = products[index];
                           return GestureDetector(
@@ -441,7 +445,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(
+                                        ResponsiveSize.width(context, 3),
+                                      ),
                                       image: DecorationImage(
                                         image:
                                             product.photoUrl != null
@@ -457,13 +463,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(
+                                  height: ResponsiveSize.height(context, 1.5),
+                                ),
                                 Text(
                                   product.name ?? 'Unknown Product',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: ResponsiveSize.font(context, 4),
                                   ),
                                 ),
                               ],
@@ -471,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      vSize(20),
+                      SizedBox(height: ResponsiveSize.height(context, 2.5)),
                     ],
                   ),
                 ),

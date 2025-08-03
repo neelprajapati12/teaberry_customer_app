@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:teaberryapp_project/constants/api_constant.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/myprofile_screen_deliveryboy.dart';
 import 'package:teaberryapp_project/deliveryboy_screens/order_screen.dart';
 import 'package:teaberryapp_project/models/deliveryordermodel.dart';
@@ -205,8 +206,6 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
   }
 
   Widget build(BuildContext context) {
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     String firstChar =
         profiledata != null && profiledata["name"] != null
             ? profiledata["name"].toUpperCase().substring(0, 1)
@@ -222,7 +221,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
               ? Center(child: CircularProgressIndicator())
               : SafeArea(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(ResponsiveSize.width(context, 4)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -259,9 +258,8 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                           Column(
                             children: [
                               Image.asset(
-                                'assets/iamges/removebckclr.png',
-                                // width: w * 0.3,
-                                height: h * 0.2,
+                                'assets/iamges/logo.png',
+                                height: ResponsiveSize.height(context, 20),
                               ),
                               // Text(
                               //   'Tea berry',
@@ -296,12 +294,17 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                             },
                             child: Stack(
                               children: [
-                                Icon(Icons.notifications_outlined, size: 28),
+                                Icon(
+                                  Icons.notifications_outlined,
+                                  size: ResponsiveSize.width(context, 7),
+                                ),
                                 Positioned(
                                   right: 0,
                                   top: 0,
                                   child: Container(
-                                    padding: EdgeInsets.all(4),
+                                    padding: EdgeInsets.all(
+                                      ResponsiveSize.width(context, 1),
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Color(0xFF76A04D),
                                       shape: BoxShape.circle,
@@ -310,7 +313,10 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                                       "${orders.length}",
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 10,
+                                        fontSize: ResponsiveSize.font(
+                                          context,
+                                          2.5,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -338,7 +344,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                       Row(
                         children: [
                           CircleAvatar(
-                            radius: 30,
+                            radius: ResponsiveSize.width(context, 7.5),
                             backgroundColor: Colors.amber[300],
                             backgroundImage:
                                 NetworkImage(profiledata["photoUrl"]) != null
@@ -354,23 +360,27 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                               Text(
                                 '${profiledata["name"]}',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: ResponsiveSize.font(context, 4),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              SizedBox(
+                                height: ResponsiveSize.height(context, 0.5),
+                              ),
                               Text(
                                 'Email - ${profiledata["email"]}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: ResponsiveSize.font(context, 3.5),
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              SizedBox(height: 2),
+                              SizedBox(
+                                height: ResponsiveSize.height(context, 0.25),
+                              ),
                               Text(
                                 'Mobile No - ${profiledata["mobile"]}',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: ResponsiveSize.font(context, 3.5),
                                   color: Colors.grey[600],
                                 ),
                               ),
@@ -384,10 +394,14 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                       // Stats Card
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(24),
+                        padding: EdgeInsets.all(
+                          ResponsiveSize.width(context, 6),
+                        ),
                         decoration: BoxDecoration(
                           color: Appcolors.green,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveSize.width(context, 4),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,7 +410,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                               child: Text(
                                 'You\'ve completed ${orderdata[0]["monthlyDeliveryQuantity"]} deliveries\nthis month!\nKeep it up!',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: ResponsiveSize.font(context, 4.5),
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                   height: 1.5,
@@ -422,7 +436,7 @@ class _HomepageDeliveryboyState extends State<HomepageDeliveryboy> {
                             ),
                             SizedBox(height: 8),
                             SizedBox(
-                              width: w * 0.8,
+                              width: ResponsiveSize.width(context, 80),
                               child: Text(
                                 'Total Earnings This Month: Rs. ${incentive ?? 0}/-',
                                 // 'Total Bonus This Month: Rs. ${incentive["incentiveAmount"]}/-',

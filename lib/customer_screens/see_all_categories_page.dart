@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:teaberryapp_project/constants/app_colors.dart';
+import 'package:teaberryapp_project/constants/responsivesize.dart';
 import 'package:teaberryapp_project/customer_screens/mycart_screen.dart';
 import 'package:teaberryapp_project/customer_screens/product_detailspage.dart';
 import 'package:teaberryapp_project/customer_screens/searchpage.dart';
@@ -40,8 +41,6 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     // int selectedIndex = widget.index ?? 0;
-    double w = MediaQuery.of(context).size.width;
-    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -56,7 +55,7 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
         title: Text(
           'Menu',
           style: TextStyle(
-            // fontSize: 18,
+            fontSize: ResponsiveSize.font(context, 4.5),
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
@@ -72,50 +71,70 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                       (context) =>
                           SearchScreen(customerData: widget.customerData),
                 ),
-              );
+              ).then((_) {
+                setState(() {});
+              });
             },
-            child: Icon(Icons.search, color: Colors.black, size: 28),
+            child: Icon(
+              Icons.search,
+              color: Colors.black,
+              size: ResponsiveSize.width(context, 7),
+            ),
           ),
-          SizedBox(width: 20),
+          SizedBox(width: ResponsiveSize.width(context, 5)),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
-              );
+                MaterialPageRoute(
+                  builder:
+                      (context) => CartPage(
+                        customeraddress: widget.customerData.address,
+                      ),
+                ),
+              ).then((_) {
+                setState(() {});
+              });
             },
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Icon(
                   Icons.shopping_cart_outlined,
-                  size: 28,
+                  size: ResponsiveSize.width(context, 7),
                   color: Colors.black,
                 ),
                 Positioned(
-                  top: 8,
+                  top: ResponsiveSize.height(context, 1),
                   right: 0,
                   child: CircleAvatar(
                     backgroundColor: Appcolors.green,
-                    radius: 8,
+                    radius: ResponsiveSize.width(context, 2),
                     child: Text(
                       '${CartService.items.length}',
-                      style: TextStyle(fontSize: 10, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: ResponsiveSize.font(context, 2.5),
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 16),
+          SizedBox(width: ResponsiveSize.width(context, 4)),
         ],
       ),
       body: Column(
         children: [
           Container(
-            height: 40,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            height: ResponsiveSize.height(context, 5),
+            margin: EdgeInsets.symmetric(
+              vertical: ResponsiveSize.height(context, 1),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 3),
+            ),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: widget.product.length,
@@ -139,12 +158,17 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
 
           // Coffee Header
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveSize.width(context, 4),
+            ),
             child: Row(
               children: [
                 Text(
                   "${widget.product[selectedIndex].name} (${widget.product[selectedIndex].subProducts!.length})",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: ResponsiveSize.font(context, 4.5),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -158,9 +182,9 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                 final subProduct =
                     widget.product[selectedIndex].subProducts![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveSize.width(context, 4),
+                    vertical: ResponsiveSize.height(context, 1),
                   ),
                   child: GestureDetector(
                     onTap: () {
@@ -182,54 +206,81 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
                     child: Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveSize.width(context, 3),
+                        ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(
+                          ResponsiveSize.width(context, 2),
+                        ),
                         child: Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveSize.width(context, 3),
+                              ),
                               child:
                                   subProduct.photoUrl != null
                                       ? Image.network(
                                         subProduct.photoUrl!,
-                                        width: 120,
-                                        height: 120,
+                                        width: ResponsiveSize.width(
+                                          context,
+                                          30,
+                                        ),
+                                        height: ResponsiveSize.height(
+                                          context,
+                                          15,
+                                        ),
                                         fit: BoxFit.cover,
                                       )
                                       : Image.asset(
                                         'assets/iamges/coffee.jpg',
-                                        width: 120,
-                                        height: 120,
+                                        width: ResponsiveSize.width(
+                                          context,
+                                          30,
+                                        ),
+                                        height: ResponsiveSize.height(
+                                          context,
+                                          15,
+                                        ),
                                         fit: BoxFit.cover,
                                       ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: ResponsiveSize.width(context, 3)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     subProduct.name!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: ResponsiveSize.font(context, 4),
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
+                                  SizedBox(
+                                    height: ResponsiveSize.height(context, 0.8),
+                                  ),
                                   Text(
                                     '❤️ Loved By ${(50 + index).toString()}k', // Dynamic count
-                                    style: const TextStyle(fontSize: 12),
+                                    style: TextStyle(
+                                      fontSize: ResponsiveSize.font(context, 3),
+                                    ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    height: ResponsiveSize.height(context, 1.2),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
                                         '₹${subProduct.price}',
-                                        style: const TextStyle(
-                                          fontSize: 25,
+                                        style: TextStyle(
+                                          fontSize: ResponsiveSize.font(
+                                            context,
+                                            6,
+                                          ),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -254,32 +305,40 @@ class _SeeAllCategoriesPageState extends State<SeeAllCategoriesPage> {
           ),
 
           // Bottom Cart Bar
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => CartPage(
-                        customeraddress: widget.customerData.address,
-                      ),
+          SafeArea(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartPage(
+                          customeraddress: widget.customerData.address,
+                        ),
+                  ),
+                ).then((_) {
+                  setState(() {});
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                height: ResponsiveSize.height(context, 8),
+                padding: EdgeInsets.all(ResponsiveSize.width(context, 3.5)),
+                margin: EdgeInsets.all(ResponsiveSize.width(context, 2)),
+                decoration: BoxDecoration(
+                  color: Appcolors.green.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveSize.width(context, 3),
+                  ),
                 ),
-              ).then((_) {
-                setState(() {});
-              });
-            },
-            child: Container(
-              width: double.infinity,
-              height: h * 0.09,
-              padding: EdgeInsets.all(14),
-              color: Appcolors.green.withOpacity(0.9),
-              child: Center(
-                child: Text(
-                  '${CartService.items.length} ITEMS ADDED; ₹${CartService.totalPrice.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    '${CartService.items.length} ITEMS ADDED; ₹${CartService.totalPrice.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: ResponsiveSize.font(context, 4.5),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -310,16 +369,18 @@ class CategoryChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.only(right: 8),
+        padding: EdgeInsets.only(right: ResponsiveSize.width(context, 2)),
         child: Chip(
           label: Text(label),
           backgroundColor: selected ? Appcolors.green : Colors.green[100],
           labelStyle: TextStyle(
             color: selected ? Colors.white : Appcolors.green,
-            fontSize: 14,
+            fontSize: ResponsiveSize.font(context, 3.5),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(
+              ResponsiveSize.width(context, 3),
+            ),
           ),
         ),
       ),
